@@ -53,7 +53,7 @@ https://github.com/gernotfeichter/alp
 			ForceColors: true,
 			DisableTimestamp: true,
 		})
-		log.Info("Starting alp")
+		log.Info("starting alp")
 		viper.Unmarshal(&RootArgsParsed)
 		level, err := log.ParseLevel(RootArgsParsed.Level)
 		if err != nil {
@@ -84,7 +84,7 @@ https://github.com/gernotfeichter/alp
 					return
 				case t := <-ticker.C:
 					timeLeft := deadline.Sub(t)
-					log.Infof("Awaiting approval from android: %.0fs left", timeLeft.Seconds())
+					log.Infof("awaiting approval from android: %.0fs left", timeLeft.Seconds())
 				}
 			}
 		}()
