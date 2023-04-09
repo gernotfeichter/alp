@@ -24,6 +24,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/gosuri/uilive"
 )
 
 var cfgFile string
@@ -48,13 +49,18 @@ https://github.com/gernotfeichter/alp
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		// init
+		log.SetFormatter(&log.TextFormatter{
+			ForceColors: true,
+			DisableTimestamp: true,
+		})
+		log.Info("Starting alp")
 		viper.Unmarshal(&RootArgsParsed)
 		level, err := log.ParseLevel(RootArgsParsed.Level)
 		if err != nil {
 			log.Fatal(err)
 		}
 		log.SetLevel(level)
-		tickerTimeout, err := time.ParseDuration(RootArgsParsed.Timeout)
+		timeout, err := time.ParseDuration(RootArgsParsed.Timeout)
 		if err != nil {
 			log.Fatalf("Cloud not parse %s as go duration!", RootArgsParsed.Timeout)
 		}
@@ -62,8 +68,14 @@ https://github.com/gernotfeichter/alp
 		if err != nil {
 			log.Fatalf("Cloud not parse %s as go duration!", RootArgsParsed.RefreshInterval)
 		}
+		now := time.Now()
+		deadline := now.Add(timeout)
 		ticker := time.NewTicker(refreshInterval)
+
 		done := make(chan bool)
+		writer := uilive.New()
+		log.SetOutput(writer)
+		writer.Start()
 
 		go func() {
 			for {
@@ -71,12 +83,13 @@ https://github.com/gernotfeichter/alp
 				case <-done:
 					return
 				case t := <-ticker.C:
-					log.Println("Tick at", t)
+					timeLeft := deadline.Sub(t)
+					log.Infof("Awaiting approval from android: %.0fs left", timeLeft.Seconds())
 				}
 			}
 		}()
 
-		time.Sleep(tickerTimeout)
+		time.Sleep(timeout)
 		ticker.Stop()
 		done <- true
 		log.Println("Ticker stopped")
