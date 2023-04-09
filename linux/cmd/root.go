@@ -18,7 +18,9 @@ package cmd
 
 import (
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -26,19 +28,59 @@ import (
 
 var cfgFile string
 
+type RootArgs struct {
+	Timeout string
+	RefreshInterval string
+	Level string
+}
+
+var RootArgsParsed RootArgs
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "alp",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "alp - android-linux-pam",
+	Long: `Alp is a convenient - yet secure - authentication method that lets you use your android device as a key for your linux machine.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+To be able to use this, you will also need to use the android counterpart - See:
+
+https://github.com/gernotfeichter/alp
+`,
+	Run: func(cmd *cobra.Command, args []string) {
+		// init
+		viper.Unmarshal(&RootArgsParsed)
+		level, err := log.ParseLevel(RootArgsParsed.Level)
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.SetLevel(level)
+		tickerTimeout, err := time.ParseDuration(RootArgsParsed.Timeout)
+		if err != nil {
+			log.Fatalf("Cloud not parse %s as go duration!", RootArgsParsed.Timeout)
+		}
+		refreshInterval, err := time.ParseDuration(RootArgsParsed.RefreshInterval)
+		if err != nil {
+			log.Fatalf("Cloud not parse %s as go duration!", RootArgsParsed.RefreshInterval)
+		}
+		ticker := time.NewTicker(refreshInterval)
+		done := make(chan bool)
+
+		go func() {
+			for {
+				select {
+				case <-done:
+					return
+				case t := <-ticker.C:
+					log.Println("Tick at", t)
+				}
+			}
+		}()
+
+		time.Sleep(tickerTimeout)
+		ticker.Stop()
+		done <- true
+		log.Println("Ticker stopped")
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -57,11 +99,17 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.alp.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is /etc/alp/alp.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.Flags().DurationP("timeout", "t", time.Second * 15, 
+		"wait for as long till the authentication is given up and fallback to the next pam module in /etc/pam.d/common-auth will occur")
+	rootCmd.Flags().DurationP("refreshInterval", "r", time.Second * 1, 
+		"refreshes the 'waiting for android user input (x seconds left)' text by the given interval")
+	rootCmd.Flags().StringP("level", "l", "info", "Log Level (panic|fatal|error|warn|info|debug|trace)")
+
+	viper.BindPFlags(rootCmd.Flags())
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -70,14 +118,9 @@ func initConfig() {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-
-		// Search config in home directory with name ".alp" (without extension).
-		viper.AddConfigPath(home)
+		viper.AddConfigPath("/etc/alp")
+		viper.SetConfigName("alp")
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".alp")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
