@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install sudo && apt-get clean
 ENV ROOT_PASSWORD="root-password"
 RUN echo "root:${ROOT_PASSWORD}" | chpasswd
 RUN useradd -g sudo test
-COPY test/fallback-to-password-prompt-good-password/common-auth /etc/pam.d/common-auth
+COPY test/resources/common-auth /etc/pam.d/common-auth
 USER test
 # before running the sudo command, the /etc/shadow file will not be readable
 RUN (cat /etc/shadow && echo "ERROR: test user should not be able to read the /etc/shadow file!" && exit 2) || true

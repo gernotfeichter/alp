@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # This Dockerfile is only used for testing
 
 FROM golang:1.20
@@ -18,12 +19,12 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /alp
 RUN chmod u+x /alp
 
 # Test
-RUN apt-get update && apt-get install sudo && apt-get clean
 RUN useradd test
-COPY test/fallback-to-password-prompt-bad-password/common-auth /etc/pam.d/common-auth
+COPY test/docker-scenarios/happy-path-mocked/alp.yaml /etc/alp/alp.yaml
+COPY test/resources/common-auth /etc/pam.d/common-auth
 USER test
 # this is the main line to be tested here
-RUN ((echo "wrong-password" | sudo -S cat /etc/shadow) && exit 2) || true
+RUN su root
 
 # the following is only there to satisfy vscode/linting
 CMD ["/alp"]

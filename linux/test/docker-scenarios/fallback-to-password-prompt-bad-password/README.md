@@ -11,5 +11,5 @@ The authentication should fail ( non-zero exit code of alp), whithin the 15s def
 
 # snippet to run this test standalone
 ```
-(cd linux && docker build . -f test/fallback-to-password-prompt-bad-password/Dockerfile -t test --progress=plain)
+(cd linux && docker build . -f test/docker-scenarios/fallback-to-password-prompt-bad-password/Dockerfile -t test --progress=plain)
 ```

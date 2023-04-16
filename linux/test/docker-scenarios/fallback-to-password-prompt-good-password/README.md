@@ -11,5 +11,5 @@ The authentication should succeed (zero exit code of alp) in the following authe
 
 # snippet to run this test standalone
 ```
-(cd linux && docker build . -f test/fallback-to-password-prompt-good-password/Dockerfile -t test --progress=plain)
+(cd linux && docker build . -f test/docker-scenarios/fallback-to-password-prompt-good-password/Dockerfile -t test --progress=plain)
 ```

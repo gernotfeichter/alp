@@ -9,5 +9,5 @@ The authentication should succeed (zero exit code of alp) because alp is called 
 
 # snippet to run this test standalone
 ```
-(cd linux && docker build . -f test/happy-path-mocked/Dockerfile -t test --progress=plain)
+(cd linux && docker build . -f test/docker-scenarios/happy-path-mocked/Dockerfile -t test --progress=plain)
 ```
