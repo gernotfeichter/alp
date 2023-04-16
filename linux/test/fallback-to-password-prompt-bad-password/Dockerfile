@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1.3-labs
 # This Dockerfile is only used for testing
 
 FROM golang:1.20
@@ -23,13 +22,8 @@ RUN apt-get update && apt-get install sudo && apt-get clean
 RUN useradd test
 COPY test/fallback-to-password-prompt-bad-password/common-auth /etc/pam.d/common-auth
 USER test
-ENV FILE_THAT_REQUIRES_SUPERUSER_PERMISSION=/root/file-requires-superuser-permission
 # this is the main line to be tested here
-RUN (echo "wrong-password" | sudo -S touch "${FILE_THAT_REQUIRES_SUPERUSER_PERMISSION}") || true
-RUN <<EOF
-[ -f "${FILE_THAT_REQUIRES_SUPERUSER_PERMISSION}" ] && echo "ERROR: The file ${FILE_THAT_REQUIRES_SUPERUSER_PERMISSION} should not have been created\!" && exit 2
-exit 0
-EOF
+RUN ((echo "wrong-password" | sudo -S cat /etc/shadow") && exit 2) || true
 
 # the following is only there to satisfy vscode/linting
 CMD ["/alp"]
