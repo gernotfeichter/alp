@@ -14,11 +14,12 @@
 # pam-auth-update(8) for details.
 
 ## gernot start
-auth    sufficient      pam_exec.so stdout /app
+auth    sufficient      pam_exec.so stdout /alp
 ## gernot end
 
 # here are the per-package modules (the "Primary" block)
-auth    [success=1 default=ignore]      pam_unix.so nullok
+auth    sufficient      pam_unix.so nullok
+
 # here's the fallback if no module succeeds
 auth    requisite                       pam_deny.so
 # prime the stack with a positive return value if there isn't one already;

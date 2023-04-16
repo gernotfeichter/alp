@@ -33,6 +33,7 @@ type RootArgs struct {
 	Timeout string
 	RefreshInterval string
 	Level string
+	MockSuccess bool
 }
 
 var RootArgsParsed RootArgs
@@ -67,6 +68,10 @@ https://github.com/gernotfeichter/alp
 		refreshInterval, err := time.ParseDuration(RootArgsParsed.RefreshInterval)
 		if err != nil {
 			log.Fatalf("Cloud not parse %s as go duration!", RootArgsParsed.RefreshInterval)
+		}
+		if RootArgsParsed.MockSuccess {
+			log.Warn("mockSuccess is true! This should only be used in testing and not on a real system!")
+			os.Exit(0)
 		}
 		now := time.Now()
 		deadline := now.Add(timeout)
@@ -118,6 +123,8 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().DurationP("timeout", "t", time.Second * 15, 
 		"wait for as long till the authentication is given up and fallback to the next pam module in /etc/pam.d/common-auth will occur")
+    rootCmd.Flags().BoolP("mockSuccess", "s", false, `Warning: Never ever use true in a real setup!
+	Setting this to true hardcodes authentication success and should only be used in testing!`)
 	rootCmd.Flags().DurationP("refreshInterval", "r", time.Second * 1, 
 		"refreshes the 'waiting for android user input (x seconds left)' text by the given interval")
 	rootCmd.Flags().StringP("level", "l", "info", "Log Level (panic|fatal|error|warn|info|debug|trace)")
