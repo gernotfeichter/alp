@@ -23,7 +23,7 @@ RUN useradd test
 COPY test/fallback-to-password-prompt-bad-password/common-auth /etc/pam.d/common-auth
 USER test
 # this is the main line to be tested here
-RUN ((echo "wrong-password" | sudo -S cat /etc/shadow") && exit 2) || true
+RUN ((echo "wrong-password" | sudo -S cat /etc/shadow) && exit 2) || true
 
 # the following is only there to satisfy vscode/linting
 CMD ["/alp"]

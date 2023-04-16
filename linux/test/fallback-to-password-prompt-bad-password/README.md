@@ -3,10 +3,11 @@
 This test scenario sets up pam in a Docker Image build to use alp as the main authentication
 mechanism.
 
-Then, an authenication attempt is made by running the `su root` command.
+Then, an authenication attempt is made by running the `sudo cat /etc/shadow` command.
 
-The authentication should fail (non-zero exit code of alp) (whithin the 15s default timeout) because alp is not connected to a real android device, nor
-did the fallback authentication succeed (password prompt was answered with the wrong password).
+The authentication should fail ( non-zero exit code of alp), whithin the 15s default timeout because
+- alp is not connected to a real android device
+- nor did the fallback authentication succeed (password prompt was answered with the wrong password).
 
 # snippet to run this test standalone
 ```
