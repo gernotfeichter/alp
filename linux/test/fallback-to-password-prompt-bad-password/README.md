@@ -5,7 +5,7 @@ mechanism.
 
 Then, an authenication attempt is made by running the `su root` command.
 
-The authentication should fail (non-zero exit code of alp) because alp is not connected to a real android device, nor
+The authentication should fail (non-zero exit code of alp) (whithin the 15s default timeout) because alp is not connected to a real android device, nor
 did the fallback authentication succeed (password prompt was answered with the wrong password).
 
 # snippet to run this test standalone
