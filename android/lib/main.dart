@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'notifications/notifications.dart';
+
 void main() {
+  configureNotifications();
   runApp(const MyApp());
 }
 
