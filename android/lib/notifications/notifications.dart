@@ -1,4 +1,5 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:awesome_notifications/android_foreground_service.dart';
 import 'package:flutter/material.dart';
 
 import 'controller.dart';
@@ -38,13 +39,36 @@ configureNotifications() {
       onNotificationDisplayedMethod:  NotificationController.onNotificationDisplayedMethod,
       onDismissActionReceivedMethod:  NotificationController.onDismissActionReceivedMethod
   );
-  AwesomeNotifications().createNotification(
+  // AwesomeNotifications().createNotification(
+  //     content: NotificationContent(
+  //         id: 10,
+  //         channelKey: 'basic_channel',
+  //         title: 'Simple Notification',
+  //         body: 'Simple body',
+  //         actionType: ActionType.Default,
+  //     )
+  // );
+  AndroidForegroundService.startAndroidForegroundService(
+      foregroundStartMode: ForegroundStartMode.stick,
+      foregroundServiceType: ForegroundServiceType.mediaPlayback,
       content: NotificationContent(
-          id: 10,
+          id: 2341234,
+          body: 'Service is running!',
+          title: 'Android Foreground Service',
           channelKey: 'basic_channel',
-          title: 'Simple Notification',
-          body: 'Simple body',
-          actionType: ActionType.Default,
-      )
+          bigPicture: 'asset://assets/images/android-bg-worker.jpg',
+          notificationLayout: NotificationLayout.BigPicture,
+          category: NotificationCategory.Service
+      ),
+      actionButtons: [
+        NotificationActionButton(
+            key: 'BUTTON_1',
+            label: 'Button 1'
+        ),
+        NotificationActionButton(
+            key: 'BUTTON_2',
+            label: 'Button 2'
+        )
+      ]
   );
 }
