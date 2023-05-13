@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:awesome_notifications/android_foreground_service.dart';
 import 'package:flutter/material.dart';
 
 import 'controller.dart';
+
+var lastNotificationId = 0;
 
 configureNotifications() {
   AwesomeNotifications().initialize(
@@ -48,26 +52,42 @@ configureNotifications() {
   //         actionType: ActionType.Default,
   //     )
   // );
+  var notificationId = lastNotificationId + 1;
+  var i = 0;
+  while (i < 15){
+    _reconcileNotification(id: notificationId, progress: i);
+    i++;
+    // according to https://pub.dev/packages/awesome_notifications#-full-screen-notifications-only-for-android
+    // the update interval of the notification should not exceed one second
+    sleep(const Duration(milliseconds: 500));
+  }
+}
+
+void _reconcileNotification({int id = 0, int progress = 0}) {
   AndroidForegroundService.startAndroidForegroundService(
       foregroundStartMode: ForegroundStartMode.stick,
       foregroundServiceType: ForegroundServiceType.mediaPlayback,
       content: NotificationContent(
-          id: 2341234,
-          body: 'Service is running!',
-          title: 'Android Foreground Service',
-          channelKey: 'basic_channel',
-          bigPicture: 'asset://assets/images/android-bg-worker.jpg',
-          notificationLayout: NotificationLayout.BigPicture,
-          category: NotificationCategory.Service
+        id: id,
+        body: 'Service is running!',
+        title: 'Android Foreground Service',
+        channelKey: 'basic_channel',
+        bigPicture: 'asset://assets/images/android-bg-worker.jpg',
+        notificationLayout: NotificationLayout.ProgressBar,
+        category: NotificationCategory.Service,
+        fullScreenIntent: true,
+        progress: progress,
       ),
       actionButtons: [
         NotificationActionButton(
-            key: 'BUTTON_1',
-            label: 'Button 1'
+          key: 'APPROVE',
+          label: 'Approve',
+          color: Colors.lightGreenAccent,
         ),
         NotificationActionButton(
-            key: 'BUTTON_2',
-            label: 'Button 2'
+          key: 'DENY',
+          label: 'Deny',
+          color: Colors.red,
         )
       ]
   );
