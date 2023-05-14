@@ -43,27 +43,69 @@ configureNotifications() {
       onNotificationDisplayedMethod:  NotificationController.onNotificationDisplayedMethod,
       onDismissActionReceivedMethod:  NotificationController.onDismissActionReceivedMethod
   );
-  // AwesomeNotifications().createNotification(
-  //     content: NotificationContent(
-  //         id: 10,
-  //         channelKey: 'basic_channel',
-  //         title: 'Simple Notification',
-  //         body: 'Simple body',
-  //         actionType: ActionType.Default,
-  //     )
-  // );
-  var notificationId = lastNotificationId + 1;
-  var i = 0;
-  while (i < 15){
-    _reconcileNotification(id: notificationId, progress: i);
-    i++;
+
+  var id = lastNotificationId + 1;
+  var timeoutSeconds = 15;
+  const maxProgress = 100;
+
+  var startTime = DateTime.now();
+  var endTime = startTime.add(Duration(seconds: timeoutSeconds));
+
+  var currentProgress = 0;
+  while (currentProgress < maxProgress){
+    currentProgress = getCurrentProgress(startTime, endTime);
+    _reconcileNotification(id: id, progress: currentProgress);
     // according to https://pub.dev/packages/awesome_notifications#-full-screen-notifications-only-for-android
     // the update interval of the notification should not exceed one second
-    sleep(const Duration(milliseconds: 500));
+    sleep(const Duration(milliseconds: 100));
   }
 }
 
+/* normal case: returns an int value between 0 and 100 reflecting the progress
+*  in percent.
+*  exceeded case: note that it can actually return a value higher than 100 and
+* it is the callers responsibility to handle that as well.
+* */
+int getCurrentProgress(DateTime startTime, DateTime endTime) {
+  int maxDurationSeconds = endTime.difference(startTime).inSeconds;
+  int secondsTillStartTime = DateTime.now().difference(startTime).inSeconds;
+  var ratio = secondsTillStartTime / maxDurationSeconds;
+  double ratioInPercent = ratio * 100;
+  return ratioInPercent.toInt();
+}
+
 void _reconcileNotification({int id = 0, int progress = 0}) {
+  if (progress < 100) {
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: id,
+          body: 'Simple body',
+          title: 'Simple Notification',
+          channelKey: 'basic_channel',
+          notificationLayout: NotificationLayout.ProgressBar,
+          progress: progress,
+          wakeUpScreen: true,
+          fullScreenIntent: true,
+        ),
+        actionButtons: [
+          NotificationActionButton(
+            key: 'DENY',
+            label: 'Deny',
+            color: Colors.red,
+          ),
+          NotificationActionButton(
+            key: 'APPROVE',
+            label: 'Approve',
+            color: Colors.lightGreenAccent,
+          )
+        ]
+    );
+  } else {
+    AwesomeNotifications().cancel(id);
+  }
+}
+
+void _reconcileNotificationForegroudService({int id = 0, int progress = 0}) {
   AndroidForegroundService.startAndroidForegroundService(
       foregroundStartMode: ForegroundStartMode.stick,
       foregroundServiceType: ForegroundServiceType.mediaPlayback,
