@@ -3,9 +3,9 @@ import 'init/init.dart' as init;
 import 'notifications/notifications.dart';
 
 void main() {
+  runApp(const MyApp());
   init.init();
   createNotification();
-  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

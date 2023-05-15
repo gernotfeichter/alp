@@ -10,5 +10,5 @@ Future init() async {
     return '<html><body><h1>Title!</h1></body></html>';
   });
 
-  await app.listen(restApiPort);
+  await app.listen(await restApiPort());
 }
