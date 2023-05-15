@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   awesome_notifications: ^0.7.4+1
   logging: ^1.1.1
+  alfred: ^1.1.0+2
 
 dev_dependencies:
   flutter_test:

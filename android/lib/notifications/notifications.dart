@@ -5,11 +5,11 @@ import 'package:awesome_notifications/android_foreground_service.dart';
 import 'package:flutter/material.dart';
 
 import '../logging/logging.dart';
-import 'controller.dart';
+import 'event-handler.dart';
 
 var lastNotificationId = 0;
 
-void init() {
+Future init() async{
   AwesomeNotifications().initialize(
     // set the icon to null if you want to use the default app icon
       'resource://drawable/res_app_icon', // TODO: Gernot
