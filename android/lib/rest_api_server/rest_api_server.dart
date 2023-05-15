@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:alfred/alfred.dart';
+import '../secure_storage/secure_storage.dart';
 
 Future init() async {
   final app = Alfred();
@@ -9,5 +10,5 @@ Future init() async {
     return '<html><body><h1>Title!</h1></body></html>';
   });
 
-  await app.listen(7654);
+  await app.listen(restApiPort);
 }
