@@ -8,7 +8,7 @@ Future init() async {
   final app = Alfred();
 
   app.get('/auth', (req, res) {
-    res.headers.contentType = ContentType.html;
+    res.headers.contentType = ContentType.json;
     return '<html><body><h1>Title!</h1></body></html>';
   });
 

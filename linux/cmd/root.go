@@ -20,23 +20,11 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"os"
-	"time"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/gosuri/uilive"
 )
 
 var cfgFile string
-
-type RootArgs struct {
-	Timeout string
-	RefreshInterval string
-	Level string
-	MockSuccess bool
-}
-
-var RootArgsParsed RootArgs
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -49,55 +37,7 @@ To be able to use this, you will also need to use the android counterpart - See:
 https://github.com/gernotfeichter/alp
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		// init
-		log.SetFormatter(&log.TextFormatter{
-			ForceColors: true,
-			DisableTimestamp: true,
-		})
-		log.Info("starting alp")
-		viper.Unmarshal(&RootArgsParsed)
-		level, err := log.ParseLevel(RootArgsParsed.Level)
-		if err != nil {
-			log.Fatal(err)
-		}
-		log.SetLevel(level)
-		timeout, err := time.ParseDuration(RootArgsParsed.Timeout)
-		if err != nil {
-			log.Fatalf("Cloud not parse %s as go duration!", RootArgsParsed.Timeout)
-		}
-		refreshInterval, err := time.ParseDuration(RootArgsParsed.RefreshInterval)
-		if err != nil {
-			log.Fatalf("Cloud not parse %s as go duration!", RootArgsParsed.RefreshInterval)
-		}
-		if RootArgsParsed.MockSuccess {
-			log.Warn("mockSuccess is true! This should only be used in testing and not on a real system!")
-			os.Exit(0)
-		}
-		now := time.Now()
-		deadline := now.Add(timeout)
-		ticker := time.NewTicker(refreshInterval)
-
-		done := make(chan bool)
-		writer := uilive.New()
-		log.SetOutput(writer)
-		writer.Start()
-
-		go func() {
-			for {
-				select {
-				case <-done:
-					return
-				case t := <-ticker.C:
-					timeLeft := deadline.Sub(t)
-					log.Infof("awaiting approval from android: %.0fs left", timeLeft.Seconds())
-				}
-			}
-		}()
-
-		time.Sleep(timeout)
-		ticker.Stop()
-		done <- true
-		log.Println("Ticker stopped")
+		log.Fatal("You invoked alp without a sub-command like auth or init, this has no use! The root cmd is only used internally to handle persistent flags")
 	},
 }
 
@@ -116,36 +56,17 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "/etc/alp/alp.yaml", "config file in YAML format")
+	rootCmd.PersistentFlags().StringP("level", "l", "info", "Log Level (panic|fatal|error|warn|info|debug|trace)")
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is /etc/alp/alp.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().DurationP("timeout", "t", time.Second * 15, 
-		"wait for as long till the authentication is given up and fallback to the next pam module in /etc/pam.d/common-auth will occur")
-    rootCmd.Flags().BoolP("mockSuccess", "s", false, `Warning: Never ever use true in a real setup!
-	Setting this to true hardcodes authentication success and should only be used in testing!`)
-	rootCmd.Flags().DurationP("refreshInterval", "r", time.Second * 1, 
-		"refreshes the 'waiting for android user input (x seconds left)' text by the given interval")
-	rootCmd.Flags().StringP("level", "l", "info", "Log Level (panic|fatal|error|warn|info|debug|trace)")
-
-	viper.BindPFlags(rootCmd.Flags())
+	viper.BindPFlags(rootCmd.PersistentFlags())
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		viper.AddConfigPath("/etc/alp")
-		viper.SetConfigName("alp")
-		viper.SetConfigType("yaml")
-	}
-
-	viper.AutomaticEnv() // read in environment variables that match
-
+	viper.AutomaticEnv()
 	// If a config file is found, read it in.
+	viper.SetConfigFile(cfgFile)
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
