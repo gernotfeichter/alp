@@ -29,7 +29,7 @@ import (
 
 type InitArgs struct {
 	Keysize int
-	Target string
+	Target  []string
 }
 
 var initArgs InitArgs
@@ -98,13 +98,15 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	initCmd.Flags().IntP("keysize", "s", 150, "Size (number of characters) of the cryptographic key that is used to encrypt communication between linux and android")
-	initCmd.Flags().StringP("target", "t", "", "Target device: <IP>|<Host>:<Port> of android device. Example: 10.0.0.3:7654. Recommendations: Stick to the default port as used in the example. In your router config, reserve the IP address for your android device.")
+	initCmd.Flags().StringSliceP("target", "t", []string{}, "Target device: <IP>|<Host>:<Port> of android device. Example: 10.0.0.3:7654. Recommendations: Stick to the default port as used in the example. In your router config, reserve the IP address for your android device.")
 
 	viper.BindPFlags(initCmd.Flags())
 }
 
 const defaultConfigFileTemplate string = `---
-key: {{.Key}}
+key: {{ .Key }}
 targets:
-  - {{.Target}}
+{{range $target := .Targets}}
+  - {{ $target }}
+{{end}}
 `

@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/gernotfeichter/alp/lib"
+	"github.com/gernotfeichter/alp/api"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gosuri/uilive"
@@ -33,9 +34,8 @@ type AuthArgs struct {
 	RefreshInterval string
 	Level string
 	MockSuccess bool
+	Target  []string
 }
-
-var AuthArgsParsed AuthArgs
 
 // authCmd represents the auth command
 var authCmd = &cobra.Command{
@@ -52,34 +52,38 @@ https://github.com/gernotfeichter/alp
 	Run: func(cmd *cobra.Command, args []string) {
 		// init
 		lib.Init()
-		log.Info("starting alp")
-		viper.Unmarshal(&AuthArgsParsed)
-		level, err := log.ParseLevel(AuthArgsParsed.Level)
+		log.Info("starting alp auth")
+		var authArgs AuthArgs
+		viper.Unmarshal(&authArgs)
+		level, err := log.ParseLevel(authArgs.Level)
 		if err != nil {
 			log.Fatal(err)
 		}
 		log.SetLevel(level)
-		timeout, err := time.ParseDuration(AuthArgsParsed.Timeout)
+		timeout, err := time.ParseDuration(authArgs.Timeout)
 		if err != nil {
-			log.Fatalf("Cloud not parse %s as go duration!", AuthArgsParsed.Timeout)
+			log.Fatalf("Cloud not parse %s as go duration!", authArgs.Timeout)
 		}
-		refreshInterval, err := time.ParseDuration(AuthArgsParsed.RefreshInterval)
+		refreshInterval, err := time.ParseDuration(authArgs.RefreshInterval)
 		if err != nil {
-			log.Fatalf("Cloud not parse %s as go duration!", AuthArgsParsed.RefreshInterval)
+			log.Fatalf("Cloud not parse %s as go duration!", authArgs.RefreshInterval)
 		}
-		if AuthArgsParsed.MockSuccess {
+		if authArgs.MockSuccess {
 			log.Warn("mockSuccess is true! This should only be used in testing and not on a real system!")
 			os.Exit(0)
 		}
+
 		now := time.Now()
+		// perform rest request to android
+		authRequest(authArgs)
+
+		// fancy console output while time is ticking
 		deadline := now.Add(timeout)
 		ticker := time.NewTicker(refreshInterval)
-
 		done := make(chan bool)
 		writer := uilive.New()
 		log.SetOutput(writer)
 		writer.Start()
-
 		go func() {
 			for {
 				select {
@@ -91,7 +95,6 @@ https://github.com/gernotfeichter/alp
 				}
 			}
 		}()
-
 		time.Sleep(timeout)
 		ticker.Stop()
 		done <- true
@@ -113,4 +116,14 @@ func init() {
 		"refreshes the 'waiting for android user input (x seconds left)' text by the given interval")
 
 	viper.BindPFlags(authCmd.Flags())
+}
+
+func authRequest(authArgs AuthArgs) {
+	for _, target := range authArgs.Target {
+		_, err := api.NewClient(target)
+		if err != nil {
+			log.Fatal(err)
+		}
+		
+	}
 }
