@@ -1,0 +1,55 @@
+openapi: 3.0.3
+info:
+  title: Alp android - OpenAPI 3.0
+  description: |-
+    Alp android REST API server running on android side.
+
+    In alp (android-linux-pam), the linux machine delegates the authentication decision
+    (true or false) to the android device.
+
+    One endpoint (/auth) is there to do exactly that.
+
+    However, to prevent "anyone" (e.g. an attacker) from doing so, previous pairing is
+    required (key exchange), since the messages sent via the /auth endpoint are encrypted.
+    Pairing is done via the android app.
+  version: 1.0.0
+externalDocs:
+  description: Find out more about alp
+  url: https://github.com/gernotfeichter/alp
+paths:
+  /auth:
+    get:
+      summary: Get authentication state
+      description: Delegate the authentication decision to the android device.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid Input
+        '401':
+          description: Invalid Key - Linux and Android must use the same key for a successful operation.
+components:
+  schemas:
+    JWT:
+      type: string
+      description: "JWT web token - See: https://jwt.io/."
+    AuthRequest:
+      properties:
+        jwt:
+          $ref: '#/components/schemas/JWT'
+    AuthResponse:
+      properties:
+        jwt:
+          $ref: '#/components/schemas/JWT'
+      description: |
+        JWT Payload contains: "authenticated": true/false
