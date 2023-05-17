@@ -21,6 +21,7 @@ paths:
     get:
       summary: Get authentication state
       description: Delegate the authentication decision to the android device.
+      operationId: getAuthenticationStatus
       requestBody:
         content:
           application/json:
@@ -29,27 +30,57 @@ paths:
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: |
+            Successful auth response. The decision if auth=true or false is in the response body encryptedMessage payload field!
+            So a 200 only means that android responded, but does not contain information about the decision.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthResponse'
         '400':
           description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResonse"
         '401':
           description: Invalid Key - Linux and Android must use the same key for a successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResonse"
+        default:
+          description: "Unclassified Error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResonse"
 components:
   schemas:
-    JWT:
+    EncryptedMessage:
       type: string
-      description: "JWT web token - See: https://jwt.io/."
+      description: "encryptedMessage "
     AuthRequest:
+      type: object
       properties:
-        jwt:
-          $ref: '#/components/schemas/JWT'
+        encryptedMessage:
+          $ref: '#/components/schemas/EncryptedMessage'
+      required:
+        - encryptedMessage
+      additionalProperties: false
     AuthResponse:
+      type: object
       properties:
-        jwt:
-          $ref: '#/components/schemas/JWT'
+        encryptedMessage:
+          $ref: '#/components/schemas/EncryptedMessage'
+      required:
+        - encryptedMessage
+      additionalProperties: false
       description: |
-        JWT Payload contains: "authenticated": true/false
+        encryptedMessage Payload contains: {"authenticated": true/false}
+    ErrorResonse:
+      type: object
+      properties:
+        error:
+          type: string
+      additionalProperties: false

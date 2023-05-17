@@ -28,8 +28,7 @@ import (
 )
 
 type InitArgs struct {
-	Keysize int
-	Target  []string
+	Targets  []string
 }
 
 var initArgs InitArgs
@@ -59,12 +58,12 @@ Warning: This will overwrite the existing alp config file (if it exists).`,
 		// delete old config
 		err = os.Remove(rootArgs.Config)
 		if err != nil {
-			log.Fatal(err)
+			log.Warn(err)
 		}
 		// prepare new config
 		templateVariables := map[string]interface{}{
-			"Key": lib.RandSeq(initArgs.Keysize),
-			"Target": initArgs.Target,
+			"Key": lib.RandSeq(32),
+			"Targets": initArgs.Targets,
 		}
 		log.Tracef("%d", templateVariables)
 		t, err := template.New("defaultConfigFileTemplate").Parse(defaultConfigFileTemplate)
@@ -97,8 +96,7 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	initCmd.Flags().IntP("keysize", "s", 150, "Size (number of characters) of the cryptographic key that is used to encrypt communication between linux and android")
-	initCmd.Flags().StringSliceP("target", "t", []string{}, "Target device: <IP>|<Host>:<Port> of android device. Example: 10.0.0.3:7654. Recommendations: Stick to the default port as used in the example. In your router config, reserve the IP address for your android device.")
+	initCmd.Flags().StringSliceP("targets", "t", []string{}, "Target device: <IP>|<Host>:<Port> of android device. Example: 10.0.0.3:7654. Recommendations: Stick to the default port as used in the example. In your router config, reserve the IP address for your android device.")
 
 	viper.BindPFlags(initCmd.Flags())
 }
@@ -106,7 +104,7 @@ func init() {
 const defaultConfigFileTemplate string = `---
 key: {{ .Key }}
 targets:
-{{range $target := .Targets}}
+{{- range $target := .Targets }}
   - {{ $target }}
-{{end}}
+{{- end }}
 `

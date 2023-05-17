@@ -17,24 +17,27 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"time"
 
-	"github.com/gernotfeichter/alp/lib"
 	"github.com/gernotfeichter/alp/api"
-	log "github.com/sirupsen/logrus"
+	"github.com/gernotfeichter/alp/lib"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/gosuri/uilive"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 type AuthArgs struct {
-	Timeout string
-	RefreshInterval string
+	Timeout time.Duration
+	RefreshInterval time.Duration
 	Level string
 	MockSuccess bool
-	Target  []string
+	Targets []string
+	Key string
 }
 
 // authCmd represents the auth command
@@ -55,31 +58,18 @@ https://github.com/gernotfeichter/alp
 		log.Info("starting alp auth")
 		var authArgs AuthArgs
 		viper.Unmarshal(&authArgs)
-		level, err := log.ParseLevel(authArgs.Level)
-		if err != nil {
-			log.Fatal(err)
-		}
-		log.SetLevel(level)
-		timeout, err := time.ParseDuration(authArgs.Timeout)
-		if err != nil {
-			log.Fatalf("Cloud not parse %s as go duration!", authArgs.Timeout)
-		}
-		refreshInterval, err := time.ParseDuration(authArgs.RefreshInterval)
-		if err != nil {
-			log.Fatalf("Cloud not parse %s as go duration!", authArgs.RefreshInterval)
-		}
 		if authArgs.MockSuccess {
 			log.Warn("mockSuccess is true! This should only be used in testing and not on a real system!")
 			os.Exit(0)
 		}
 
-		now := time.Now()
 		// perform rest request to android
+		now := time.Now()
 		authRequest(authArgs)
 
 		// fancy console output while time is ticking
-		deadline := now.Add(timeout)
-		ticker := time.NewTicker(refreshInterval)
+		deadline := now.Add(authArgs.Timeout)
+		ticker := time.NewTicker(authArgs.RefreshInterval)
 		done := make(chan bool)
 		writer := uilive.New()
 		log.SetOutput(writer)
@@ -95,7 +85,7 @@ https://github.com/gernotfeichter/alp
 				}
 			}
 		}()
-		time.Sleep(timeout)
+		time.Sleep(authArgs.RefreshInterval)
 		ticker.Stop()
 		done <- true
 		log.Println("Ticker stopped")
@@ -109,21 +99,47 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	authCmd.Flags().DurationP("timeout", "t", time.Second * 15, 
-		"wait for as long till the authentication is given up and fallback to the next pam module in /etc/pam.d/common-auth will occur")
+	"wait for as long till the authentication is given up and fallback to the next pam module in /etc/pam.d/common-auth will occur")
     authCmd.Flags().BoolP("mockSuccess", "s", false, `Warning: Never ever use true in a real setup!
 	Setting this to true hardcodes authentication success and should only be used in testing!`)
 	authCmd.Flags().DurationP("refreshInterval", "r", time.Second * 1, 
 		"refreshes the 'waiting for android user input (x seconds left)' text by the given interval")
+	authCmd.Flags().StringP("key", "k", "", "key aka password used by both linux (client) and android (server) for communcation. utf-8 string. " +
+		"Recommendation: do not override this param. Use the alp init command instead, which writes the key to /etc/alp/alp.yaml and " +
+		"takes precedence over the empty default specified for this command line arg.")
 
 	viper.BindPFlags(authCmd.Flags())
 }
 
 func authRequest(authArgs AuthArgs) {
-	for _, target := range authArgs.Target {
-		_, err := api.NewClient(target)
+	for _, target := range authArgs.Targets {
+		client, err := api.NewClient(fmt.Sprintf("http://%s", target))
+		if err != nil {
+			log.Fatalf("Could not create rest client: %s", err)
+		}
+		requestExpirationTime := time.Now().Add(authArgs.Timeout)
+		ctx, _ := context.WithDeadline(context.Background(), requestExpirationTime)
+		// requestString := fmt.Sprintf(`{"jwt":"%s"}`, jwt)
+		// requestBytes, err := jx.DecodeStr(requestString).Raw()
 		if err != nil {
 			log.Fatal(err)
 		}
-		
+		hostname, _ := os.Hostname()
+		res, err := client.GetAuthenticationStatus(ctx, &api.AuthRequest{
+			EncryptedMessage: api.EncryptedMessage(
+				lib.Encrypt(fmt.Sprintf(`{"host":"%s","requestExpirationTime":"%s"}`, hostname, requestExpirationTime),
+				authArgs.Key)),
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+		switch r := res.(type) {
+		case *api.AuthResponse:
+			log.Infof("200 - Success authorized=%s", r)
+		case *api.GetAuthenticationStatusBadRequest:
+			log.Fatalf("400 - BadRequest: %s", r)
+		case *api.GetAuthenticationStatusUnauthorized:
+			log.Fatalf("401 - Unauthorized: %s", r)
+		}
 	}
 }

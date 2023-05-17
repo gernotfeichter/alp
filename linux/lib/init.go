@@ -28,8 +28,8 @@ func initRootArgs() RootArgs {
 	// init
 	var rootArgs RootArgs
 	viper.Unmarshal(&rootArgs)
-	log.Trace("Config=%s", rootArgs.Config)
-	log.Trace("Level=%s", rootArgs.Level)
+	log.Tracef("Config=%s", rootArgs.Config)
+	log.Tracef("Level=%s", rootArgs.Level)
 	return rootArgs
 }
 
