@@ -39,6 +39,7 @@ dependencies:
   logging: ^1.1.1
   alfred: ^1.1.0+2
   flutter_secure_storage: ^8.0.0
+  pointycastle: ^3.1.1
 
 dev_dependencies:
   flutter_test:

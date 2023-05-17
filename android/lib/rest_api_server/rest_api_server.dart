@@ -3,7 +3,7 @@ import 'package:alfred/alfred.dart';
 import '../secure_storage/secure_storage.dart';
 
 Future init() async {
-  // Atm. of writing I could not a lib for server-side dart codegen from
+  // Atm. of writing I could not find a lib for server dart codegen from
   // the openapi.yaml file, hence this is self-written.
   // The openapi.yaml is however used for the client code generation!
   final app = Alfred();

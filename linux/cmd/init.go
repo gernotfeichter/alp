@@ -65,7 +65,7 @@ Warning: This will overwrite the existing alp config file (if it exists).`,
 			"Key": lib.RandSeq(32),
 			"Targets": initArgs.Targets,
 		}
-		log.Tracef("%d", templateVariables)
+		log.Tracef("%v", templateVariables)
 		t, err := template.New("defaultConfigFileTemplate").Parse(defaultConfigFileTemplate)
 		if err != nil {
 			log.Fatal(err)

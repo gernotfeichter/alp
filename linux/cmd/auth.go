@@ -125,10 +125,14 @@ func authRequest(authArgs AuthArgs) {
 			log.Fatal(err)
 		}
 		hostname, _ := os.Hostname()
+		encryptedMessage, err := lib.Encrypt(
+			fmt.Sprintf(`{"host":"%s","requestExpirationTime":"%s"}`, hostname, requestExpirationTime),
+			authArgs.Key)
+		if err != nil {
+			log.Fatalf("Error encrypting message: %s", err)
+		}
 		res, err := client.GetAuthenticationStatus(ctx, &api.AuthRequest{
-			EncryptedMessage: api.EncryptedMessage(
-				lib.Encrypt(fmt.Sprintf(`{"host":"%s","requestExpirationTime":"%s"}`, hostname, requestExpirationTime),
-				authArgs.Key)),
+			EncryptedMessage: api.EncryptedMessage(encryptedMessage),
 		})
 		if err != nil {
 			log.Fatal(err)
@@ -137,9 +141,9 @@ func authRequest(authArgs AuthArgs) {
 		case *api.AuthResponse:
 			log.Infof("200 - Success authorized=%s", r)
 		case *api.GetAuthenticationStatusBadRequest:
-			log.Fatalf("400 - BadRequest: %s", r)
+			log.Fatalf("400 - BadRequest: %s", res)
 		case *api.GetAuthenticationStatusUnauthorized:
-			log.Fatalf("401 - Unauthorized: %s", r)
+			log.Fatalf("401 - Unauthorized: %s", res)
 		}
 	}
 }

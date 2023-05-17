@@ -6,51 +6,61 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"errors"
+	"fmt"
 	"io"
+
 	log "github.com/sirupsen/logrus"
 )
 
-func Encrypt(plaintext string, key string) string {
+func Encrypt(plaintext string, key string) (string, error) {
 	validateKey(key)
-	gcm := initCipher(key)
+	gcm, err := initCipher(key)
+	if err != nil {
+		return "", err
+	}
 	nonce := make([]byte, gcm.NonceSize())
 	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
 		log.Fatalf("Could not seed nonce: %s", err)
 	}
-	return string(gcm.Seal(nonce, nonce, []byte(plaintext), nil))
+	return string(gcm.Seal(nonce, nonce, []byte(plaintext), nil)), nil
 }
 
-func Decrypt(ciphertext string, key string) string {
+func Decrypt(ciphertext string, key string) (string, error) {
 	validateKey(key)
-	gcm := initCipher(key)
+	gcm, err := initCipher(key)
+	if err != nil {
+		return "", err
+	}
 	nonceSize := gcm.NonceSize()
 	if len([]byte(ciphertext)) < nonceSize {
-		log.Fatalf("Length of ciphertext smaller than nonceSize")
+		return "", errors.New("length of ciphertext smaller than nonceSize")
 	}
 	nonce, ciphertext := ciphertext[:nonceSize], ciphertext[nonceSize:]
 	plaintext, err := gcm.Open(nil, []byte(nonce), []byte(ciphertext), nil)
 	if err != nil {
-		log.Fatalf("Coud not decrypt: %s", err)
+		return "", err
 	}
-	return string(plaintext)
+	return string(plaintext), nil
 }
 
-func initCipher(key string) cipher.AEAD {
+func initCipher(key string) (cipher.AEAD, error) {
 	c, err := aes.NewCipher([]byte(key))
 	if err != nil {
 		log.Tracef("Key=%s", key)
-		log.Fatalf("Could not create cipher from given key. Hiding the key - set -l trace to see it! %s", err)
+		return nil, err
 	}
 	gcm, err := cipher.NewGCM(c)
 	if err != nil {
-		log.Fatalf("Could not execute GCM: %s", err)
+		return nil, err
 	}
-	return gcm
+	return gcm, nil
 }
 
-func validateKey(key string) {
+func validateKey(key string) error {
 	keySize := len(key)
 	if keySize != 32 {
-		log.Fatalf("Expected a key size of 32, got: %d", keySize)
+		return fmt.Errorf("expected a key size of 32, got: %d", keySize)
 	}
+	return nil
 }
