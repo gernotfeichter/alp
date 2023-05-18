@@ -21,10 +21,12 @@ Future init() async {
     String host;
     DateTime requestExpirationTime;
     try {
-      String body = await req.body as String;
-      log.fine("request body: \n$body");
-      var bodyAsJsonMap = await json.decode(body);
-      var encryptedMessage = bodyAsJsonMap['encryptedMessage'];
+      // String body = await req.body as String;
+      // log.fine("request body: \n$body");
+      var bodyAsJsonMap = await req.bodyAsJsonMap; // await json.decode(body);
+      final String encryptedMessageEncoded = bodyAsJsonMap['encryptedMessage'];
+      var encryptedMessageDecoded = base64.decode(encryptedMessageEncoded);
+      String encryptedMessage = encryptedMessageDecoded.toString();
       String decryptedMessage;
       try {
         decryptedMessage = await Aes256Gcm.decrypt(encryptedMessage, 'GYTpQ8GRE23YOgB1DK0FBwUATnKPJliW'); // TODO: Gernot

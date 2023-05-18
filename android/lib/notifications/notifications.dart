@@ -5,7 +5,7 @@ import 'package:circular_buffer/circular_buffer.dart';
 import 'package:flutter/material.dart';
 
 import '../logging/logging.dart';
-import 'event-handler.dart';
+import 'event_handler.dart';
 
 // for each of the last five notifications, contains a map(notification_id(int): approval state(bool))
 // That means that one device can theoretically handle up to five concurrent auth requests
