@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'init/init.dart' as init;
-import 'notifications/notifications.dart';
 
 void main() {
   runApp(const MyApp());
