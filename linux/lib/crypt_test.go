@@ -3,11 +3,12 @@ package lib
 import (
 	"errors"
 	"fmt"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"testing"
 )
 
 func Test_encrypt_decrypt(t *testing.T) {
+	log.SetLevel(log.TraceLevel)
 	type args struct {
 		plaintext  string
 		encryptKey string
@@ -35,6 +36,7 @@ func Test_encrypt_decrypt(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(_ *testing.T) {
 			enrypted, err := Encrypt(tt.args.plaintext, tt.args.encryptKey)
+			log.Tracef("encrypted: %s", enrypted)
 			if err != nil {
 				log.Fatal(err)
 			}
