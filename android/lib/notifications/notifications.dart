@@ -1,13 +1,15 @@
 import 'dart:io';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:awesome_notifications/android_foreground_service.dart';
+import 'package:circular_buffer/circular_buffer.dart';
 import 'package:flutter/material.dart';
 
 import '../logging/logging.dart';
 import 'event-handler.dart';
 
-var lastNotificationId = 0;
+// for each of the last five notifications, contains a map(notification_id(int): approval state(bool))
+// That means that one device can theoretically handle up to five concurrent auth requests
+final lastFiveNotificationStates = CircularBuffer<Map<int,bool>>(5)..add({0: false});
 
 Future init() async{
   AwesomeNotifications().initialize(
@@ -39,10 +41,9 @@ Future init() async{
   );
 }
 
-void createNotification() {
+void createNotification({timeoutSeconds = 60, title}) {
   log.info("createNotification called");
-  var id = lastNotificationId + 1;
-  var timeoutSeconds = 60;
+  var id = lastFiveNotificationStates.last.keys.first + 1; // should yield last notification id + 1
   const maxProgress = 100;
   
   var startTime = DateTime.now();
@@ -51,7 +52,7 @@ void createNotification() {
   var currentProgress = 0;
   while (currentProgress < maxProgress){
     currentProgress = _getCurrentProgress(startTime, endTime);
-    _reconcileNotification(id: id, progress: currentProgress);
+    _reconcileNotification(id: id, progress: currentProgress, title: title);
     // according to https://pub.dev/packages/awesome_notifications#-full-screen-notifications-only-for-android
     // the update interval of the notification should not exceed one second
     sleep(const Duration(milliseconds: 5000));
@@ -71,12 +72,12 @@ int _getCurrentProgress(DateTime startTime, DateTime endTime) {
   return ratioInPercent.toInt();
 }
 
-void _reconcileNotification({int id = 0, int progress = 0}) {
+void _reconcileNotification({int id = 0, int progress = 0, title}) {
   if (progress < 100) {
     AwesomeNotifications().createNotification(
         content: NotificationContent(
           id: id,
-          title: 'Alp auth request',
+          title: title,
           channelKey: 'alp',
           notificationLayout: NotificationLayout.ProgressBar,
           progress: progress,
@@ -104,7 +105,10 @@ void _reconcileNotification({int id = 0, int progress = 0}) {
 }
 
 // TODO: Gernot maybe won't need this ever again
-/*void _reconcileNotificationForegroudService({int id = 0, int progress = 0}) {
+/*
+import 'package:awesome_notifications/android_foreground_service.dart';
+
+void _reconcileNotificationForegroudService({int id = 0, int progress = 0}) {
   AndroidForegroundService.startAndroidForegroundService(
       foregroundStartMode: ForegroundStartMode.stick,
       foregroundServiceType: ForegroundServiceType.mediaPlayback,

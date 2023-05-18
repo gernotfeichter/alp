@@ -59,7 +59,7 @@ components:
   schemas:
     EncryptedMessage:
       type: string
-      description: "encryptedMessage "
+      description: "encryptedMessage: aes256 GCM encrypted ciphertext. the decrypted message is always a json string."
     AuthRequest:
       type: object
       properties:
@@ -68,6 +68,8 @@ components:
       required:
         - encryptedMessage
       additionalProperties: false
+      description: |
+        encryptedMessage containing: {"host":"<hostname>","requestExpirationTime":"<datetime>"}
     AuthResponse:
       type: object
       properties:
@@ -77,7 +79,7 @@ components:
         - encryptedMessage
       additionalProperties: false
       description: |
-        encryptedMessage Payload contains: {"authenticated": true/false}
+        encryptedMessage containing: {"authenticated": true/false}
     ErrorResonse:
       type: object
       properties:

@@ -67,7 +67,7 @@ https://github.com/gernotfeichter/alp
 		now := time.Now()
 		authRequest(authArgs)
 
-		// fancy console output while time is ticking
+		// console output while time is ticking
 		deadline := now.Add(authArgs.Timeout)
 		ticker := time.NewTicker(authArgs.RefreshInterval)
 		done := make(chan bool)
@@ -118,6 +118,7 @@ func authRequest(authArgs AuthArgs) {
 			log.Fatalf("Could not create rest client: %s", err)
 		}
 		requestExpirationTime := time.Now().Add(authArgs.Timeout)
+		requestExpirationTimeString := requestExpirationTime.Format(time.RFC3339)
 		ctx, _ := context.WithDeadline(context.Background(), requestExpirationTime)
 		// requestString := fmt.Sprintf(`{"jwt":"%s"}`, jwt)
 		// requestBytes, err := jx.DecodeStr(requestString).Raw()
@@ -126,7 +127,7 @@ func authRequest(authArgs AuthArgs) {
 		}
 		hostname, _ := os.Hostname()
 		encryptedMessage, err := lib.Encrypt(
-			fmt.Sprintf(`{"host":"%s","requestExpirationTime":"%s"}`, hostname, requestExpirationTime),
+			fmt.Sprintf(`{"host":"%s","requestExpirationTime":"%s"}`, hostname, requestExpirationTimeString),
 			authArgs.Key)
 		if err != nil {
 			log.Fatalf("Error encrypting message: %s", err)
