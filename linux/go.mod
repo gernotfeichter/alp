@@ -15,12 +15,10 @@ require (
 	go.opentelemetry.io/otel/metric v0.38.1
 	go.opentelemetry.io/otel/trace v1.15.1
 	go.uber.org/multierr v1.11.0
+	gotest.tools/v3 v3.0.3
 )
 
-require (
-	golang.org/x/mod v0.10.0 // indirect
-	golang.org/x/tools v0.8.0 // indirect
-)
+require github.com/google/go-cmp v0.5.9 // indirect
 
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
@@ -40,7 +38,6 @@ require (
 	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang-jwt/jwe v0.0.0-20220815104040-b2647e820b90
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
