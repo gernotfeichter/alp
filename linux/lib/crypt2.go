@@ -21,6 +21,7 @@ func encryptAES(plaintext string, key string) string {
 	}
 
 	stream := cipher.NewCTR(block, iv)
+	log.Printf("bytes plaintext %v", []byte(plaintext))
 	stream.XORKeyStream(ciphertext[aes.BlockSize:], []byte(plaintext))
 
 	return base64.StdEncoding.EncodeToString(ciphertext)
