@@ -14,7 +14,7 @@ void main() async {
 
   assert(plaintext == decrypted);
 
-	// assert(decryptAES("nIj/ThHqhT9lrBKM1kl4MA==", key) == plaintext); // ciphertext from this dart implementation TODO: Gernot
+	assert(decryptAES("Nb5lHLauPblZHko1dM75gg==", key) == plaintext); // ciphertext from this dart implementation TODO: Gernot
 	log.info("First test succeeded");
-  assert(decryptAES("HQBNSQf3CZa09RUHqPB1tBCazQXPJ+eGgH3x", key) == plaintext); // ciphertext from go implementation
+  assert(decryptAES("y6+ySUhbULZ9fffhKYhS9zWoc4ayUH13lloT", key) == plaintext); // ciphertext from go implementation
 }
