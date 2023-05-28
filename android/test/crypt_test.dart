@@ -1,20 +1,12 @@
-import 'package:android/crypt/crypt.dart';
-import 'package:android/logging/logging.dart';
-import 'dart:convert' as convert;
+import 'dart:io';
 
-void main() async {
-  var key = "passwordpassword";
-  var plaintext = "secret-text";
+import 'package:android/crypt/aes_gcm_256_pbkdf2_string_encryption.dart';
 
-  print(convert.utf8.encode(plaintext)) ;
-
-  var encrypted = encryptAES(plaintext, key);
-  print("Ciphertext: ${encrypted}");
-  var decrypted = decryptAES(encrypted, key);
-
-  assert(plaintext == decrypted);
-
-	assert(decryptAES("Nb5lHLauPblZHko1dM75gg==", key) == plaintext); // ciphertext from this dart implementation TODO: Gernot
-	log.info("First test succeeded");
-  assert(decryptAES("y6+ySUhbULZ9fffhKYhS9zWoc4ayUH13lloT", key) == plaintext); // ciphertext from go implementation
+void main() {
+  var encrypted = "zRgaonmXy+Yw9jyf8PwW0X9z7Hwv1738X4X2coLf/vM=:ZLnedKZm04V3v+5A:4O3GCXdqyJ73iKMwp1paHQ==:dXzVZy2Fs/iKOuOolZp2TQ==";
+  var decrypted = aesGcmPbkdf2DecryptFromBase64("GYTpQ8GRE23YOgB1DK0FBwUATnKPJliW", encrypted);
+  print("decrypted=$decrypted");
+  if ("{\"secret\":\"abc\"}" != decrypted) {
+    exit(1);
+  }
 }

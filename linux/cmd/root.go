@@ -36,7 +36,7 @@ To be able to use this, you will also need to use the android counterpart - See:
 
 https://github.com/gernotfeichter/alp
 `,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		log.Fatal("You invoked alp without a sub-command like auth or init, this has no use! The root cmd is only used internally to handle persistent flags")
 	},
 }

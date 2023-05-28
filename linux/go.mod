@@ -15,10 +15,8 @@ require (
 	go.opentelemetry.io/otel/metric v0.38.1
 	go.opentelemetry.io/otel/trace v1.15.1
 	go.uber.org/multierr v1.11.0
-	gotest.tools/v3 v3.0.3
+	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
 )
-
-require github.com/google/go-cmp v0.5.9 // indirect
 
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect

@@ -23,10 +23,11 @@ import (
 	"time"
 
 	"github.com/gernotfeichter/alp/api"
-	"github.com/gernotfeichter/alp/lib"
+	"github.com/gernotfeichter/alp/ini"
+	"github.com/gernotfeichter/alp/crypt"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/gosuri/uilive"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -52,9 +53,9 @@ To be able to use this, you will also need to use the android counterpart - See:
 
 https://github.com/gernotfeichter/alp
 `,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		// init
-		lib.Init()
+		ini.Init()
 		log.Info("starting alp auth")
 		var authArgs AuthArgs
 		viper.Unmarshal(&authArgs)
@@ -119,14 +120,15 @@ func authRequest(authArgs AuthArgs) {
 		}
 		requestExpirationTime := time.Now().Add(authArgs.Timeout)
 		requestExpirationTimeString := requestExpirationTime.Format(time.RFC3339)
-		ctx, _ := context.WithDeadline(context.Background(), requestExpirationTime)
+		ctx, cancel := context.WithDeadline(context.Background(), requestExpirationTime)
+		defer cancel()
 		// requestString := fmt.Sprintf(`{"jwt":"%s"}`, jwt)
 		// requestBytes, err := jx.DecodeStr(requestString).Raw()
 		if err != nil {
 			log.Fatal(err)
 		}
 		hostname, _ := os.Hostname()
-		encryptedMessage, err := lib.Encrypt(
+		encryptedMessage := crypt.AesGcmPbkdf2EncryptToBase64(
 			fmt.Sprintf(`{"host":"%s","requestExpirationTime":"%s"}`, hostname, requestExpirationTimeString),
 			authArgs.Key)
 		if err != nil {

@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:aes256gcm/aes256gcm.dart';
 import 'package:alfred/alfred.dart';
-import '../crypt/crypt.dart';
+import '../crypt/aes_gcm_256_pbkdf2_string_encryption.dart';
 import '../logging/logging.dart';
 import '../notifications/notifications.dart';
 import '../secure_storage/secure_storage.dart';
+import '../crypt/decryption_error.dart';
 
 Future init() async {
   // Atm. of writing I could not find a lib for server dart codegen from
@@ -21,15 +21,10 @@ Future init() async {
     String host;
     DateTime requestExpirationTime;
     try {
-      // String body = await req.body as String;
-      // log.fine("request body: \n$body");
-      var bodyAsJsonMap = await req.bodyAsJsonMap; // await json.decode(body);
-      final String encryptedMessageEncoded = bodyAsJsonMap['encryptedMessage'];
-      var encryptedMessageDecoded = base64.decode(encryptedMessageEncoded);
-      String encryptedMessage = encryptedMessageDecoded.toString();
+      Map bodyAsJsonMap = await req.body as Map;
       String decryptedMessage;
       try {
-        decryptedMessage = await Aes256Gcm.decrypt(encryptedMessage, 'GYTpQ8GRE23YOgB1DK0FBwUATnKPJliW'); // TODO: Gernot
+        decryptedMessage = aesGcmPbkdf2DecryptFromBase64(bodyAsJsonMap['encryptedMessage'], 'GYTpQ8GRE23YOgB1DK0FBwUATnKPJliW'); // TODO: Gernot
       } on Exception {
         throw DecryptionError();
       }

@@ -21,7 +21,9 @@ import (
 	"html/template"
 	"os"
 
-	"github.com/gernotfeichter/alp/lib"
+	"github.com/gernotfeichter/alp/filepath"
+	"github.com/gernotfeichter/alp/ini"
+	"github.com/gernotfeichter/alp/random"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -48,9 +50,9 @@ to update your password on the android side as well!
 If using the default config file location (recommended), this command needs to be executed as root!
 
 Warning: This will overwrite the existing alp config file (if it exists).`,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		// init
-		rootArgs := lib.Init()
+		rootArgs := ini.Init()
 		err := viper.Unmarshal(&initArgs)
 		if err != nil {
 			log.Fatal(err)
@@ -62,7 +64,7 @@ Warning: This will overwrite the existing alp config file (if it exists).`,
 		}
 		// prepare new config
 		templateVariables := map[string]interface{}{
-			"Key": lib.RandSeq(32),
+			"Key": random.RandSeq(32),
 			"Targets": initArgs.Targets,
 		}
 		log.Tracef("%v", templateVariables)
@@ -76,7 +78,7 @@ Warning: This will overwrite the existing alp config file (if it exists).`,
 		}
 		defaultConfigFileContent := buf.String()
 		// write new config
-		err = lib.CreateFileWithPath(rootArgs.Config, defaultConfigFileContent, 0660)
+		err = filepath.CreateFileWithPath(rootArgs.Config, defaultConfigFileContent, 0660)
 		if err != nil {
 			log.Warnf("Hint: You may need to run this command as root or with sudo!")
 			log.Fatal(err)

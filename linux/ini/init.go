@@ -1,4 +1,4 @@
-package lib
+package ini
 
 import (
 	log "github.com/sirupsen/logrus"
