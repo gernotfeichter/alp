@@ -42,7 +42,12 @@ Future init() async {
     }
 
     // notification
-    var notificationTimeout = DateTime.now().difference(requestExpirationTime).inSeconds;
+    var notificationTimeout = requestExpirationTime.difference(DateTime.now()).inSeconds;
+    if (notificationTimeout < 0) {
+      res.statusCode = HttpStatus.badRequest;
+      return '{"error": "Calculated notificationTimeout is negative. This could have multiple reasons like your phone vs linux machine times being out of sync, very low configured timeout or very poor device or network performance."}';
+    }
+    log.fine("notificationTimeout=$notificationTimeout");
     createNotification(timeoutSeconds: notificationTimeout, title: "Alp auth request from $host");
 
     // response
