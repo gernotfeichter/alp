@@ -24,7 +24,7 @@ Future init() async {
       Map bodyAsJsonMap = await req.body as Map;
       String decryptedMessage;
       try {
-        decryptedMessage = aesGcmPbkdf2DecryptFromBase64(bodyAsJsonMap['encryptedMessage'], 'GYTpQ8GRE23YOgB1DK0FBwUATnKPJliW'); // TODO: Gernot
+        decryptedMessage = aesGcmPbkdf2DecryptFromBase64('GYTpQ8GRE23YOgB1DK0FBwUATnKPJliW', bodyAsJsonMap['encryptedMessage']); // TODO: Gernot
       } on Exception {
         throw DecryptionError();
       }
@@ -35,11 +35,12 @@ Future init() async {
       log.severe("DecryptionError: $e");
       res.statusCode = HttpStatus.unauthorized;
       return '{"error": "$e"}';
-    } on Exception catch (e) {
+    } catch (e) {
       log.severe("Exception during parsing of request: $e");
       res.statusCode = HttpStatus.badRequest;
       return '{"error": "$e"}';
     }
+
     // notification
     var notificationTimeout = DateTime.now().difference(requestExpirationTime).inSeconds;
     createNotification(timeoutSeconds: notificationTimeout, title: "Alp auth request from $host");

@@ -129,8 +129,8 @@ func authRequest(authArgs AuthArgs) {
 		}
 		hostname, _ := os.Hostname()
 		encryptedMessage := crypt.AesGcmPbkdf2EncryptToBase64(
-			fmt.Sprintf(`{"host":"%s","requestExpirationTime":"%s"}`, hostname, requestExpirationTimeString),
-			authArgs.Key)
+			authArgs.Key,
+			fmt.Sprintf(`{"host":"%s","requestExpirationTime":"%s"}`, hostname, requestExpirationTimeString))
 		if err != nil {
 			log.Fatalf("Error encrypting message: %s", err)
 		}
