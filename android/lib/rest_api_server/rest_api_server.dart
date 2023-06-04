@@ -24,11 +24,11 @@ Future init() async {
       String decryptedMessage = "";
       Map bodyAsJsonMap = await req.body as Map;
       try {
-        var decrpytionKey = await getKey();
-        if (decrpytionKey == null) {
+        var decryptionKey = await getKey();
+        if (decryptionKey == null) {
           log.severe("Decryption Key is null, please configure a key!");
         } else {
-          decryptedMessage = aesGcmPbkdf2DecryptFromBase64(decrpytionKey, bodyAsJsonMap['encryptedMessage']);
+          decryptedMessage = aesGcmPbkdf2DecryptFromBase64(decryptionKey, bodyAsJsonMap['encryptedMessage']);
         }
       } on Exception {
         throw DecryptionError();
