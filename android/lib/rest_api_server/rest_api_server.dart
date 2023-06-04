@@ -10,7 +10,7 @@ import '../crypt/decryption_error.dart';
 Future init() async {
   // Atm. of writing I could not find a lib for server dart codegen from
   // the openapi.yaml file, hence this is self-written.
-  // The openapi.yaml is however used for the client code generation!
+  // The openapi.yaml is however used for the client code generation (linux side)!
   final app = Alfred(logLevel: LogType.debug);
 
   app.get('/auth', (req, res) async {
@@ -21,10 +21,15 @@ Future init() async {
     String host;
     DateTime requestExpirationTime;
     try {
+      String decryptedMessage = "";
       Map bodyAsJsonMap = await req.body as Map;
-      String decryptedMessage;
       try {
-        decryptedMessage = aesGcmPbkdf2DecryptFromBase64('GYTpQ8GRE23YOgB1DK0FBwUATnKPJliW', bodyAsJsonMap['encryptedMessage']); // TODO: Gernot
+        var decrpytionKey = await getKey();
+        if (decrpytionKey == null) {
+          log.severe("Decryption Key is null, please configure a key!");
+        } else {
+          decryptedMessage = aesGcmPbkdf2DecryptFromBase64(decrpytionKey, bodyAsJsonMap['encryptedMessage']);
+        }
       } on Exception {
         throw DecryptionError();
       }
@@ -48,12 +53,12 @@ Future init() async {
       return '{"error": "Calculated notificationTimeout is negative. This could have multiple reasons like your phone vs linux machine times being out of sync, very low configured timeout or very poor device or network performance."}';
     }
     log.fine("notificationTimeout=$notificationTimeout");
-    createNotification(timeoutSeconds: notificationTimeout, title: "Alp auth request from $host");
+    createNotificationAuthRequest(timeoutSeconds: notificationTimeout, title: "Alp auth request from $host");
 
     // response
     res.headers.contentType = ContentType.json;
     return '{"encryptedMessage":"authenticated-true-json"}';
   });
 
-  await app.listen(await restApiPort());
+  await app.listen(await getRestApiPort());
 }

@@ -1,15 +1,20 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:circular_buffer/circular_buffer.dart';
 import 'package:flutter/material.dart';
-
 import '../logging/logging.dart';
 import 'event_handler.dart';
 
+const notificationChannelKey = 'alp';
+const notificationMessage = 'Alp is running in background!';
+const foregroundServiceNotificationId = 1;
+const authRequestsNotificationStartId = 2;
+
 // for each of the last five notifications, contains a map(notification_id(int): approval state(bool))
 // That means that one device can theoretically handle up to five concurrent auth requests
-final lastFiveNotificationStates = CircularBuffer<Map<int,bool>>(5)..add({0: false});
+final authRequestNotificationStateHistory = CircularBuffer<Map<int,bool>>(5)..add({authRequestsNotificationStartId: false});
 
 Future init() async{
   AwesomeNotifications().initialize(
@@ -17,7 +22,7 @@ Future init() async{
       'resource://drawable/res_app_icon', // TODO: Gernot
       [
         NotificationChannel(
-            channelKey: 'alp',
+            channelKey: notificationChannelKey,
             channelName: 'Alp notifications',
             channelDescription: 'Notification channel for alp (android-linux-pam project) - Authentication Requests from Linux',
             defaultColor: Colors.black,
@@ -41,9 +46,21 @@ Future init() async{
   );
 }
 
-void createNotification({timeoutSeconds = 60, title}) {
+void createNotificationForegroundService() {
+  AwesomeNotifications().createNotification(
+    content: NotificationContent(
+      id: foregroundServiceNotificationId,
+      channelKey: notificationChannelKey,
+      summary: notificationMessage,
+      notificationLayout: NotificationLayout.ProgressBar,
+    ),
+  );
+}
+
+
+void createNotificationAuthRequest({timeoutSeconds = 60, title}) {
   log.info("createNotification called");
-  var id = lastFiveNotificationStates.last.keys.first + 1; // should yield last notification id + 1
+  var id = authRequestNotificationStateHistory.last.keys.first + 1; // should yield last notification id + 1
   const maxProgress = 100;
   
   var startTime = DateTime.now();
@@ -62,7 +79,7 @@ void createNotification({timeoutSeconds = 60, title}) {
 /* normal case: returns an int value between 0 and 100 reflecting the progress
 *  in percent.
 *  exceeded case: note that it can actually return a value higher than 100 and
-* it is the callers responsibility to handle that as well.
+*  it is the callers responsibility to handle that as well.
 * */
 int _getCurrentProgress(DateTime startTime, DateTime endTime) {
   int maxDurationSeconds = endTime.difference(startTime).inSeconds;
@@ -103,37 +120,3 @@ void _reconcileNotification({int id = 0, int progress = 0, title}) {
     AwesomeNotifications().cancel(id);
   }
 }
-
-// TODO: Gernot maybe won't need this ever again
-/*
-import 'package:awesome_notifications/android_foreground_service.dart';
-
-void _reconcileNotificationForegroudService({int id = 0, int progress = 0}) {
-  AndroidForegroundService.startAndroidForegroundService(
-      foregroundStartMode: ForegroundStartMode.stick,
-      foregroundServiceType: ForegroundServiceType.mediaPlayback,
-      content: NotificationContent(
-        id: id,
-        body: 'Service is running!',
-        title: 'Android Foreground Service',
-        channelKey: 'alp',
-        bigPicture: 'asset://assets/images/android-bg-worker.jpg',
-        notificationLayout: NotificationLayout.ProgressBar,
-        category: NotificationCategory.Service,
-        fullScreenIntent: true,
-        progress: progress,
-      ),
-      actionButtons: [
-        NotificationActionButton(
-          key: 'APPROVE',
-          label: 'Approve',
-          color: Colors.lightGreenAccent,
-        ),
-        NotificationActionButton(
-          key: 'DENY',
-          label: 'Deny',
-          color: Colors.red,
-        )
-      ]
-  );
-}*/

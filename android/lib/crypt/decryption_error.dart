@@ -1,2 +1,1 @@
-class DecryptionError extends Error {
-}
+class DecryptionError extends Error {}

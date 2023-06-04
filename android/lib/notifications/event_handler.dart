@@ -31,7 +31,7 @@ class NotificationEventHandler {
     if (receivedAction.id != null) {
       final id = receivedAction.id!;
       log.info("id=$id, receivedAction.buttonKeyPressed=$receivedAction.buttonKeyPressed");
-      lastFiveNotificationStates.add({id: receivedAction.buttonKeyPressed == 'APPROVE'});
+      authRequestNotificationStateHistory.add({id: receivedAction.buttonKeyPressed == 'APPROVE'});
     }
     // Navigate into pages, avoiding to open the notification details page over another details page already opened
     // MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil('/notification-page',
