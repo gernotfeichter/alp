@@ -20,6 +20,7 @@ version: 1.0.0+1
 
 environment:
   sdk: '>=2.19.6 <3.0.0'
+  flutter: ">=3.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -44,6 +45,9 @@ dependencies:
   flutter_background_service: ^2.4.6
   flutter_background_service_android: ^3.0.3
   settings_ui: ^2.0.2
+  flutter_riverpod: ^2.3.6
+  network_info_plus: ^4.0.1
+
 
 dev_dependencies:
   flutter_test:

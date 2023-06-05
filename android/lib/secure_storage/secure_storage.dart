@@ -23,3 +23,7 @@ setRestApiPort(int port) {
 Future<String?> getKey() async {
   return await storage.read(key: 'key');
 }
+
+setKey(String key) async {
+  storage.write(key: 'key', value: key);
+}
