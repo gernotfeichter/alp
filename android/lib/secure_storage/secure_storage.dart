@@ -27,3 +27,13 @@ Future<String> getKey() async {
 setKey(String key) async {
   storage.write(key: 'key', value: key);
 }
+
+Future<bool> getLazyAuthMode() async {
+  var lazyAuthModeString = await storage.read(key: 'lazyAuthMode');
+  bool lazyAuthMode = bool.tryParse(lazyAuthModeString ?? 'false') ?? false;
+  return lazyAuthMode;
+}
+
+setLazyAuthMode(bool lazyAuthMode) async {
+  storage.write(key: 'lazyAuthMode', value: lazyAuthMode.toString());
+}

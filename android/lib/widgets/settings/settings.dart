@@ -9,6 +9,10 @@ final keyProvider = FutureProvider<String>((ref) async {
   return getKey();
 });
 
+final lazyAuthProvider = FutureProvider<bool>((ref) async {
+  return getLazyAuthMode();
+});
+
 final restApiPortProvider = FutureProvider<int>((ref) async {
   return getRestApiPort();
 });
@@ -35,11 +39,12 @@ class Settings extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    AsyncValue<String> decryptionKey = ref.watch(keyProvider);
+    bool obscureTextWatched = ref.watch(obscureTextProvider);
+    AsyncValue<bool> lazyAuth = ref.watch(lazyAuthProvider);
     AsyncValue<int> restApiPort = ref.watch(restApiPortProvider);
     AsyncValue<String?> ipv4 = ref.watch(wifiIpV4Provider);
     AsyncValue<String?> ipv6 = ref.watch(wifiIpV6Provider);
-    AsyncValue<String> decryptionKey = ref.watch(keyProvider);
-    bool obscureTextWatched = ref.watch(obscureTextProvider);
 
     return SettingsList(
       sections: [
@@ -90,14 +95,40 @@ class Settings extends ConsumerWidget {
                     description: const Text('This key must match your linux '
                         'device key in /etc/alp/alp.yaml'),
                     trailing: const CircularProgressIndicator())),
-            SettingsTile.switchTile(
-              leading: const Icon(Icons.policy),
-              title: const Text('Treat timeout as success'),
-              description: const Text(
-                  'enabling this setting (lazy auth mode) is dangerous!'),
-              initialValue: false,
-              trailing: Switch(value: false, onChanged: (value) {}),
-              onToggle: (bool value) {},
+            lazyAuth.when(
+              data: (lazyAuth) => SettingsTile.switchTile(
+                  leading: const Icon(Icons.policy),
+                  title: const Text('Lazy auth mode'),
+                  description: const Text(
+                      'Treat timeout as success, dangerous!'),
+                  initialValue: lazyAuth,
+                  trailing: Switch(
+                      value: lazyAuth,
+                      onChanged: (value) {
+                        setLazyAuthMode(value);
+                        ref.invalidate(lazyAuthProvider);
+                      }
+                  ),
+                  onToggle: (bool value) {},
+              ),
+              error: (err, stack) => SettingsTile.switchTile(
+                leading: const Icon(Icons.policy),
+                title: Text(err.toString()),
+                description: const Text(
+                    'Treat timeout as success, dangerous!'),
+                initialValue: false,
+                trailing: const Icon(Icons.error),
+                onToggle: (bool value) {  },
+              ),
+              loading: () =>  SettingsTile.switchTile(
+                leading: const Icon(Icons.policy),
+                title: const Text(''),
+                description: const Text(
+                'Treat timeout as success, dangerous!'),
+                initialValue: false,
+                trailing: const CircularProgressIndicator(),
+                onToggle: (bool value) {  },
+              )
             ),
           ],
         ),
