@@ -28,7 +28,6 @@ final obscureTextProvider = Provider<bool>((ref) => obscureText);
 
 void toggleObscureText(WidgetRef ref) {
   obscureText = !obscureText;
-  ref.invalidate(obscureTextProvider);
 }
 
 class Settings extends ConsumerWidget {
@@ -52,16 +51,24 @@ class Settings extends ConsumerWidget {
                     leading: const Icon(Icons.password),
                     title: const Text('Key'),
                     description: const Text('This key must match your linux '
-                        'device key in /etc/alp/alp.yaml'),
-                    value: TextFormField(
-                      autocorrect: false,
-                      obscureText: obscureTextWatched,
-                      onChanged: (value) {
-                        setKey(value);
-                      },
+                        'device key in /etc/alp/alp.yaml. Hint: may Lose Google Lens to scan it.'),
+                    value: Container(
+                      color: k == '' ? Colors.red : null,
+                      child: TextFormField(
+                        initialValue: k,
+                        autocorrect: false,
+                        obscureText: obscureTextWatched,
+                        onChanged: (value) {
+                          setKey(value);
+                          ref.invalidate(keyProvider);
+                        },
+                      ),
                     ),
                     trailing: InkWell(
-                      onTap: () => { toggleObscureText(ref) },
+                      onTap: () {
+                          toggleObscureText(ref);
+                          ref.invalidate(obscureTextProvider);
+                        },
                       child: Padding(
                         padding: const EdgeInsets.all(15),
                         child: obscureTextWatched
