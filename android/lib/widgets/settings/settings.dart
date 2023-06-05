@@ -9,20 +9,24 @@ final settingsProviderRestApiPort = FutureProvider<int>((ref) async {
   return await getRestApiPort();
 });
 
-final wifiIpProviderV4 = FutureProvider<String?>((ref) async {
+final wifiIpV4Provider = FutureProvider<String?>((ref) async {
   final info = NetworkInfo();
   return info.getWifiIP();
+});
+
+final wifiIpV6Provider = FutureProvider<String?>((ref) async {
+  final info = NetworkInfo();
+  return info.getWifiIPv6();
 });
 
 class Settings extends ConsumerWidget {
   const Settings({super.key});
 
-
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     AsyncValue<int> restApiPort = ref.watch(settingsProviderRestApiPort);
-    AsyncValue<String?> ipv4 = ref.watch(wifiIpProviderV4);
+    AsyncValue<String?> ipv4 = ref.watch(wifiIpV4Provider);
+    AsyncValue<String?> ipv6 = ref.watch(wifiIpV6Provider);
 
     return SettingsList(
       sections: [
@@ -58,16 +62,20 @@ class Settings extends ConsumerWidget {
             SettingsTile.navigation(
               leading: const Icon(Icons.numbers),
               title: const Text('Port'),
-              value: TextFormField(
-                  initialValue: restApiPort.toString(),
-                  keyboardType: const TextInputType.numberWithOptions(
-                  signed: false,
-                  decimal: false,
-                ),
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.digitsOnly
-                ], // Only numbers can be entered
-              ),
+              value: restApiPort.when(
+                data: (value) => TextFormField(
+                    initialValue: value.toString(),
+                    keyboardType: const TextInputType.numberWithOptions(
+                        signed: false,
+                        decimal: false
+                    ),
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ],
+                    onChanged: (value) => setRestApiPort(value as int),
+                  ),
+                error: (err, stack) => Text(err.toString()),
+                loading: () => const CircularProgressIndicator()),
             ),
             ipv4.when(
               data: (ip) => SettingsTile.navigation(
@@ -86,8 +94,27 @@ class Settings extends ConsumerWidget {
                 title: const Text('IP (v4)'),
                 description: const Text('readonly'),
                 value: const Text(""),
-                trailing: const Icon(Icons.sync))
-              ),
+                trailing: const CircularProgressIndicator())
+            ),
+            ipv6.when(
+                data: (ip) => SettingsTile.navigation(
+                    leading: const Icon(Icons.numbers),
+                    title: const Text('IP (v6)'),
+                    description: const Text('readonly'),
+                    value: Text(ip ?? "")),
+                error: (err, stack) => SettingsTile.navigation(
+                    leading: const Icon(Icons.numbers),
+                    title: const Text('IP (v6)'),
+                    description: const Text('readonly'),
+                    value: Text(err.toString()),
+                    trailing: const Icon(Icons.error)),
+                loading: () => SettingsTile.navigation(
+                    leading: const Icon(Icons.numbers),
+                    title: const Text('IP (v6)'),
+                    description: const Text('readonly'),
+                    value: const Text(""),
+                    trailing: const CircularProgressIndicator())
+            ),
           ],
         ),
       ],
