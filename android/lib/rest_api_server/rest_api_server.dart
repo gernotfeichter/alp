@@ -25,8 +25,8 @@ Future init() async {
       Map bodyAsJsonMap = await req.body as Map;
       try {
         var decryptionKey = await getKey();
-        if (decryptionKey == null) {
-          log.severe("Decryption Key is null, please configure a key!");
+        if (decryptionKey == '') {
+          log.severe("Decryption Key is empty, please configure a key!");
         } else {
           decryptedMessage = aesGcmPbkdf2DecryptFromBase64(decryptionKey, bodyAsJsonMap['encryptedMessage']);
         }

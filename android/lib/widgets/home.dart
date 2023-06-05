@@ -13,7 +13,7 @@ class Home extends ConsumerWidget {
             appBar: AppBar(
               title: const Text('Settings'),
             ),
-            body: Settings(),
+            body: const Settings(),
             drawer: Drawer(
               child: Material(
                 child: ListView(

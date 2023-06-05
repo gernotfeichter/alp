@@ -1,6 +1,5 @@
 import 'dart:core';
 
-import '../logging/logging.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 var storage = const FlutterSecureStorage(
@@ -21,8 +20,8 @@ setRestApiPort(int port) {
 }
 
 // encryption and decryption key
-Future<String?> getKey() async {
-  return await storage.read(key: 'key');
+Future<String> getKey() async {
+  return await storage.read(key: 'key') ?? '';
 }
 
 setKey(String key) async {

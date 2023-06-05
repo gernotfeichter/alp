@@ -8,7 +8,7 @@ class NotificationEventHandler {
   /// Use this method to detect when a new notification or a schedule is created
   @pragma("vm:entry-point")
   static Future <void> onNotificationCreatedMethod(ReceivedNotification receivedNotification) async {
-    log.fine("onNotificationCreatedMethod called: ${receivedNotification.payload}");
+    log.finer("onNotificationCreatedMethod called: ${receivedNotification.payload}");
   }
 
   /// Use this method to detect every time that a new notification is displayed
