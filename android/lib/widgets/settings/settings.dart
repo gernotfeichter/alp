@@ -49,7 +49,7 @@ class Settings extends ConsumerWidget {
             SettingsTile.switchTile(
               leading: const Icon(Icons.policy),
               title: const Text('Treat timeout as success'),
-              description: const Text('enabling this setting is dangerous!'),
+              description: const Text('enabling this setting (lazy auth mode) is dangerous!'),
               initialValue: false,
               trailing: Switch(value: false, onChanged: (value) {}),
               onToggle: (bool value) {},
@@ -72,7 +72,7 @@ class Settings extends ConsumerWidget {
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.digitsOnly
                     ],
-                    onChanged: (value) => setRestApiPort(value as int),
+                    onChanged: (value) => setRestApiPort(int.parse(value)),
                   ),
                 error: (err, stack) => Text(err.toString()),
                 loading: () => const CircularProgressIndicator()),
