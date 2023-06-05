@@ -1,3 +1,4 @@
+import 'package:android/widgets/settings/settings.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatelessWidget {
@@ -6,7 +7,12 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
       return MaterialApp(
-          home: Drawer(
+        home: Scaffold(
+          appBar: AppBar(
+            title: const Text('Settings'),
+          ),
+          body: const Settings(),
+          drawer: Drawer(
             child: Material(
               child: ListView(
                 children: [
@@ -22,7 +28,8 @@ class Home extends StatelessWidget {
                 ],
               ),
             ),
-          )
+          ),
+        ),
       );
   }
 
