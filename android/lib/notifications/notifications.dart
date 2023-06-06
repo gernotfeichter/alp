@@ -7,9 +7,10 @@ import 'package:flutter/material.dart';
 import '../logging/logging.dart';
 import 'event_handler.dart';
 
-const notificationChannelKey = 'alp';
-const notificationMessage = 'Alp is running in background!';
+const foregroundServiceNotificationChannelKey = 'alp_foreground_service';
+const foregroundServiceNotificationMessage = 'Alp is running in background!';
 const foregroundServiceNotificationId = 1;
+const authRequestsNotificationChannelKey = 'alp_auth_requests';
 const authRequestsNotificationStartId = 2;
 
 // for each of the last five notifications, contains a map(notification_id(int): approval state(bool))
@@ -22,9 +23,13 @@ Future init() async{
       'resource://drawable/res_app_icon', // TODO: Gernot
       [
         NotificationChannel(
-            channelKey: notificationChannelKey,
-            channelName: 'Alp notifications',
-            channelDescription: 'Notification channel for alp (android-linux-pam project) - Authentication Requests from Linux',
+            channelKey: foregroundServiceNotificationChannelKey,
+            channelName: 'Alp service notifications (dismissing advised)',
+            channelDescription: 'Service notification channel for alp (android-linux-pam project) - Authentication Requests from Linux'),
+        NotificationChannel(
+            channelKey: authRequestsNotificationChannelKey,
+            channelName: 'Alp auth requests',
+            channelDescription: 'Authentication requests channel for alp (android-linux-pam project) - Authentication Requests from Linux',
             defaultColor: Colors.black,
             ledColor: Colors.amber)
       ],
@@ -50,22 +55,27 @@ void createNotificationForegroundService() {
   AwesomeNotifications().createNotification(
     content: NotificationContent(
       id: foregroundServiceNotificationId,
-      channelKey: notificationChannelKey,
-      summary: notificationMessage,
+      channelKey: authRequestsNotificationChannelKey,
+      summary: foregroundServiceNotificationMessage,
       notificationLayout: NotificationLayout.ProgressBar,
     ),
   );
 }
 
 
-void createNotificationAuthRequest({timeoutSeconds = 60, title}) {
-  log.info("createNotification called");
+int createNotificationAuthRequest({timeoutSeconds = 60, title}) {
+  log.info("createNotification called: $title");
   var id = authRequestNotificationStateHistory.last.keys.first + 1; // should yield last notification id + 1
+  createNotificationAuthRequestAsyncPart(id: id, timeoutSeconds: timeoutSeconds, title: title);
+  return id;
+}
+
+void createNotificationAuthRequestAsyncPart({id, timeoutSeconds = 60, title}) async {
   const maxProgress = 100;
-  
+
   var startTime = DateTime.now();
   var endTime = startTime.add(Duration(seconds: timeoutSeconds));
-  
+
   var currentProgress = 0;
   while (currentProgress < maxProgress){
     currentProgress = _getCurrentProgress(startTime, endTime);
@@ -90,16 +100,26 @@ int _getCurrentProgress(DateTime startTime, DateTime endTime) {
 }
 
 void _reconcileNotification({int id = 0, int progress = 0, title}) {
+  var notificationAlreadyExpired = authRequestNotificationStateHistory.any(
+          (map) => map.containsKey(id));
+  log.info(authRequestNotificationStateHistory);
+  log.info("notificationAlreadyExpired: ($id): $notificationAlreadyExpired");
+  if (notificationAlreadyExpired) { return; }
   if (progress < 100) {
     AwesomeNotifications().createNotification(
         content: NotificationContent(
           id: id,
-          title: title,
-          channelKey: 'alp',
+          title: title + " ($id)",
+          channelKey: authRequestsNotificationChannelKey,
           notificationLayout: NotificationLayout.ProgressBar,
           progress: progress,
           wakeUpScreen: true,
           fullScreenIntent: true,
+          displayOnBackground: true,
+          displayOnForeground: true,
+          locked: true,
+          autoDismissible: false,
+          showWhen: true,
         ),
         actionButtons: [
           NotificationActionButton(
@@ -117,6 +137,7 @@ void _reconcileNotification({int id = 0, int progress = 0, title}) {
         ]
     );
   } else {
+    authRequestNotificationStateHistory.add({id: false});
     AwesomeNotifications().cancel(id);
   }
 }

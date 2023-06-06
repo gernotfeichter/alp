@@ -10,6 +10,8 @@ Future init() async {
   Logger.root.onRecord.listen((record) {
     // ignore: avoid_print
     print('${record.level.name}: ${record.time}: ${record.message}');
-    addLogToAggregator(record);
+    if (!record.level.name.contains("FINE")) {
+      addLogToAggregator(record);
+    }
   });
 }

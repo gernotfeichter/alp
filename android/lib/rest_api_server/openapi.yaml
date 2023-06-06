@@ -31,8 +31,9 @@ paths:
       responses:
         '200':
           description: |
-            Successful auth response. The decision if auth=true or false is in the response body encryptedMessage payload field!
+            Successful auth response. The decision if auth=true or false is in the response body encryptedMessage field!
             So a 200 only means that android responded, but does not contain information about the decision.
+            The decision is encrypted, but the decrypted value is in the format {"auth":true}.
           content:
             application/json:
               schema:

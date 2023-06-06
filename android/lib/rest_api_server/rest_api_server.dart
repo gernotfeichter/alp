@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:alfred/alfred.dart';
@@ -20,15 +21,16 @@ Future init() async {
     // request
     String host;
     DateTime requestExpirationTime;
+    String? encryptionDecryptionKey;
     try {
       String decryptedMessage = "";
       Map bodyAsJsonMap = await req.body as Map;
       try {
-        var decryptionKey = await getKey();
-        if (decryptionKey == '') {
+        var encryptionDecryptionKey = await getKey();
+        if (encryptionDecryptionKey == '') {
           log.severe("Decryption Key is empty, please configure a key!");
         } else {
-          decryptedMessage = aesGcmPbkdf2DecryptFromBase64(decryptionKey, bodyAsJsonMap['encryptedMessage']);
+          decryptedMessage = aesGcmPbkdf2DecryptFromBase64(encryptionDecryptionKey, bodyAsJsonMap['encryptedMessage']);
         }
       } on Exception {
         throw DecryptionError();
@@ -47,18 +49,45 @@ Future init() async {
     }
 
     // notification
-    var notificationTimeout = requestExpirationTime.difference(DateTime.now()).inSeconds;
-    if (notificationTimeout < 0) {
+    var notificationTimeoutSeconds = requestExpirationTime.difference(DateTime.now()).inSeconds;
+    if (notificationTimeoutSeconds < 0) {
       res.statusCode = HttpStatus.badRequest;
-      return '{"error": "Calculated notificationTimeout is negative. This could have multiple reasons like your phone vs linux machine times being out of sync, very low configured timeout or very poor device or network performance."}';
+      return '{"error": "Calculated notificationTimeoutSeconds is negative. This could have multiple reasons like your phone vs linux machine times being out of sync, very low configured timeout or very poor device or network performance."}';
     }
-    log.fine("notificationTimeout=$notificationTimeout");
-    createNotificationAuthRequest(timeoutSeconds: notificationTimeout, title: "Alp auth request from $host");
+    log.fine("notificationTimeoutSeconds=$notificationTimeoutSeconds");
+    var notificationId = createNotificationAuthRequest(
+        timeoutSeconds: notificationTimeoutSeconds,
+        title: "Alp auth request from $host");
+    var approved = pollForNotificationResult(
+        notificationId, notificationTimeoutSeconds);
 
     // response
-    res.headers.contentType = ContentType.json;
-    return '{"encryptedMessage":"authenticated-true-json"}';
+    var encryptedMessage = aesGcmPbkdf2EncryptToBase64(
+        encryptionDecryptionKey!,
+        '{"auth":$approved}');
+    return '{"encryptedMessage":$encryptedMessage}';
   });
 
   await app.listen(await getRestApiPort());
+}
+
+bool pollForNotificationResult(int notificationId, int timeoutSeconds) {
+  int timeOutMilliseconds = timeoutSeconds * 1000;
+  int millisecondsConsumed = 0;
+  int sleepIntervalMilliseconds = 250;
+  while (millisecondsConsumed < timeOutMilliseconds) {
+    if (authRequestNotificationStateHistory.any(
+            (map) => map[notificationId] == true)
+    ) {
+      return true;
+    }
+    if (authRequestNotificationStateHistory.any(
+            (map) => map[notificationId] == false)
+    ) {
+      return false;
+    }
+    sleep(Duration(milliseconds: sleepIntervalMilliseconds));
+    millisecondsConsumed += sleepIntervalMilliseconds;
+  }
+  return false;
 }
