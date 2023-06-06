@@ -1,25 +1,32 @@
 import 'package:android/logging/logging.dart';
 import 'package:circular_buffer/circular_buffer.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 
-final logHistoryProvider = Provider<CircularBuffer<LogRecord>>(
-        (ref) => history);
+import '../../logging/aggregator.dart';
+
+final logAggregatorProvider = StreamProvider<CircularBuffer<LogRecord>>((ref) {
+  return logStream;
+});
 
 class Logs extends ConsumerWidget {
   const Logs({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var logHistory = ref.watch(logHistoryProvider);
+    var last100Logs = ref.watch(logAggregatorProvider);
+    Iterable<Widget> logLineWidgets = last100Logs.when(
+      data: (records) => records.reversed.map(
+              (element) => LogRecordWidget(logRecord: element)),
+      error: (err, stack) => [Text(err.toString())],
+      loading: () => [const CircularProgressIndicator()]
+    );
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListView(
         children: [
-          ...logHistory.reversed.map(
-                  (logRecord) => LogRecordWidget(logRecord: logRecord))
+          ...logLineWidgets
         ],
       ),
     );
