@@ -28,10 +28,11 @@ final wifiIpV6Provider = FutureProvider<String?>((ref) async {
 });
 
 var obscureText = true;
-final obscureTextProvider = Provider<bool>((ref) => obscureText);
+final obscureTextProvider = StateProvider<bool>((ref) => obscureText);
 
 void toggleObscureText(WidgetRef ref) {
-  obscureText = !obscureText;
+  ref.read(obscureTextProvider.notifier).state =
+      !ref.read(obscureTextProvider.notifier).state;
 }
 
 class Settings extends ConsumerWidget {
@@ -72,7 +73,6 @@ class Settings extends ConsumerWidget {
                     trailing: InkWell(
                       onTap: () {
                           toggleObscureText(ref);
-                          ref.invalidate(obscureTextProvider);
                         },
                       child: Padding(
                         padding: const EdgeInsets.all(15),
