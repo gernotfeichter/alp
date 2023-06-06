@@ -99,7 +99,7 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	authCmd.Flags().DurationP("timeout", "t", time.Second * 15, 
+	authCmd.Flags().DurationP("timeout", "t", time.Second * 60,
 	"wait for as long till the authentication is given up and fallback to the next pam module in /etc/pam.d/common-auth will occur")
     authCmd.Flags().BoolP("mockSuccess", "s", false, `Warning: Never ever use true in a real setup!
 	Setting this to true hardcodes authentication success and should only be used in testing!`)
