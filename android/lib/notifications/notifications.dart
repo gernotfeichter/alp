@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:ui';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:circular_buffer/circular_buffer.dart';
@@ -43,6 +45,15 @@ Future init() async{
       AwesomeNotifications().requestPermissionToSendNotifications();
     }
   });
+  ReceivePort receivePort = ReceivePort();
+  SendPort sendPort = receivePort.sendPort;
+  IsolateNameServer.registerPortWithName(
+    sendPort,
+    'background_notification_action',
+  );
+  receivePort.listen((var received) async {
+    NotificationEventHandler.onActionReceivedMethodMainIsolate(received);
+  });
   AwesomeNotifications().setListeners(
       onActionReceivedMethod:         NotificationEventHandler.onActionReceivedMethod,
       onNotificationCreatedMethod:    NotificationEventHandler.onNotificationCreatedMethod,
@@ -82,7 +93,7 @@ void createNotificationAuthRequestAsyncPart({id, timeoutSeconds = 60, title}) as
     _reconcileNotification(id: id, progress: currentProgress, title: title);
     // according to https://pub.dev/packages/awesome_notifications#-full-screen-notifications-only-for-android
     // the update interval of the notification should not exceed one second
-    sleep(const Duration(milliseconds: 5000));
+    sleep(const Duration(milliseconds: 900));
   }
 }
 
@@ -102,7 +113,7 @@ int _getCurrentProgress(DateTime startTime, DateTime endTime) {
 void _reconcileNotification({int id = 0, int progress = 0, title}) {
   var notificationAlreadyExpired = authRequestNotificationStateHistory.any(
           (map) => map.containsKey(id));
-  log.info(authRequestNotificationStateHistory);
+  log.info("authRequestNotificationStateHistory=$authRequestNotificationStateHistory ${Isolate.current.debugName}");
   log.info("notificationAlreadyExpired: ($id): $notificationAlreadyExpired");
   if (notificationAlreadyExpired) { return; }
   if (progress < 100) {

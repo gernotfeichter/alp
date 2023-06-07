@@ -1,5 +1,5 @@
-import 'package:android/widgets/logs/logs.dart';
-import 'package:android/widgets/settings/settings.dart';
+import 'package:alp/widgets/logs/logs.dart';
+import 'package:alp/widgets/settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

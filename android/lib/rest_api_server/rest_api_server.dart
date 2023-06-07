@@ -21,12 +21,11 @@ Future init() async {
     // request
     String host;
     DateTime requestExpirationTime;
-    String? encryptionDecryptionKey;
+    String encryptionDecryptionKey = await getKey();
     try {
       String decryptedMessage = "";
       Map bodyAsJsonMap = await req.body as Map;
       try {
-        var encryptionDecryptionKey = await getKey();
         if (encryptionDecryptionKey == '') {
           log.severe("Decryption Key is empty, please configure a key!");
         } else {
@@ -63,7 +62,7 @@ Future init() async {
 
     // response
     var encryptedMessage = aesGcmPbkdf2EncryptToBase64(
-        encryptionDecryptionKey!,
+        encryptionDecryptionKey,
         '{"auth":$approved}');
     return '{"encryptedMessage":$encryptedMessage}';
   });
