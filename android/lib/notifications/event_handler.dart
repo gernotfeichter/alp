@@ -29,10 +29,10 @@ class NotificationEventHandler {
   @pragma("vm:entry-point")
   static Future <void> onActionReceivedMethod(ReceivedAction receivedAction) async {
     // Your code goes here
-    log.info("onActionReceivedMethod called: $receivedAction ${Isolate.current.debugName}");
+    log.finer("onActionReceivedMethod called: $receivedAction ${Isolate.current.debugName}");
     if (receivedAction.id != null) {
       final id = receivedAction.id!;
-      log.info("id=$id, receivedAction.buttonKeyPressed=${receivedAction.buttonKeyPressed} ${Isolate.current.debugName}");
+      log.finer("id=$id, receivedAction.buttonKeyPressed=${receivedAction.buttonKeyPressed} ${Isolate.current.debugName}");
       authRequestNotificationStateHistory.add({id: receivedAction.buttonKeyPressed == 'APPROVE'});
     }
   }

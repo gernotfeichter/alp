@@ -103,9 +103,11 @@ int _getCurrentProgress(DateTime startTime, DateTime endTime) {
 void _reconcileNotification({int id = 0, int progress = 0, title}) {
   var notificationAlreadyExpired = authRequestNotificationStateHistory.any(
           (map) => map.containsKey(id));
-  log.info("authRequestNotificationStateHistory=$authRequestNotificationStateHistory ${Isolate.current.debugName}");
-  log.info("notificationAlreadyExpired: ($id): $notificationAlreadyExpired");
-  if (notificationAlreadyExpired) { return; }
+  log.finer("authRequestNotificationStateHistory=$authRequestNotificationStateHistory ${Isolate.current.debugName}");
+  if (notificationAlreadyExpired) { 
+    log.finer("notificationAlreadyExpired: ($id): $notificationAlreadyExpired");
+    return;
+  }
   if (progress < 100) {
     AwesomeNotifications().createNotification(
         content: NotificationContent(

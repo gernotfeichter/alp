@@ -67,7 +67,12 @@ Future init() async {
     var encryptedMessage = aesGcmPbkdf2EncryptToBase64(
         encryptionDecryptionKey,
         '{"auth":$approved}');
-    log.info("auth request from host $host ${approved ? "approved" : "denied"}");
+    var approvedMessage = "auth request from host $host ${approved ? "approved" : "denied"}";
+    if (approved) {
+      log.info(approvedMessage);
+    } else {
+      log.severe(approvedMessage);
+    }
     return '{"encryptedMessage":"$encryptedMessage"}';
   });
 
