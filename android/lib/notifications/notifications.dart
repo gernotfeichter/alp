@@ -19,8 +19,8 @@ final authRequestNotificationStateHistory = CircularBuffer<Map<int,bool>>(5)..ad
 
 Future init() async{
   AwesomeNotifications().initialize(
-    // set the icon to null if you want to use the default app icon
-      'resource://drawable/res_app_icon', // TODO: Gernot
+      // set the icon to null if you want to use the default app icon
+      null,
       [
         NotificationChannel(
             channelKey: foregroundServiceNotificationChannelKey,
@@ -114,9 +114,6 @@ void _reconcileNotification({int id = 0, int progress = 0, title}) {
           id: id,
           title: title + " ($id)",
           channelKey: authRequestsNotificationChannelKey,
-          bigPicture: 'https://storage.googleapis.com/cms-storage-bucket/d406c736e7c4c57f5f61.png',
-          largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
-          //'asset://assets/images/balloons-in-sky.jpg',
           notificationLayout: NotificationLayout.ProgressBar,
           progress: progress,
           category: NotificationCategory.Alarm,
