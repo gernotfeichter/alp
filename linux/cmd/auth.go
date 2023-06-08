@@ -18,13 +18,14 @@ package cmd
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"time"
 
 	"github.com/gernotfeichter/alp/api"
-	"github.com/gernotfeichter/alp/ini"
 	"github.com/gernotfeichter/alp/crypt"
+	"github.com/gernotfeichter/alp/ini"
 
 	"github.com/gosuri/uilive"
 	log "github.com/sirupsen/logrus"
@@ -56,7 +57,7 @@ https://github.com/gernotfeichter/alp
 	Run: func(_ *cobra.Command, _ []string) {
 		// init
 		ini.Init()
-		log.Info("starting alp auth")
+		log.Tracef("starting alp auth")
 		var authArgs AuthArgs
 		viper.Unmarshal(&authArgs)
 		if authArgs.MockSuccess {
@@ -122,8 +123,6 @@ func authRequest(authArgs AuthArgs) {
 		requestExpirationTimeString := requestExpirationTime.Format(time.RFC3339)
 		ctx, cancel := context.WithDeadline(context.Background(), requestExpirationTime)
 		defer cancel()
-		// requestString := fmt.Sprintf(`{"jwt":"%s"}`, jwt)
-		// requestBytes, err := jx.DecodeStr(requestString).Raw()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -134,6 +133,7 @@ func authRequest(authArgs AuthArgs) {
 		if err != nil {
 			log.Fatalf("Error encrypting message: %s", err)
 		}
+		log.Info("sending auth request to connected device")
 		res, err := client.GetAuthenticationStatus(ctx, &api.AuthRequest{
 			EncryptedMessage: api.EncryptedMessage(encryptedMessage),
 		})
@@ -142,7 +142,17 @@ func authRequest(authArgs AuthArgs) {
 		}
 		switch r := res.(type) {
 		case *api.AuthResponse:
-			log.Infof("200 - Success authorized=%s", r)
+			log.Tracef("200 - Success authorized=%s. Note that checking the auth flag is still pending before being fully authorized.", r)
+			decryptedMessage := crypt.AesGcmPbkdf2DecryptFromBase64(authArgs.Key, string(r.EncryptedMessage))
+			var responseJson map[string]any
+			err := json.Unmarshal([]byte(decryptedMessage), &responseJson)
+			if err != nil {
+				log.Fatalf("Parsing response as json failed: %s", err)
+			}
+			if !responseJson["auth"].(bool) {
+				log.Fatalf("not authorized!")
+			}
+			log.Info("authorized!")
 		case *api.GetAuthenticationStatusBadRequest:
 			log.Fatalf("400 - BadRequest: %s", res)
 		case *api.GetAuthenticationStatusUnauthorized:

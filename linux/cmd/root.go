@@ -17,7 +17,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
-	"fmt"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"github.com/spf13/cobra"
@@ -68,7 +67,7 @@ func initConfig() {
 	// If a config file is found, read it in.
 	viper.SetConfigFile(cfgFile)
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+		log.Tracef("Using config file:", viper.ConfigFileUsed())
 	} else {
 		log.Warnf("Could not read config file '%s': %s", cfgFile, err)
 	}
