@@ -19,8 +19,7 @@ final authRequestNotificationStateHistory = CircularBuffer<Map<int,bool>>(5)..ad
 
 Future init() async{
   AwesomeNotifications().initialize(
-      // set the icon to null if you want to use the default app icon
-      null,
+      'resource://drawable/launch_background',
       [
         NotificationChannel(
             channelKey: foregroundServiceNotificationChannelKey,
@@ -122,7 +121,7 @@ void _reconcileNotification({int id = 0, int progress = 0, title}) {
           displayOnBackground: true,
           displayOnForeground: true,
           autoDismissible: false,
-          showWhen: true,
+          locked: true,
         ),
         actionButtons: [
           NotificationActionButton(

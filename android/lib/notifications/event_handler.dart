@@ -30,7 +30,7 @@ class NotificationEventHandler {
   static Future <void> onActionReceivedMethod(ReceivedAction receivedAction) async {
     // Your code goes here
     log.finer("onActionReceivedMethod called: $receivedAction ${Isolate.current.debugName}");
-    if (receivedAction.id != null) {
+    if (receivedAction.id != null && receivedAction.buttonKeyPressed != "") {
       final id = receivedAction.id!;
       log.finer("id=$id, receivedAction.buttonKeyPressed=${receivedAction.buttonKeyPressed} ${Isolate.current.debugName}");
       authRequestNotificationStateHistory.add({id: receivedAction.buttonKeyPressed == 'APPROVE'});

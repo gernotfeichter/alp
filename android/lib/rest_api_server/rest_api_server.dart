@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 import 'package:alfred/alfred.dart';
 import '../crypt/aes_gcm_256_pbkdf2_string_encryption.dart';
 import '../logging/logging.dart';
@@ -17,6 +18,7 @@ Future init() async {
   app.get('/auth', (req, res) async {
     // init
     res.headers.contentType = ContentType.json;
+    log.fine("Running in ${Isolate.current.debugName}");
 
     // request
     String host;
@@ -92,10 +94,12 @@ Future<bool> pollForNotificationResult(int notificationId, int timeoutSeconds) a
     if (authRequestNotificationStateHistory.any(
             (map) => map[notificationId] == false)
     ) {
+      log.fine("stopped polling for auth success because authRequestNotificationStateHistory for (id=$notificationId) contains already a negative result: $authRequestNotificationStateHistory");
       return false;
     }
     await Future.delayed(Duration(milliseconds: sleepIntervalMilliseconds));
     millisecondsConsumed += sleepIntervalMilliseconds;
   }
+  log.fine("stopped polling for auth success because of timeout");
   return false;
 }

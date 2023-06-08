@@ -34,7 +34,7 @@ Future<void> createNotificationBackgroundService(ServiceInstance service) async 
   DartPluginRegistrant.ensureInitialized();
 
   // bring to foreground
-  Timer.periodic(const Duration(seconds: 1), (timer) async {
+  Timer.periodic(const Duration(milliseconds: 500), (timer) async {
     if (service is AndroidServiceInstance) {
       if (await service.isForegroundService()) {
         createNotificationForegroundService();
