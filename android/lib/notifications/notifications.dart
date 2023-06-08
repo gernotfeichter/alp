@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:isolate';
-import 'dart:ui';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:circular_buffer/circular_buffer.dart';
@@ -32,8 +30,9 @@ Future init() async{
             channelKey: authRequestsNotificationChannelKey,
             channelName: 'Alp auth requests',
             channelDescription: 'Authentication requests channel for alp (android-linux-pam project) - Authentication Requests from Linux',
-            defaultColor: Colors.black,
-            ledColor: Colors.amber)
+            importance: NotificationImportance.Max,
+            defaultPrivacy: NotificationPrivacy.Public,
+        )
       ],
       debug: true
   );
@@ -44,15 +43,6 @@ Future init() async{
       // This is very important to not harm the user experience
       AwesomeNotifications().requestPermissionToSendNotifications();
     }
-  });
-  ReceivePort receivePort = ReceivePort();
-  SendPort sendPort = receivePort.sendPort;
-  IsolateNameServer.registerPortWithName(
-    sendPort,
-    'background_notification_action',
-  );
-  receivePort.listen((var received) async {
-    NotificationEventHandler.onActionReceivedMethodMainIsolate(received);
   });
   AwesomeNotifications().setListeners(
       onActionReceivedMethod:         NotificationEventHandler.onActionReceivedMethod,
@@ -66,7 +56,7 @@ void createNotificationForegroundService() {
   AwesomeNotifications().createNotification(
     content: NotificationContent(
       id: foregroundServiceNotificationId,
-      channelKey: authRequestsNotificationChannelKey,
+      channelKey: foregroundServiceNotificationChannelKey,
       summary: foregroundServiceNotificationMessage,
       notificationLayout: NotificationLayout.ProgressBar,
     ),
@@ -93,7 +83,7 @@ void createNotificationAuthRequestAsyncPart({id, timeoutSeconds = 60, title}) as
     _reconcileNotification(id: id, progress: currentProgress, title: title);
     // according to https://pub.dev/packages/awesome_notifications#-full-screen-notifications-only-for-android
     // the update interval of the notification should not exceed one second
-    sleep(const Duration(milliseconds: 900));
+    await Future.delayed(const Duration(seconds: 1));
   }
 }
 
@@ -122,13 +112,17 @@ void _reconcileNotification({int id = 0, int progress = 0, title}) {
           id: id,
           title: title + " ($id)",
           channelKey: authRequestsNotificationChannelKey,
+          bigPicture: 'https://storage.googleapis.com/cms-storage-bucket/d406c736e7c4c57f5f61.png',
+          largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
+          //'asset://assets/images/balloons-in-sky.jpg',
           notificationLayout: NotificationLayout.ProgressBar,
           progress: progress,
+          category: NotificationCategory.Alarm,
+          criticalAlert: true,
           wakeUpScreen: true,
           fullScreenIntent: true,
           displayOnBackground: true,
           displayOnForeground: true,
-          locked: true,
           autoDismissible: false,
           showWhen: true,
         ),

@@ -20,7 +20,7 @@ Future init() async {
       isForegroundMode: true,
 
       foregroundServiceNotificationId: foregroundServiceNotificationId,
-      notificationChannelId: authRequestsNotificationChannelKey, // this channel must be created before calling this, see notifications.dart:init
+      notificationChannelId: foregroundServiceNotificationChannelKey, // this channel must be created before calling this, see notifications.dart:init
       initialNotificationTitle: foregroundServiceNotificationMessage,
       initialNotificationContent: "",
     ),

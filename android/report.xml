@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dfxml xmloutputversion='1.0'>
+  <metadata 
+  xmlns='http://afflib.org/tcpflow/' 
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' 
+  xmlns:dc='http://purl.org/dc/elements/1.1/'>
+    <dc:type>Feature Extraction</dc:type>
+  </metadata>
+  <creator version='1.0'>
+    <program>TCPFLOW</program>
+    <version>1.6.1</version>
+    <build_environment>
+      <compiler>13.0.1 (13.0.1 20230127 (Red Hat 13.0.1-0))</compiler>
+      <CPPFLAGS>-I/usr/local/include -O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64  -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/local/include -DUTC_OFFSET=+0000</CPPFLAGS>
+      <CFLAGS>-g -O3 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64  -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -MD -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wshadow -Wwrite-strings -Wcast-align -Waggregate-return -Wbad-function-cast -Wcast-qual -Wundef -Wredundant-decls -Wdisabled-optimization -Wfloat-equal -Wmultichar -Wc++-compat -Wmissing-noreturn -Wall -Wstrict-prototypes -MD -D_FORTIFY_SOURCE=2 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wshadow -Wwrite-strings -Wcast-align -Waggregate-return -Wbad-function-cast -Wcast-qual -Wundef -Wredundant-decls -Wdisabled-optimization -Wfloat-equal -Wmultichar -Wc++-compat -Wmissing-noreturn -Wall -Wstrict-prototypes</CFLAGS>
+      <CXXFLAGS>-g -O3 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64  -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -Wall -MD -D_FORTIFY_SOURCE=2 -Wpointer-arith -Wshadow -Wwrite-strings -Wcast-align -Wredundant-decls -Wdisabled-optimization -Wfloat-equal -Wmultichar -Wmissing-noreturn -Woverloaded-virtual -Wsign-promo -funit-at-a-time -Weffc++</CXXFLAGS>
+      <LDFLAGS>-L/usr/local/lib -Wl,-z,relro -Wl,--as-needed  -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes -L/usr/local/lib</LDFLAGS>
+      <LIBS>-lpcap -lcairo -lfontconfig -lfreetype -lbz2 -lpixman-1 -lcrypto -lssl -lcrypto -ldl -lz </LIBS>
+      <compilation_date>2023-02-02T00:00:00</compilation_date>
+      <library name="boost" version="107800"/>
+    </build_environment>
+    <execution_environment>
+      <os_sysname>Linux</os_sysname>
+      <os_release>6.2.15-300.fc38.x86_64</os_release>
+      <os_version>#1 SMP PREEMPT_DYNAMIC Thu May 11 17:37:39 UTC 2023</os_version>
+      <host>fedora</host>
+      <arch>x86_64</arch>
+      <command_line>command line to be provided</command_line>
+      <uid>0</uid>
+      <username>root</username>
+      <start_time>2023-06-08T10:26:09Z</start_time>
+    </execution_environment>
+  </creator>
+  <configuration>
+  </configuration>
+  <tdelta>0</tdelta>
+  <configuration>
+    <fileobject>
+      <filename>010.000.000.003.07654-010.000.000.005.48622</filename>
+      <filesize>328</filesize>
+      <tcpflow startime='2023-06-08T10:33:47.064982Z' endtime='2023-06-08T10:34:00.427388Z' mac_daddr='60:36:dd:ce:fb:c6' mac_saddr='5a:b2:ab:a4:cd:61' family='2' src_ipn='10.0.0.3' dst_ipn='10.0.0.5' srcport='7654' dstport='48622' packets='5' len='666' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.005.48622-010.000.000.003.07654</filename>
+      <filesize>353</filesize>
+      <tcpflow startime='2023-06-08T10:33:47.062411Z' endtime='2023-06-08T10:34:00.427418Z' mac_daddr='5a:b2:ab:a4:cd:61' mac_saddr='60:36:dd:ce:fb:c6' family='2' src_ipn='10.0.0.5' dst_ipn='10.0.0.3' srcport='48622' dstport='7654' packets='7' len='823' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.005.49742-010.000.000.003.07654</filename>
+      <filesize>353</filesize>
+      <tcpflow startime='2023-06-08T10:32:47.816980Z' endtime='2023-06-08T10:33:37.565723Z' mac_daddr='5a:b2:ab:a4:cd:61' mac_saddr='60:36:dd:ce:fb:c6' family='2' src_ipn='10.0.0.5' dst_ipn='10.0.0.3' srcport='49742' dstport='7654' packets='9' len='967' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.003.07654-010.000.000.005.60498</filename>
+      <filesize>328</filesize>
+      <tcpflow startime='2023-06-08T10:31:57.734705Z' endtime='2023-06-08T10:32:02.317261Z' mac_daddr='60:36:dd:ce:fb:c6' mac_saddr='5a:b2:ab:a4:cd:61' family='2' src_ipn='10.0.0.3' dst_ipn='10.0.0.5' srcport='7654' dstport='60498' packets='6' len='732' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.005.60498-010.000.000.003.07654</filename>
+      <filesize>353</filesize>
+      <tcpflow startime='2023-06-08T10:31:57.729320Z' endtime='2023-06-08T10:32:02.317288Z' mac_daddr='5a:b2:ab:a4:cd:61' mac_saddr='60:36:dd:ce:fb:c6' family='2' src_ipn='10.0.0.5' dst_ipn='10.0.0.3' srcport='60498' dstport='7654' packets='7' len='823' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.003.07654-010.000.000.005.40062</filename>
+      <filesize>467</filesize>
+      <tcpflow startime='2023-06-08T10:31:41.693297Z' endtime='2023-06-08T10:31:51.656200Z' mac_daddr='60:36:dd:ce:fb:c6' mac_saddr='5a:b2:ab:a4:cd:61' family='2' src_ipn='10.0.0.3' dst_ipn='10.0.0.5' srcport='7654' dstport='40062' packets='6' len='871' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.003.07654-010.000.000.005.49742</filename>
+      <filesize>467</filesize>
+      <tcpflow startime='2023-06-08T10:32:47.823579Z' endtime='2023-06-08T10:33:37.565637Z' mac_daddr='60:36:dd:ce:fb:c6' mac_saddr='5a:b2:ab:a4:cd:61' family='2' src_ipn='10.0.0.3' dst_ipn='10.0.0.5' srcport='7654' dstport='49742' packets='7' len='937' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.003.07654-010.000.000.005.57220</filename>
+      <filesize>467</filesize>
+      <tcpflow startime='2023-06-08T10:28:37.176564Z' endtime='2023-06-08T10:28:51.983838Z' mac_daddr='60:36:dd:ce:fb:c6' mac_saddr='5a:b2:ab:a4:cd:61' family='2' src_ipn='10.0.0.3' dst_ipn='10.0.0.5' srcport='7654' dstport='57220' packets='6' len='871' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.003.07654-010.000.000.005.35736</filename>
+      <filesize>328</filesize>
+      <tcpflow startime='2023-06-08T10:31:22.267026Z' endtime='2023-06-08T10:31:27.572493Z' mac_daddr='60:36:dd:ce:fb:c6' mac_saddr='5a:b2:ab:a4:cd:61' family='2' src_ipn='10.0.0.3' dst_ipn='10.0.0.5' srcport='7654' dstport='35736' packets='6' len='732' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.003.07654-010.000.000.005.36366</filename>
+      <filesize>328</filesize>
+      <tcpflow startime='2023-06-08T10:26:22.998427Z' endtime='2023-06-08T10:26:56.600788Z' mac_daddr='60:36:dd:ce:fb:c6' mac_saddr='5a:b2:ab:a4:cd:61' family='2' src_ipn='10.0.0.3' dst_ipn='10.0.0.5' srcport='7654' dstport='36366' packets='6' len='732' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.003.07654-010.000.000.005.57210</filename>
+      <filesize>467</filesize>
+      <tcpflow startime='2023-06-08T10:30:16.276588Z' endtime='2023-06-08T10:30:24.393118Z' mac_daddr='60:36:dd:ce:fb:c6' mac_saddr='5a:b2:ab:a4:cd:61' family='2' src_ipn='10.0.0.3' dst_ipn='10.0.0.5' srcport='7654' dstport='57210' packets='7' len='937' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.005.50722-010.000.000.003.07654</filename>
+      <filesize>353</filesize>
+      <tcpflow startime='2023-06-08T10:27:36.244155Z' endtime='2023-06-08T10:28:13.905742Z' mac_daddr='5a:b2:ab:a4:cd:61' mac_saddr='60:36:dd:ce:fb:c6' family='2' src_ipn='10.0.0.5' dst_ipn='10.0.0.3' srcport='50722' dstport='7654' packets='9' len='967' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.005.40062-010.000.000.003.07654</filename>
+      <filesize>353</filesize>
+      <tcpflow startime='2023-06-08T10:31:41.690187Z' endtime='2023-06-08T10:31:51.656238Z' mac_daddr='5a:b2:ab:a4:cd:61' mac_saddr='60:36:dd:ce:fb:c6' family='2' src_ipn='10.0.0.5' dst_ipn='10.0.0.3' srcport='40062' dstport='7654' packets='8' len='901' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.005.36366-010.000.000.003.07654</filename>
+      <filesize>353</filesize>
+      <tcpflow startime='2023-06-08T10:26:22.920866Z' endtime='2023-06-08T10:26:56.600812Z' mac_daddr='5a:b2:ab:a4:cd:61' mac_saddr='60:36:dd:ce:fb:c6' family='2' src_ipn='10.0.0.5' dst_ipn='10.0.0.3' srcport='36366' dstport='7654' packets='8' len='889' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.003.07654-010.000.000.005.50722</filename>
+      <filesize>467</filesize>
+      <tcpflow startime='2023-06-08T10:27:36.249819Z' endtime='2023-06-08T10:28:13.905719Z' mac_daddr='60:36:dd:ce:fb:c6' mac_saddr='5a:b2:ab:a4:cd:61' family='2' src_ipn='10.0.0.3' dst_ipn='10.0.0.5' srcport='7654' dstport='50722' packets='7' len='937' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.005.57220-010.000.000.003.07654</filename>
+      <filesize>353</filesize>
+      <tcpflow startime='2023-06-08T10:28:37.174187Z' endtime='2023-06-08T10:28:51.983878Z' mac_daddr='5a:b2:ab:a4:cd:61' mac_saddr='60:36:dd:ce:fb:c6' family='2' src_ipn='10.0.0.5' dst_ipn='10.0.0.3' srcport='57220' dstport='7654' packets='8' len='901' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.005.55228-010.000.000.003.07654</filename>
+      <filesize>353</filesize>
+      <tcpflow startime='2023-06-08T10:28:59.754210Z' endtime='2023-06-08T10:29:12.756834Z' mac_daddr='5a:b2:ab:a4:cd:61' mac_saddr='60:36:dd:ce:fb:c6' family='2' src_ipn='10.0.0.5' dst_ipn='10.0.0.3' srcport='55228' dstport='7654' packets='8' len='901' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.003.07654-010.000.000.005.55228</filename>
+      <filesize>467</filesize>
+      <tcpflow startime='2023-06-08T10:28:59.757947Z' endtime='2023-06-08T10:29:12.756812Z' mac_daddr='60:36:dd:ce:fb:c6' mac_saddr='5a:b2:ab:a4:cd:61' family='2' src_ipn='10.0.0.3' dst_ipn='10.0.0.5' srcport='7654' dstport='55228' packets='6' len='871' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.005.57210-010.000.000.003.07654</filename>
+      <filesize>353</filesize>
+      <tcpflow startime='2023-06-08T10:30:16.273258Z' endtime='2023-06-08T10:30:24.393187Z' mac_daddr='5a:b2:ab:a4:cd:61' mac_saddr='60:36:dd:ce:fb:c6' family='2' src_ipn='10.0.0.5' dst_ipn='10.0.0.3' srcport='57210' dstport='7654' packets='8' len='901' />
+    </fileobject>
+    <fileobject>
+      <filename>010.000.000.005.35736-010.000.000.003.07654</filename>
+      <filesize>353</filesize>
+      <tcpflow startime='2023-06-08T10:31:22.265130Z' endtime='2023-06-08T10:31:27.572515Z' mac_daddr='5a:b2:ab:a4:cd:61' mac_saddr='60:36:dd:ce:fb:c6' family='2' src_ipn='10.0.0.5' dst_ipn='10.0.0.3' srcport='35736' dstport='7654' packets='7' len='823' />
+    </fileobject>
+  </configuration>
+  <summary />
+  <open_fds_at_end>0</open_fds_at_end>
+  <max_open_flows>0</max_open_flows>
+  <total_flows>20</total_flows>
+  <flow_map_size>20</flow_map_size>
+  <total_packets>141</total_packets>
+  <rusage>
+    <utime>0.021857</utime>
+    <stime>0.033515</stime>
+    <maxrss>14464</maxrss>
+    <minflt>1298</minflt>
+    <majflt>22</majflt>
+    <nswap>0</nswap>
+    <inblock>7184</inblock>
+    <oublock>64</oublock>
+    <clocktime>724.804561</clocktime>
+  </rusage>
+</dfxml>

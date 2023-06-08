@@ -51,26 +51,30 @@ Future init() async {
     var notificationTimeoutSeconds = requestExpirationTime.difference(DateTime.now()).inSeconds;
     if (notificationTimeoutSeconds < 0) {
       res.statusCode = HttpStatus.badRequest;
-      return '{"error": "Calculated notificationTimeoutSeconds is negative. This could have multiple reasons like your phone vs linux machine times being out of sync, very low configured timeout or very poor device or network performance."}';
+      var errMsg = "Calculated notificationTimeoutSeconds is negative. This could have multiple reasons like your phone vs linux machine times being out of sync, very low configured timeout or very poor device or network performance.";
+      log.severe(errMsg);
+      return '{"error": "$errMsg"}';
     }
     log.fine("notificationTimeoutSeconds=$notificationTimeoutSeconds");
     var notificationId = createNotificationAuthRequest(
         timeoutSeconds: notificationTimeoutSeconds,
         title: "Alp auth request from $host");
-    var approved = pollForNotificationResult(
+    log.info("created notification for auth request from host: $host");
+    var approved = await pollForNotificationResult(
         notificationId, notificationTimeoutSeconds);
 
     // response
     var encryptedMessage = aesGcmPbkdf2EncryptToBase64(
         encryptionDecryptionKey,
         '{"auth":$approved}');
-    return '{"encryptedMessage":$encryptedMessage}';
+    log.info("auth request from host $host ${approved ? "approved" : "denied"}");
+    return '{"encryptedMessage":"$encryptedMessage"}';
   });
 
   await app.listen(await getRestApiPort());
 }
 
-bool pollForNotificationResult(int notificationId, int timeoutSeconds) {
+Future<bool> pollForNotificationResult(int notificationId, int timeoutSeconds) async {
   int timeOutMilliseconds = timeoutSeconds * 1000;
   int millisecondsConsumed = 0;
   int sleepIntervalMilliseconds = 250;
@@ -85,7 +89,7 @@ bool pollForNotificationResult(int notificationId, int timeoutSeconds) {
     ) {
       return false;
     }
-    sleep(Duration(milliseconds: sleepIntervalMilliseconds));
+    await Future.delayed(Duration(milliseconds: sleepIntervalMilliseconds));
     millisecondsConsumed += sleepIntervalMilliseconds;
   }
   return false;
