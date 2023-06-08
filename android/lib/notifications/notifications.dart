@@ -31,10 +31,9 @@ Future init() async{
             channelName: 'Alp auth requests',
             channelDescription: 'Authentication requests channel for alp (android-linux-pam project) - Authentication Requests from Linux',
             importance: NotificationImportance.Max,
-            defaultPrivacy: NotificationPrivacy.Public,
+            defaultPrivacy: NotificationPrivacy.Secret,
         )
-      ],
-      debug: true
+      ]
   );
   AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
     if (!isAllowed) {
