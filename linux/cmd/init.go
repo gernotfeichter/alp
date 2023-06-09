@@ -149,7 +149,6 @@ Furthermore, a backup will be created for each auto-patched file in its original
 	viper.BindPFlags(initCmd.Flags())
 }
 
-// TODO: Gernot
 const (
 	defaultConfigFileAlpTemplate = `---
 key: {{ .Key }}
