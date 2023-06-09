@@ -17,11 +17,15 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
+	"bufio"
 	"bytes"
+	"fmt"
 	"html/template"
+	"io"
 	"os"
+	"strings"
 
-	"github.com/gernotfeichter/alp/filepath"
+	myfilepath "github.com/gernotfeichter/alp/filepath"
 	"github.com/gernotfeichter/alp/ini"
 	"github.com/gernotfeichter/alp/random"
 	log "github.com/sirupsen/logrus"
@@ -30,7 +34,8 @@ import (
 )
 
 type InitArgs struct {
-	Targets  []string
+	Target  		[]string
+	PamConfigFile 	[]string
 }
 
 var initArgs InitArgs
@@ -57,6 +62,10 @@ Warning: This will overwrite the existing alp config file (if it exists).`,
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		// 
+		// ALP Config file
+		//
 		// delete old config
 		err = os.Remove(rootArgs.Config)
 		if err != nil {
@@ -65,10 +74,10 @@ Warning: This will overwrite the existing alp config file (if it exists).`,
 		// prepare new config
 		templateVariables := map[string]interface{}{
 			"Key": random.RandSeq(32),
-			"Targets": initArgs.Targets,
+			"Targets": initArgs.Target,
 		}
 		log.Tracef("%v", templateVariables)
-		t, err := template.New("defaultConfigFileTemplate").Parse(defaultConfigFileTemplate)
+		t, err := template.New("defaultConfigFileTemplate").Parse(defaultConfigFileAlpTemplate)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -78,12 +87,33 @@ Warning: This will overwrite the existing alp config file (if it exists).`,
 		}
 		defaultConfigFileContent := buf.String()
 		// write new config
-		err = filepath.CreateFileWithPath(rootArgs.Config, defaultConfigFileContent, 0660)
+		err = myfilepath.CreateFileWithPath(rootArgs.Config, defaultConfigFileContent, 0660)
 		if err != nil {
 			log.Warnf("Hint: You may need to run this command as root or with sudo!")
 			log.Fatal(err)
 		}
 		log.Infof("created the file (%s): \n%s", rootArgs.Config, defaultConfigFileContent)
+
+		// 
+		// PAM Config file(s)
+		//
+		log.Info("attempting to patch pam files")
+		patched := false
+		for _, configFile := range initArgs.PamConfigFile {
+			log.Infof("attempting to patch pam file %s", configFile)
+			if fileExists(configFile) {
+				if patchFile(configFile) {
+					patched = true
+				}
+			} else {
+				log.Tracef("File not found: %s", configFile)
+			}
+		}
+		
+		if !patched {
+			log.Warnf("Unable to patch the files %s", initArgs.PamConfigFile)
+		}
+		
 	},
 }
 
@@ -98,15 +128,113 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	initCmd.Flags().StringSliceP("targets", "t", []string{}, "Target device: <IP>|<Host>:<Port> of android device. Example: 10.0.0.3:7654. Recommendations: Stick to the default port as used in the example. In your router config, reserve the IP address for your android device.")
+	initCmd.Flags().StringSliceP("target", "t", []string{},
+		`Target device: <IP>|<Host>:<Port> of android device.
+Example: 10.0.0.3:7654.
+Recommendations: Stick to the default port as used in the example.
+In your router config, reserve the IP address for your android device.
+`)
+	initCmd.Flags().StringSliceP("pamConfigFile", "p", []string{"/etc/authselect/system-auth", "/etc/pam.d/common-auth"},
+		fmt.Sprintf(`Pam Config file to patch.
+If the specified path does not exist, it will be ignored, but a warning will be logged.
+The warning will however only be logged if none of the specified files can be patched.
+Specify /dev/null to explicitly not perform auto-patching.
+In this case you need to insert the pam config yourself to activate alp in pam.
+The pam config line that is expected in either case is the following line:
+%s
 
+Auto-patching will insert the line before the first auth line, and if there are comment lines present it will be placed before them.
+Furthermore, a backup will be created for each auto-patched file in its original location, but with the suffix '.backup-before-alp-init'.
+`, defaultConfigPam))
 	viper.BindPFlags(initCmd.Flags())
 }
 
-const defaultConfigFileTemplate string = `---
+// TODO: Gernot
+const (
+	defaultConfigFileAlpTemplate = `---
 key: {{ .Key }}
 targets:
 {{- range $target := .Targets }}
   - {{ $target }}
 {{- end }}
 `
+	defaultConfigPam = "auth    sufficient      pam_exec.so stdout /alp"
+	BackupSuffix   = ".backup-before-alp-init"
+)
+
+func fileExists(filePath string) bool {
+	_, err := os.Stat(filePath)
+	return err == nil
+}
+
+func patchFile(filePath string) bool {
+	file, err := os.Open(filePath)
+	if err != nil {
+		log.Printf("Error opening file: %s", err)
+		return false
+	}
+	defer file.Close()
+
+	lines := make([]string, 0)
+	inserted := false
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if !inserted && strings.TrimSpace(line) == "" {
+			lines = append(lines, defaultConfigPam)
+			inserted = true
+		}
+
+		lines = append(lines, line)
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Printf("Error scanning file: %s", err)
+		return false
+	}
+
+	if !inserted {
+		lines = append([]string{defaultConfigPam}, lines...)
+	}
+
+	backupPath := filePath + BackupSuffix
+	if err := createBackup(filePath, backupPath); err != nil {
+		log.Printf("Error creating backup: %s", err)
+		return false
+	}
+
+	if err := os.WriteFile(filePath, []byte(strings.Join(lines, "\n")), 0644); err != nil {
+		log.Printf("Error writing patched file: %s", err)
+		return false
+	}
+
+	return true
+}
+
+func createBackup(srcPath, destPath string) error {
+	srcFile, err := os.Open(srcPath)
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+
+	destFile, err := os.Create(destPath)
+	if err != nil {
+		return err
+	}
+	defer destFile.Close()
+
+	_, err = srcFile.Seek(0, 0)
+	if err != nil {
+		return err
+	}
+
+	_, err = io.Copy(destFile, srcFile)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
