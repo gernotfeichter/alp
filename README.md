@@ -42,7 +42,7 @@ On 99% of installations, that will be a password prompt.
 # a few words on security
 - In alp you trust your android device, you can even think of your android device as a key to your linux device.
 - The level of security will depend on the level of security of your android device.
-- TLS (standard, banking-grade security mechanism) is used to protect the communication between your smartphone and your linux machine.
+- pre shared key based encyption (aes 256 gcm pbkdf2) is used to protect the communication between your smartphone and your linux machine.
 - Your linux passwords are NOT transferred to or known by your android device.
 
 # components overview
