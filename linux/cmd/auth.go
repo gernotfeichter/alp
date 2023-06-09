@@ -66,11 +66,10 @@ https://github.com/gernotfeichter/alp
 		}
 
 		// perform rest request to android
-		now := time.Now()
 		authRequest(authArgs)
 
 		// console output while time is ticking
-		deadline := now.Add(authArgs.Timeout)
+		deadline := time.Now().Add(authArgs.Timeout)
 		ticker := time.NewTicker(authArgs.RefreshInterval)
 		done := make(chan bool)
 		writer := uilive.New()
@@ -153,10 +152,13 @@ func authRequest(authArgs AuthArgs) {
 				log.Fatalf("not authorized!")
 			}
 			log.Info("authorized!")
+			os.Exit(0)
 		case *api.GetAuthenticationStatusBadRequest:
 			log.Fatalf("400 - BadRequest: %s", res)
 		case *api.GetAuthenticationStatusUnauthorized:
 			log.Fatalf("401 - Unauthorized: %s", res)
 		}
+		log.Fatal("Could not classify response into known cases.")
 	}
+	log.Fatal("No targets delivered a meaningful response.")
 }
