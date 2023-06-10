@@ -66,10 +66,10 @@ func Test_main_init(t *testing.T) {
 }
 
 func runInitCmd(filePath string) ([]byte, error) {
-	cmd := exec.Command("go", "run", "main.go", "init", "-p", filePath)
-	output, err := cmd.Output()
+	cmd := exec.Command("go", "run", "main.go", "init", "-p", filePath, "--config", "/tmp/alp-test-config.yaml")
+	output, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatalf("alp init failed %s", err)
+		log.Fatalf("alp init failed: %s, output was: %s", err, output)
 	}
 	log.Println(string(output))
 	return output, err
