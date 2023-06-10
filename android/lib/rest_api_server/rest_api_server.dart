@@ -78,7 +78,9 @@ Future init() async {
     return '{"encryptedMessage":"$encryptedMessage"}';
   });
 
-  await app.listen(await getRestApiPort());
+  var port = await getRestApiPort();
+  await app.listen(port);
+  log.info("Listening on port $port");
 }
 
 Future<bool> pollForNotificationResult(int notificationId, int timeoutSeconds) async {

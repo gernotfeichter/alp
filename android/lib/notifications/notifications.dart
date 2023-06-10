@@ -9,6 +9,11 @@ import 'event_handler.dart';
 
 const foregroundServiceNotificationChannelKey = 'alp_foreground_service';
 const foregroundServiceNotificationMessage = 'Alp is running in background!';
+const foregroundServiceNotificationContent = '''You can disable this notification via android settings,
+but be sure to not disable all alp notifications but only this channel.
+Note that it is a requirement from android side, so I have to show this
+notification at first for this kind of permanently running service.''';
+
 const foregroundServiceNotificationId = 1;
 const authRequestsNotificationChannelKey = 'alp_auth_requests';
 const authRequestsNotificationStartId = 2;
@@ -19,12 +24,13 @@ final authRequestNotificationStateHistory = CircularBuffer<Map<int,bool>>(5)..ad
 
 Future init() async{
   AwesomeNotifications().initialize(
-      'resource://drawable/notification',
+      'resource://drawable/ic_bg_service_small',
       [
         NotificationChannel(
             channelKey: foregroundServiceNotificationChannelKey,
             channelName: 'Alp service notifications (dismissing advised)',
-            channelDescription: 'Service notification channel for alp (android-linux-pam project) - Authentication Requests from Linux'),
+            channelDescription: 'Service notification channel for alp (android-linux-pam project) - Authentication Requests from Linux',
+            importance: NotificationImportance.Low),
         NotificationChannel(
             channelKey: authRequestsNotificationChannelKey,
             channelName: 'Alp auth requests',
@@ -48,6 +54,10 @@ Future init() async{
       onNotificationDisplayedMethod:  NotificationEventHandler.onNotificationDisplayedMethod,
       onDismissActionReceivedMethod:  NotificationEventHandler.onDismissActionReceivedMethod
   );
+  // bring service to foreground
+  Timer.periodic(const Duration(milliseconds: 500), (timer) async {
+    createNotificationForegroundService();
+  });
 }
 
 void createNotificationForegroundService() {
@@ -56,7 +66,8 @@ void createNotificationForegroundService() {
       id: foregroundServiceNotificationId,
       channelKey: foregroundServiceNotificationChannelKey,
       summary: foregroundServiceNotificationMessage,
-      notificationLayout: NotificationLayout.ProgressBar,
+      body: foregroundServiceNotificationContent,
+      notificationLayout: NotificationLayout.BigText,
     ),
   );
 }
