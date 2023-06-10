@@ -1,7 +1,6 @@
 
   // this will be used as notification channel id
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flutter_background_service/flutter_background_service.dart';
 import '../init/init.dart' as init_lib;
