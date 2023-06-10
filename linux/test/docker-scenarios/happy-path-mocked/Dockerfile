@@ -21,7 +21,7 @@ RUN go install -v github.com/ogen-go/ogen/cmd/ogen@latest
 RUN go generate ./... && \
     go mod tidy
 RUN go mod download
-RUN CGO_ENABLED=0 GOOS=linux go build -o /alp
+RUN CGO_ENABLED=0 GOOS=linux go build -o /usr/sbin/alp
 
 # Test
 RUN useradd test
