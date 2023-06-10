@@ -10,7 +10,7 @@ TODO: Gernot github release
 ⚠ Replace the `-t` parameter below with the IP:Port values from your android device in below code snippet.
 Hint: You find these in the settings screen of the [android alp app](#android)!
 ```
-sudo install -o root -g root -m 0755 alp /usr/sbin/alp
+sudo install -o root -g root -m 4755 alp /usr/sbin/alp
 sudo alp init -t 10.0.0.3:7654
 ```
 
