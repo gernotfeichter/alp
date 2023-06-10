@@ -111,7 +111,7 @@ Warning: This will overwrite the existing alp config file (if it exists).`,
 		}
 		
 		if !patched {
-			log.Warnf("Unable to patch the files %s", initArgs.PamConfigFile)
+			log.Warnf("Did patch any of the files %s. This could be because they are already patched. Otherwise, the output above may provide more info!", initArgs.PamConfigFile)
 		}
 		
 	},
@@ -213,6 +213,7 @@ func patchFile(filePath string) bool {
 		log.Printf("Error writing patched file: %s", err)
 		return false
 	}
+	log.Infof("Patched %s and created backup %s", filePath, backupPath)
 
 	return true
 }
