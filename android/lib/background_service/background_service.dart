@@ -17,12 +17,12 @@ Future init() async {
 
       // auto start service
       autoStart: true,
+      autoStartOnBoot: true,
       isForegroundMode: true,
-
       foregroundServiceNotificationId: foregroundServiceNotificationId,
       notificationChannelId: foregroundServiceNotificationChannelKey, // this channel must be created before calling this, see notifications.dart:init
       initialNotificationTitle: foregroundServiceNotificationMessage,
-      initialNotificationContent: "",
+      initialNotificationContent: "You can disable this notification via android settings, but be sure to not disable all alp notifications but only this channel. Note that it is a requirement from android side, so I have to show this notification at first for this kind of permanently running service.",
     ),
     iosConfiguration: IosConfiguration()
   );

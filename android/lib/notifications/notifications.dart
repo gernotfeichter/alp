@@ -19,7 +19,7 @@ final authRequestNotificationStateHistory = CircularBuffer<Map<int,bool>>(5)..ad
 
 Future init() async{
   AwesomeNotifications().initialize(
-      'resource://drawable/launch_background',
+      'resource://drawable/notification',
       [
         NotificationChannel(
             channelKey: foregroundServiceNotificationChannelKey,
