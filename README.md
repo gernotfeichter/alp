@@ -7,7 +7,7 @@ Alp is a convenient - yet secure - authentication method that lets you use your 
 ## linux
 TODO: Gernot github release
 ```
-sudo install -o root -g root -m 0755 alp /usr/local/bin/alp
+sudo install -o root -g root -m 0755 alp /usr/sbin/alp
 ```
 
 ## android
