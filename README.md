@@ -46,7 +46,7 @@ On 99% of installations, that will be a password prompt.
 - Your linux passwords are NOT transferred to or known by your android device.
 
 # components overview
-- [linux](linux): go REST client 
+- [linux](linux): go REST client
 - [android](android): flutter REST server
 
 # license

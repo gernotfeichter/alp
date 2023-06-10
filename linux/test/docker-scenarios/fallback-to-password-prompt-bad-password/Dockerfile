@@ -5,17 +5,23 @@ FROM golang:1.20
 # Set destination for COPY
 WORKDIR /ws
 
-# Download Go modules
-COPY go.mod go.sum ./
-RUN go mod download
-
 # Copy sources
+COPY go.mod go.sum ./
 COPY cmd cmd
+COPY crypt crypt
+COPY filepath filepath
+COPY ini ini
+COPY random random
 COPY main.go .
+# notice: the following is a hard linked file to ../android/lib/rest_api_server/openapi.yaml:
+COPY openapi.yaml openapi.yaml
 
 # Build
+RUN go install -v github.com/ogen-go/ogen/cmd/ogen@latest
+RUN go generate ./... && \
+    go mod tidy
+RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -o /alp
-RUN chmod u+x /alp
 
 # Test
 RUN apt-get update && apt-get install sudo && apt-get clean

@@ -12,7 +12,7 @@
 # local modules either before or after the default block, and use
 # pam-auth-update to manage selection of other modules.  See
 # pam-auth-update(8) for details.
-auth    sufficient      pam_exec.so stdout /alp
+auth    sufficient      pam_exec.so stdout /alp auth
 
 # here are the per-package modules (the "Primary" block)
 auth    sufficient      pam_unix.so nullok

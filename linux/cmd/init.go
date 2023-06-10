@@ -157,7 +157,7 @@ targets:
   - {{ $target }}
 {{- end }}
 `
-	defaultConfigPam = "auth    sufficient      pam_exec.so stdout /alp"
+	defaultConfigPam = "auth    sufficient      pam_exec.so stdout /alp auth"
 	BackupSuffix   = ".backup-before-alp-init"
 )
 
@@ -180,6 +180,11 @@ func patchFile(filePath string) bool {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
+
+		if strings.TrimSpace(line) == defaultConfigPam {
+			// Skip inserting the line if it already exists
+			return false
+		}
 
 		if !inserted && strings.TrimSpace(line) == "" {
 			lines = append(lines, defaultConfigPam)

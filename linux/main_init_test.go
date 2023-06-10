@@ -35,12 +35,15 @@ func Test_main_init(t *testing.T) {
 	cmd.Output()
 
 	// when
-	cmd = exec.Command("go", "run", "main.go", "init", "-p", filePath)
-	output, err := cmd.Output()
+	// we patch twice in a row to check idempotence
+	output, err := runInitCmd(filePath)
 	if err != nil {
-		log.Fatalf("alp init failed %s", err)
+		log.Fatalf("Could not run init command: %s %s", output, err)
 	}
-	log.Println(string(output))
+	output, err = runInitCmd(filePath)
+	if err != nil {
+		log.Fatalf("Could not run init command: %s %s", output, err)
+	}
 	
 	// then
 	// check backup file
@@ -60,4 +63,14 @@ func Test_main_init(t *testing.T) {
 		log.Fatalf("Diff is %s for filePath %s", output, filePath)
 	}
 	assert.Equal(t, string(output), "")
+}
+
+func runInitCmd(filePath string) ([]byte, error) {
+	cmd := exec.Command("go", "run", "main.go", "init", "-p", filePath)
+	output, err := cmd.Output()
+	if err != nil {
+		log.Fatalf("alp init failed %s", err)
+	}
+	log.Println(string(output))
+	return output, err
 }
