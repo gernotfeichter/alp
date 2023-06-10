@@ -27,7 +27,7 @@ import (
 	"github.com/gernotfeichter/alp/crypt"
 	"github.com/gernotfeichter/alp/ini"
 
-	"github.com/gosuri/uilive"
+	//"github.com/gosuri/uilive"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -69,27 +69,27 @@ https://github.com/gernotfeichter/alp
 		authRequest(authArgs)
 
 		// console output while time is ticking
-		deadline := time.Now().Add(authArgs.Timeout)
-		ticker := time.NewTicker(authArgs.RefreshInterval)
-		done := make(chan bool)
-		writer := uilive.New()
-		log.SetOutput(writer)
-		writer.Start()
-		go func() {
-			for {
-				select {
-				case <-done:
-					return
-				case t := <-ticker.C:
-					timeLeft := deadline.Sub(t)
-					log.Infof("awaiting approval from android: %.0fs left", timeLeft.Seconds())
-				}
-			}
-		}()
-		time.Sleep(authArgs.RefreshInterval)
-		ticker.Stop()
-		done <- true
-		log.Println("Ticker stopped")
+		// deadline := time.Now().Add(authArgs.Timeout)
+		// ticker := time.NewTicker(authArgs.RefreshInterval)
+		// done := make(chan bool)
+		// writer := uilive.New()
+		// log.SetOutput(writer)
+		// writer.Start()
+		// go func() {
+		// 	for {
+		// 		select {
+		// 		case <-done:
+		// 			return
+		// 		case t := <-ticker.C:
+		// 			timeLeft := deadline.Sub(t)
+		// 			log.Infof("awaiting approval from android: %.0fs left", timeLeft.Seconds())
+		// 		}
+		// 	}
+		// }()
+		// time.Sleep(authArgs.RefreshInterval)
+		// ticker.Stop()
+		// done <- true
+		// log.Println("Ticker stopped")
 	},
 }
 

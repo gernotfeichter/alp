@@ -33,6 +33,7 @@ USER test
 # before running the sudo command, the /etc/shadow file will not be readable
 RUN (cat /etc/shadow && echo "ERROR: test user should not be able to read the /etc/shadow file!" && exit 2) || true
 # while running the sudo command verify that the now privileged user can read the /etc/shadow file
+RUN echo "root password is: ${ROOT_PASSWORD}"
 RUN echo "${ROOT_PASSWORD}" | sudo -S cat /etc/shadow
 
 # the following is only there to satisfy vscode/linting

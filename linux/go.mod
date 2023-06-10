@@ -5,7 +5,6 @@ go 1.20
 require (
 	github.com/go-faster/errors v0.6.1
 	github.com/go-faster/jx v1.0.0
-	github.com/gosuri/uilive v0.0.4
 	github.com/magiconair/properties v1.8.7
 	github.com/ogen-go/ogen v0.68.6
 	github.com/sirupsen/logrus v1.9.0
