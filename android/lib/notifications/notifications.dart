@@ -63,7 +63,7 @@ void createNotificationAuthRequestAsyncPart({id, timeoutSeconds = 60, title}) as
     _reconcileNotification(id: id, progress: currentProgress, title: title);
     // according to https://pub.dev/packages/awesome_notifications#-full-screen-notifications-only-for-android
     // the update interval of the notification should not exceed one second
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 5));
   }
 }
 
