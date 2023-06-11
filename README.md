@@ -1,5 +1,7 @@
 # alp - android-linux-pam
 
+> DEVELOPMENT IS STILL ONGOING! NOT USABLE ATM!
+
 Alp is a convenient - yet secure - authentication method that lets you use your android device as a key for your linux machine.
 
 # installation
