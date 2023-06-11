@@ -35,3 +35,4 @@ jobs:
       # =============================================================================================================
       #     Optional: For more options, see https://github.com/slsa-framework/slsa-github-generator#golang-projects
       # =============================================================================================================
+      evaluated-envs: "VERSION:${{needs.args.version}}"
