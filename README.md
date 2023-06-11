@@ -19,7 +19,7 @@ sudo alp init -t <IP>:7654
 ```
 
 It is recomended that you use alp in a local wifi network and to reserve a dhcp lease in your router,
-such that you always get assigned to a fixed IP address.
+such that you always get assigned a fixed IP address.
 
 ## android
 TODO: Gernot
