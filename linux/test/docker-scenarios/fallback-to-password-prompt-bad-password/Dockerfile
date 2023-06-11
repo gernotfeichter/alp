@@ -32,7 +32,7 @@ USER test
 RUN ((echo "wrong-password" | sudo -S cat /etc/shadow) && exit 2) || true
 
 # the following is only there to satisfy vscode/linting
-CMD ["/alp"]
+CMD ["/usr/sbin/alp"]
 LABEL Name="testing"
 LABEL Version="0.0.0"
 EXPOSE 8080

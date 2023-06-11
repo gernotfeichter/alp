@@ -32,7 +32,7 @@ USER test
 RUN su root
 
 # the following is only there to satisfy vscode/linting
-CMD ["/alp"]
+CMD ["/usr/sbin/alp"]
 LABEL Name="testing"
 LABEL Version="0.0.0"
 EXPOSE 8080

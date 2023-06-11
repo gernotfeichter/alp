@@ -25,20 +25,19 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /usr/sbin/alp
 
 # Test
 RUN apt-get update && apt-get install sudo && apt-get clean
-ENV ROOT_PASSWORD="root-password"
-RUN echo "root:${ROOT_PASSWORD}" | chpasswd
 RUN useradd -g sudo test
+ENV SUDO_PASSWORD="sudo-password"
+RUN echo "test:${SUDO_PASSWORD}" | chpasswd
 COPY test/resources/common-auth /etc/pam.d/common-auth
 USER test
-ENV ROOT_PASSWORD="root-password"
 # before running the sudo command, the /etc/shadow file will not be readable
 RUN (cat /etc/shadow && echo "ERROR: test user should not be able to read the /etc/shadow file!" && exit 2) || true
 # while running the sudo command verify that the now privileged user can read the /etc/shadow file
-RUN echo "root password is: ${ROOT_PASSWORD}"
-RUN echo "${ROOT_PASSWORD}" | sudo -S cat /etc/shadow
+RUN echo "root password is: ${SUDO_PASSWORD}"
+RUN echo "${SUDO_PASSWORD}" | sudo -S cat /etc/shadow
 
 # the following is only there to satisfy vscode/linting
-CMD ["/alp"]
+CMD ["/usr/sbin/alp"]
 LABEL Name="testing"
 LABEL Version="0.0.0"
 EXPOSE 8080
