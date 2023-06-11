@@ -27,6 +27,7 @@ go test
 ```
 
 ### specific tests
+e.g.:
 ```
-(cd linux && docker build . -f test/docker-scenarios/fallback-to-password-prompt-bad-password/Dockerfile -t test --progress=plain)
+docker build . -f test/docker-scenarios/fallback-to-password-prompt-bad-password/Dockerfile -t test --progress=plain
 ```

@@ -30,6 +30,7 @@ RUN echo "root:${ROOT_PASSWORD}" | chpasswd
 RUN useradd -g sudo test
 COPY test/resources/common-auth /etc/pam.d/common-auth
 USER test
+ENV ROOT_PASSWORD="root-password"
 # before running the sudo command, the /etc/shadow file will not be readable
 RUN (cat /etc/shadow && echo "ERROR: test user should not be able to read the /etc/shadow file!" && exit 2) || true
 # while running the sudo command verify that the now privileged user can read the /etc/shadow file
