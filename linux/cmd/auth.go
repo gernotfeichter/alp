@@ -21,7 +21,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 	"time"
+
+	"github.com/jackpal/gateway"
 
 	"github.com/gernotfeichter/alp/api"
 	"github.com/gernotfeichter/alp/crypt"
@@ -41,6 +44,8 @@ type AuthArgs struct {
 	Targets []string
 	Key string
 }
+
+const defaultGatewayConst = "default-gateway"
 
 // authCmd represents the auth command
 var authCmd = &cobra.Command{
@@ -114,7 +119,8 @@ func init() {
 
 func authRequest(authArgs AuthArgs) {
 	for _, target := range authArgs.Targets {
-		client, err := api.NewClient(fmt.Sprintf("http://%s", target))
+		targetTemplated := templateDefaultGateway(target)
+		client, err := api.NewClient(fmt.Sprintf("http://%s", targetTemplated))
 		if err != nil {
 			log.Fatalf("Could not create rest client: %s", err)
 		}
@@ -161,4 +167,16 @@ func authRequest(authArgs AuthArgs) {
 		log.Fatal("Could not classify response into known cases.")
 	}
 	log.Fatal("No targets delivered a meaningful response.")
+}
+
+func templateDefaultGateway(target string) string {
+	if strings.Contains(target, defaultGatewayConst) {
+		defaultGateway, err := gateway.DiscoverGateway()
+		if err != nil {
+			log.Fatalf("Could not determine default gw: %s", err)
+		}
+		log.Tracef("defaultGateway: %s", defaultGateway)
+		return strings.Replace(target, defaultGatewayConst, defaultGateway.To16().String() ,1)
+	}
+	return target
 }

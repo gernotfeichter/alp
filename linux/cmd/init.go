@@ -128,12 +128,16 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	initCmd.Flags().StringSliceP("target", "t", []string{},
-		`Target device: <IP>|<Host>:<Port> of android device.
+	initCmd.Flags().StringSliceP("target", "t", []string{fmt.Sprintf("%s:7654", defaultGatewayConst)},
+		fmt.Sprintf(`Target device: <IP>|<Host>:<Port> of android device.
 Example: 10.0.0.3:7654.
 Recommendations: Stick to the default port as used in the example.
 In your router config, reserve the IP address for your android device.
-`)
+
+If you use your anroid phone as a hotspot you can stick to the default config
+and simply omit this param.
+That is because the fixed string %s will be replaced by your actual default gateway.
+`, defaultGatewayConst))
 	initCmd.Flags().StringSliceP("pamConfigFile", "p", []string{"/etc/authselect/system-auth", "/etc/pam.d/common-auth"},
 		fmt.Sprintf(`Pam Config file to patch.
 If the specified path does not exist, it will be ignored, but a warning will be logged.
