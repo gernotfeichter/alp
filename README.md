@@ -21,6 +21,11 @@ sudo alp init -t <IP>:7654
 It is recomended that you use alp in a local wifi network and to reserve a dhcp lease in your router,
 such that you always get assigned a fixed IP address.
 
+Or, if your android phone is your hotspot, simply run:
+```
+sudo alp init
+```
+
 ## android
 TODO: Gernot
 

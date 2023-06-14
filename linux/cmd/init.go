@@ -161,7 +161,7 @@ targets:
   - {{ $target }}
 {{- end }}
 `
-	defaultConfigPam = "auth    sufficient      pam_exec.so stdout /usr/sbin/alp auth"
+	defaultConfigPam = "auth    sufficient      pam_exec.so log=/var/log/alp /usr/sbin/alp auth"
 	BackupSuffix   = ".backup-before-alp-init"
 )
 
