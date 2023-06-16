@@ -21,7 +21,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/jackpal/gateway"
@@ -37,12 +39,12 @@ import (
 )
 
 type AuthArgs struct {
-	Timeout time.Duration
+	Timeout         time.Duration
 	RefreshInterval time.Duration
-	Level string
-	MockSuccess bool
-	Targets []string
-	Key string
+	Level           string
+	MockSuccess     bool
+	Targets         []string
+	Key             string
 }
 
 const defaultGatewayConst = "default-gateway"
@@ -60,41 +62,10 @@ To be able to use this, you will also need to use the android counterpart - See:
 https://github.com/gernotfeichter/alp
 `,
 	Run: func(_ *cobra.Command, _ []string) {
-		// init
-		ini.Init()
-		log.Tracef("starting alp auth")
-		var authArgs AuthArgs
-		viper.Unmarshal(&authArgs)
-		if authArgs.MockSuccess {
-			log.Warn("mockSuccess is true! This should only be used in testing and not on a real system!")
-			os.Exit(0)
-		}
-
-		// perform rest request to android
-		authRequest(authArgs)
-
-		// console output while time is ticking
-		// deadline := time.Now().Add(authArgs.Timeout)
-		// ticker := time.NewTicker(authArgs.RefreshInterval)
-		// done := make(chan bool)
-		// writer := uilive.New()
-		// log.SetOutput(writer)
-		// writer.Start()
-		// go func() {
-		// 	for {
-		// 		select {
-		// 		case <-done:
-		// 			return
-		// 		case t := <-ticker.C:
-		// 			timeLeft := deadline.Sub(t)
-		// 			log.Infof("awaiting approval from android: %.0fs left", timeLeft.Seconds())
-		// 		}
-		// 	}
-		// }()
-		// time.Sleep(authArgs.RefreshInterval)
-		// ticker.Stop()
-		// done <- true
-		// log.Println("Ticker stopped")
+		sigChan := make(chan os.Signal, 1)
+		signal.Notify(sigChan, syscall.SIGTERM, syscall.SIGINT, syscall.SIGABRT)
+		go allowQuickAbort(&sigChan)
+		authCommand()
 	},
 }
 
@@ -104,17 +75,55 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	authCmd.Flags().DurationP("timeout", "t", time.Second * 60,
-	"wait for as long till the authentication is given up and fallback to the next pam module in /etc/pam.d/common-auth will occur")
-    authCmd.Flags().BoolP("mockSuccess", "s", false, `Warning: Never ever use true in a real setup!
+	authCmd.Flags().DurationP("timeout", "t", time.Second*60,
+		"wait for as long till the authentication is given up and fallback to the next pam module in /etc/pam.d/common-auth will occur")
+	authCmd.Flags().BoolP("mockSuccess", "s", false, `Warning: Never ever use true in a real setup!
 	Setting this to true hardcodes authentication success and should only be used in testing!`)
-	authCmd.Flags().DurationP("refreshInterval", "r", time.Second * 1, 
+	authCmd.Flags().DurationP("refreshInterval", "r", time.Second*1,
 		"refreshes the 'waiting for android user input (x seconds left)' text by the given interval")
-	authCmd.Flags().StringP("key", "k", "", "key aka password used by both linux (client) and android (server) for communcation. utf-8 string. " +
-		"Recommendation: do not override this param. Use the alp init command instead, which writes the key to /etc/alp/alp.yaml and " +
+	authCmd.Flags().StringP("key", "k", "", "key aka password used by both linux (client) and android (server) for communcation. utf-8 string. "+
+		"Recommendation: do not override this param. Use the alp init command instead, which writes the key to /etc/alp/alp.yaml and "+
 		"takes precedence over the empty default specified for this command line arg.")
 
 	viper.BindPFlags(authCmd.Flags())
+}
+
+func authCommand() {
+	// init
+	ini.Init()
+	log.Tracef("starting alp auth")
+	var authArgs AuthArgs
+	viper.Unmarshal(&authArgs)
+	if authArgs.MockSuccess {
+		log.Warn("mockSuccess is true! This should only be used in testing and not on a real system!")
+		os.Exit(0)
+	}
+
+	// perform rest request to android
+	authRequest(authArgs)
+
+	// console output while time is ticking
+	// deadline := time.Now().Add(authArgs.Timeout)
+	// ticker := time.NewTicker(authArgs.RefreshInterval)
+	// done := make(chan bool)
+	// writer := uilive.New()
+	// log.SetOutput(writer)
+	// writer.Start()
+	// go func() {
+	// 	for {
+	// 		select {
+	// 		case <-done:
+	// 			return
+	// 		case t := <-ticker.C:
+	// 			timeLeft := deadline.Sub(t)
+	// 			log.Infof("awaiting approval from android: %.0fs left", timeLeft.Seconds())
+	// 		}
+	// 	}
+	// }()
+	// time.Sleep(authArgs.RefreshInterval)
+	// ticker.Stop()
+	// done <- true
+	// log.Println("Ticker stopped")
 }
 
 func authRequest(authArgs AuthArgs) {
@@ -169,6 +178,11 @@ func authRequest(authArgs AuthArgs) {
 	log.Fatal("No targets delivered a meaningful response.")
 }
 
+func allowQuickAbort(sigChan *chan os.Signal) {
+	sig := <-*sigChan
+	log.Fatalf("Got sig %s, terminating", sig)
+}
+
 func templateDefaultGateway(target string) string {
 	if strings.Contains(target, defaultGatewayConst) {
 		defaultGateway, err := gateway.DiscoverGateway()
@@ -176,7 +190,7 @@ func templateDefaultGateway(target string) string {
 			log.Fatalf("Could not determine default gw: %s", err)
 		}
 		log.Tracef("defaultGateway: %s", defaultGateway)
-		return strings.Replace(target, defaultGatewayConst, defaultGateway.To16().String() ,1)
+		return strings.Replace(target, defaultGatewayConst, defaultGateway.To16().String(), 1)
 	}
 	return target
 }
