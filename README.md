@@ -10,7 +10,7 @@ Alp is a convenient - yet secure - authentication method that lets you use your 
 TODO: Gernot github release
 
 Download:
-```sudo install -o root -g root -m 4755 alp /usr/sbin/alp```
+```sudo install -o root -g root -m 4755 ./alp /usr/sbin/alp```
 
 ⚠ Replace the `<IP>` parameter below with the IP:Port values from your android device in below code snippet.
 Hint: You find these in the settings screen of the [android alp app](#android)!
