@@ -5,7 +5,6 @@ go 1.20
 require (
 	github.com/go-faster/errors v0.6.1
 	github.com/go-faster/jx v1.0.0
-	github.com/jackpal/gateway v1.0.10
 	github.com/magiconair/properties v1.8.7
 	github.com/ogen-go/ogen v0.68.6
 	github.com/sirupsen/logrus v1.9.0
@@ -41,6 +40,7 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/jackpal/gateway v1.0.10
 	github.com/klauspost/compress v1.16.3 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
