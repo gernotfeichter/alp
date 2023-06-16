@@ -62,9 +62,7 @@ To be able to use this, you will also need to use the android counterpart - See:
 https://github.com/gernotfeichter/alp
 `,
 	Run: func(_ *cobra.Command, _ []string) {
-		sigChan := make(chan os.Signal, 1)
-		signal.Notify(sigChan, syscall.SIGTERM, syscall.SIGINT, syscall.SIGABRT)
-		go allowQuickAbort(&sigChan)
+		go allowQuickAbort()
 		authCommand()
 	},
 }
@@ -178,8 +176,10 @@ func authRequest(authArgs AuthArgs) {
 	log.Fatal("No targets delivered a meaningful response.")
 }
 
-func allowQuickAbort(sigChan *chan os.Signal) {
-	sig := <-*sigChan
+func allowQuickAbort() {
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGTERM, syscall.SIGINT, syscall.SIGABRT)
+	sig := <- sigChan
 	log.Fatalf("Got sig %s, terminating", sig)
 }
 
