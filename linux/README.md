@@ -31,3 +31,10 @@ e.g.:
 ```
 docker build . -f test/docker-scenarios/fallback-to-password-prompt-bad-password/Dockerfile -t test --progress=plain
 ```
+
+## release
+
+```
+export GITHUB_TOKEN="<verysecret>"
+goreleaser --clean
+```
