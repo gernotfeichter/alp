@@ -26,6 +26,7 @@ In a terminal, perform the following steps:
    sudo install -o root -g root -m 4755 ./alp /usr/sbin/alp
    ```
 3. Initialize alp
+   
    ⚠ Replace the `<IP>` parameter below with the IP:Port values from your android device in below code snippet.
    Hint: You find these in the settings screen of the [android alp app](#android)!
    ```
