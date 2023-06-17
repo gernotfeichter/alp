@@ -110,13 +110,15 @@ void _reconcileNotification({int id = 0, int progress = 0, title}) {
             key: 'DENY',
             label: 'Deny',
             color: Colors.red,
-            showInCompactView: true,
+            showInCompactView: false,
+            actionType: ActionType.SilentAction
           ),
           NotificationActionButton(
             key: 'APPROVE',
             label: 'Approve',
             color: Colors.lightGreenAccent,
-            showInCompactView: true,
+            showInCompactView: false,
+            actionType: ActionType.SilentAction
           )
         ]
     );
