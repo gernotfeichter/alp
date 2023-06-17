@@ -7,24 +7,36 @@ Alp is a convenient - yet secure - authentication method that lets you use your 
 # installation
 
 ## linux
-TODO: Gernot github release
 
-Download:
-```sudo install -o root -g root -m 4755 ./alp /usr/sbin/alp```
-
-⚠ Replace the `<IP>` parameter below with the IP:Port values from your android device in below code snippet.
-Hint: You find these in the settings screen of the [android alp app](#android)!
-```
-sudo alp init -t <IP>:7654
-```
-
-It is recomended that you use alp in a local wifi network and to reserve a dhcp lease in your router,
-such that you always get assigned a fixed IP address.
-
-Or, if your android phone is your hotspot, simply run:
-```
-sudo alp init
-```
+In a terminal, perform the following steps:
+1. Choose your platform
+   ```
+   ARCH=Darwin_arm64
+   ARCH=Darwin_x86_64
+   ARCH=Linux_arm64
+   ARCH=Linux_i386
+   ARCH=Linux_x86_64
+   ```
+   ⚠ Really choose one, do not execute all of the commands above!
+2. Download and Install your package
+   ```
+   PACKAGE_FILE="alp_${ARCH}.tar.gz"
+   wget "https://github.com/gernotfeichter/alp/releases/download/1.0.0/${PACKAGE_FILE}"
+   tar -xvf "${PACKAGE_FILE}"
+   sudo install -o root -g root -m 4755 ./alp /usr/sbin/alp
+   ```
+3. Initialize alp
+   ⚠ Replace the `<IP>` parameter below with the IP:Port values from your android device in below code snippet.
+   Hint: You find these in the settings screen of the [android alp app](#android)!
+   ```
+   sudo alp init -t <IP>:7654
+   ```
+   It is recomended that you use alp in a local wifi network and to reserve a dhcp lease in your router,
+   such that you always get assigned a fixed IP address.
+   Or, if your android phone is your hotspot, simply run:
+   ```
+   sudo alp init
+   ```
 
 ## android
 TODO: Gernot
