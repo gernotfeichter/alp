@@ -38,7 +38,7 @@ In a terminal, perform the following steps:
    ```
    sudo alp init
    ```
-
+4. Now proceed with the android part!
 ## android
 TODO: Gernot
 

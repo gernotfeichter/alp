@@ -39,12 +39,13 @@ import (
 )
 
 type AuthArgs struct {
-	Timeout         time.Duration
-	RefreshInterval time.Duration
-	Level           string
-	MockSuccess     bool
-	Targets         []string
-	Key             string
+	Timeout              time.Duration
+	ResponseTimeoutDelta time.Duration
+	RefreshInterval      time.Duration
+	Level                string
+	MockSuccess          bool
+	Targets              []string
+	Key                  string
 }
 
 const defaultGatewayConst = "default-gateway"
@@ -75,6 +76,13 @@ func init() {
 	// when this action is called directly.
 	authCmd.Flags().DurationP("timeout", "t", time.Second*60,
 		"wait for as long till the authentication is given up and fallback to the next pam module in /etc/pam.d/common-auth will occur")
+	authCmd.Flags().DurationP("responseTimeoutDelta", "d", time.Second*5,
+		`The timeout parameter (linux) is also used as basis for the calculation of the android notification timeout. However, the 
+		android timeout may not be the same, because the android configuration allows defining a default decision. The default decision is 
+		to deny an auth request if it is not approved within the timeout, but that could be changed by the user.
+		As a consequence, setting both timeout values to the same value would not allow for that default response to be communicated back, 
+		since the response will also take some time to arrive. So the android must be shorter, and it is so much shorter as specified by
+		this parameter.`)
 	authCmd.Flags().BoolP("mockSuccess", "s", false, `Warning: Never ever use true in a real setup!
 	Setting this to true hardcodes authentication success and should only be used in testing!`)
 	authCmd.Flags().DurationP("refreshInterval", "r", time.Second*1,
@@ -131,9 +139,10 @@ func authRequest(authArgs AuthArgs) {
 		if err != nil {
 			log.Fatalf("Could not create rest client: %s", err)
 		}
-		requestExpirationTime := time.Now().Add(authArgs.Timeout)
-		requestExpirationTimeString := requestExpirationTime.Format(time.RFC3339)
-		ctx, cancel := context.WithDeadline(context.Background(), requestExpirationTime)
+		requestExpirationTimeAndroid := time.Now().Add(authArgs.Timeout - authArgs.ResponseTimeoutDelta)
+		requestExpirationTimeLinux := time.Now().Add(authArgs.Timeout)
+		requestExpirationTimeAndroidString := requestExpirationTimeAndroid.Format(time.RFC3339)
+		ctx, cancel := context.WithDeadline(context.Background(), requestExpirationTimeLinux)
 		defer cancel()
 		if err != nil {
 			log.Fatal(err)
@@ -141,7 +150,7 @@ func authRequest(authArgs AuthArgs) {
 		hostname, _ := os.Hostname()
 		encryptedMessage := crypt.AesGcmPbkdf2EncryptToBase64(
 			authArgs.Key,
-			fmt.Sprintf(`{"host":"%s","requestExpirationTime":"%s"}`, hostname, requestExpirationTimeString))
+			fmt.Sprintf(`{"host":"%s","requestExpirationTime":"%s"}`, hostname, requestExpirationTimeAndroidString))
 		if err != nil {
 			log.Fatalf("Error encrypting message: %s", err)
 		}
@@ -179,7 +188,7 @@ func authRequest(authArgs AuthArgs) {
 func allowQuickAbort() {
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGTERM, syscall.SIGINT, syscall.SIGABRT)
-	sig := <- sigChan
+	sig := <-sigChan
 	log.Fatalf("Got sig %s, terminating", sig)
 }
 

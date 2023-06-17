@@ -5,6 +5,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:circular_buffer/circular_buffer.dart';
 import 'package:flutter/material.dart';
 import '../logging/logging.dart';
+import '../secure_storage/secure_storage.dart';
 import 'event_handler.dart';
 
 const authRequestsNotificationChannelKey = 'alp_auth_requests';
@@ -80,7 +81,7 @@ int _getCurrentProgress(DateTime startTime, DateTime endTime) {
   return ratioInPercent.toInt();
 }
 
-void _reconcileNotification({int id = 0, int progress = 0, title}) {
+void _reconcileNotification({int id = 0, int progress = 0, title}) async {
   var notificationAlreadyExpired = authRequestNotificationStateHistory.any(
           (map) => map.containsKey(id));
   log.finer("authRequestNotificationStateHistory=$authRequestNotificationStateHistory ${Isolate.current.debugName}");
@@ -123,7 +124,14 @@ void _reconcileNotification({int id = 0, int progress = 0, title}) {
         ]
     );
   } else {
-    authRequestNotificationStateHistory.add({id: false});
+    var auth = await getLazyAuthMode();
+    authRequestNotificationStateHistory.add({id: auth});
     AwesomeNotifications().cancel(id);
+    var message = "notification timed out, applying default action: auth=$auth";
+    if (auth) {
+      log.info(message);
+    } else {
+      log.severe(message);
+    }
   }
 }

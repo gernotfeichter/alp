@@ -102,6 +102,7 @@ Future<bool> pollForNotificationResult(int notificationId, int timeoutSeconds) a
     await Future.delayed(Duration(milliseconds: sleepIntervalMilliseconds));
     millisecondsConsumed += sleepIntervalMilliseconds;
   }
-  log.fine("stopped polling for auth success because of timeout");
-  return false;
+  var auth = await getLazyAuthMode();
+  log.fine("notification polling timed out, applying default action: auth=$auth");
+  return auth;
 }
