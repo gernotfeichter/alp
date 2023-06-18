@@ -14,7 +14,9 @@ Alp attempts to solve that usability problem!
 
 The solution proposed assumes that the user owns an android device that is on the same wifi network. The solution also works if the android phone is the hotspot of the linux machine.
 
-Apart from the described default solution, there is an even more innovative, but arguably less secure mode where even the button click is optional in the positive case. Read more on the [lazy auth mode](#lazy-auth-mode) below. 
+> Note that alp does not "remove" your password. Per default the authentication and authorisation process tries to use alp, but as a fallback, the "traditional" fallback authentication and authorisation process - on most systems that will be a password promt - kicks in. Since alp is using https://github.com/linux-pam/linux-pam, quite something could be tweaked when having knowledge of pam.
+
+Apart from the described default solution, there is an even more innovative, but arguably less secure mode where even the button click is optional in the positive case. Read more on the [lazy auth mode](#lazy-auth-mode) below.
 
 # installation
 
