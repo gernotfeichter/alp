@@ -4,6 +4,18 @@
 
 Alp is a convenient - yet secure - authentication method that lets you use your android device as a key for your linux machine.
 
+The idea of alp is, instead of typing a password on the linux machine, the user only clicks a button on an android device to confirm an authentication/authorisation request.
+
+I realized that in traditional PC setups, the user is confronted with either
+- using a secure password that is labour intensive to type or
+- using a less secure password that is still annoying to be typed because of the frequency.
+
+Alp attempts to solve that usability problem!
+
+The solution proposed assumes that the user owns an android device that is on the same wifi network. The solution also works if the android phone is the hotspot of the linux machine.
+
+Apart from the described default solution, there is an even more innovative, but arguably less secure mode where even the button click is optional in the positive case. Read more on the [lazy auth mode](#lazy-auth-mode) below. 
+
 # installation
 
 ## linux
@@ -44,7 +56,7 @@ TODO: Gernot
 
 # authentication flow
 
-> the following assumes that the user followed the standard installation method and uses alp in 'common-auth' (in linux PAM terms)
+> the following assumes that the user followed the standard installation thereby uses alp in 'common-auth' (in linux PAM terms)
 
 ## success case
 1. user does something on a linux machine that requires authentication, e.g. you log in to your desktop environment
@@ -76,6 +88,21 @@ On 99% of installations, that will be a password prompt.
 - The level of security will depend on the level of security of your android device.
 - pre shared key based encyption (aes 256 gcm pbkdf2) is used to protect the communication between your smartphone and your linux machine.
 - Your linux passwords are NOT transferred to or known by your android device.
+
+## lazy auth mode
+
+⚠ This mode is less secure and thereby NOT enabled per default.
+
+According to ChatGPT (18.06.2023), there is no known authentication mechanism of this kind.
+
+In this mode, the authentication request is
+1. sent to the android phone
+2. if the alp server running on the phone is reachable AND the user does not click `Deny` within the configured timeout, the auth request is approved.
+
+This mode requires an "always on" mentality of the user, constantly observing the state of the smartphone to be considered secure, which is certainly hard to achieve continously. However, since most useres will have their smartphone lying besides their linux machines anyway, maybe there is a group of users that finds this feature valuable.
+Especially at night, one should not forget to disable wifi in this mode to not make oneself vulnerable when "always on" is certainly not possible.
+
+You may enable this mode in the android app's settings if you feel you want to take the extra risk involved.
 
 # components overview
 - [linux](linux): go REST client
