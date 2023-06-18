@@ -74,9 +74,9 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	authCmd.Flags().DurationP("timeout", "t", time.Second*60,
+	authCmd.Flags().DurationP("timeout", "t", time.Second*15,
 		"wait for as long till the authentication is given up and fallback to the next pam module in /etc/pam.d/common-auth will occur")
-	authCmd.Flags().DurationP("responseTimeoutDelta", "d", time.Second*5,
+	authCmd.Flags().DurationP("responseTimeoutDelta", "d", time.Second*7,
 		`The timeout parameter (linux) is also used as basis for the calculation of the android notification timeout. However, the 
 		android timeout may not be the same, because the android configuration allows defining a default decision. The default decision is 
 		to deny an auth request if it is not approved within the timeout, but that could be changed by the user.
