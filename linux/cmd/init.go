@@ -34,8 +34,8 @@ import (
 )
 
 type InitArgs struct {
-	Target  		[]string
-	PamConfigFile 	[]string
+	Target        []string
+	PamConfigFile []string
 }
 
 var initArgs InitArgs
@@ -63,7 +63,7 @@ Warning: This will overwrite the existing alp config file (if it exists).`,
 			log.Fatal(err)
 		}
 
-		// 
+		//
 		// ALP Config file
 		//
 		// delete old config
@@ -73,7 +73,7 @@ Warning: This will overwrite the existing alp config file (if it exists).`,
 		}
 		// prepare new config
 		templateVariables := map[string]interface{}{
-			"Key": random.RandSeq(32),
+			"Key":     random.RandSeq(32),
 			"Targets": initArgs.Target,
 		}
 		log.Tracef("%v", templateVariables)
@@ -94,7 +94,7 @@ Warning: This will overwrite the existing alp config file (if it exists).`,
 		}
 		log.Infof("created the file (%s): \n%s", rootArgs.Config, defaultConfigFileContent)
 
-		// 
+		//
 		// PAM Config file(s)
 		//
 		log.Info("attempting to patch pam files")
@@ -109,11 +109,11 @@ Warning: This will overwrite the existing alp config file (if it exists).`,
 				log.Tracef("File not found: %s", configFile)
 			}
 		}
-		
+
 		if !patched {
 			log.Warnf("Did patch any of the files %s. This could be because they are already patched. Otherwise, the output above may provide more info!", initArgs.PamConfigFile)
 		}
-		
+
 	},
 }
 
@@ -161,8 +161,8 @@ targets:
   - {{ $target }}
 {{- end }}
 `
-	defaultConfigPam = "auth    sufficient      pam_exec.so log=/var/log/alp /usr/sbin/alp auth"
-	BackupSuffix   = ".backup-before-alp-init"
+	defaultConfigPam = "auth    sufficient      pam_exec.so stdout /usr/sbin/alp auth"
+	BackupSuffix     = ".backup-before-alp-init"
 )
 
 func fileExists(filePath string) bool {
