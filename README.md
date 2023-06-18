@@ -100,7 +100,7 @@ In this mode, the authentication request is
 2. if the alp server running on the phone is reachable AND the user does not click `Deny` within the configured timeout, the auth request is approved.
 
 This mode requires an "always on" mentality of the user, constantly observing the state of the smartphone to be considered secure, which is certainly hard to achieve continously. However, since most useres will have their smartphone lying besides their linux machines anyway, maybe there is a group of users that finds this feature valuable.
-Especially at night, one should not forget to disable wifi in this mode to not make oneself vulnerable when "always on" is certainly not possible.
+Especially before sleep, one should not forget to disable wifi in this mode to not make oneself vulnerable when "always on" is certainly not possible.
 
 You may enable this mode in the android app's settings if you feel you want to take the extra risk involved.
 
