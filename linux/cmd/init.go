@@ -138,7 +138,7 @@ If you use your anroid phone as a hotspot you can stick to the default config
 and simply omit this param.
 That is because the fixed string %s will be replaced by your actual default gateway.
 `, defaultGatewayConst))
-	initCmd.Flags().StringSliceP("pamConfigFile", "p", []string{"/etc/authselect/system-auth", "/etc/pam.d/common-auth"},
+	initCmd.Flags().StringSliceP("pamConfigFile", "p", []string{"/etc/pam.d/system-auth", "/etc/authselect/system-auth", "/etc/pam.d/common-auth"},
 		fmt.Sprintf(`Pam Config file to patch.
 If the specified path does not exist, it will be ignored, but a warning will be logged.
 The warning will however only be logged if none of the specified files can be patched.
