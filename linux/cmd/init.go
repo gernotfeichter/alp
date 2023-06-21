@@ -87,7 +87,8 @@ Warning: This will overwrite the existing alp config file (if it exists).`,
 		}
 		defaultConfigFileContent := buf.String()
 		// write new config
-		err = myfilepath.CreateFileWithPath(rootArgs.Config, defaultConfigFileContent, 0660)
+		fileMode := os.FileMode(int(0600))
+		err = myfilepath.CreateFileWithPath(rootArgs.Config, defaultConfigFileContent, fileMode)
 		if err != nil {
 			log.Warnf("Hint: You may need to run this command as root or with sudo!")
 			log.Fatal(err)

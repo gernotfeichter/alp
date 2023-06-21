@@ -34,8 +34,9 @@ In a terminal, perform the following steps:
    ⚠ Really choose one, do not execute all of the commands above!
 2. Download and Install your package
    ```
+   cd /tmp
    PACKAGE_FILE="alp_${ARCH}.tar.gz"
-   wget "https://github.com/gernotfeichter/alp/releases/download/1.0.0/${PACKAGE_FILE}"
+   wget "https://github.com/gernotfeichter/alp/releases/download/1.0.2/${PACKAGE_FILE}"
    tar -xvf "${PACKAGE_FILE}"
    sudo install -o root -g root -m 4755 ./alp /usr/sbin/alp
    ```
