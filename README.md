@@ -30,7 +30,7 @@ Apart from the described default solution, there is an even more innovative, but
 
 ## linux | mac
 
-⚠ The installation procedure hooks alp deeply into the main 
+⚠ The installation procedure hooks alp deeply into the main system authentication mechanism, creating a full system backup is recommended before installation!
 
 In a terminal, perform the following steps:
 1. Choose your platform
