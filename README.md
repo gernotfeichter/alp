@@ -16,11 +16,21 @@ The solution proposed assumes that the user owns an android device that is on th
 
 > Note that alp does not "remove" your password. Per default the authentication and authorisation process tries to use alp, but as a fallback, the "traditional" fallback authentication and authorisation process - on most systems that will be a password promt - kicks in. Since alp is using https://github.com/linux-pam/linux-pam, quite something could be tweaked when having knowledge of pam.
 
+This solution works on, and is intended for single user linux machines.
+Thought it should also work for mac users.
+
+In any case, the users also needs to have an android device.
+If another maintainer is interested to compile/test/release an ios version, I am open for merging such a PR.
+
+> It does not work for machines that are operated by different users, nor is such support currently planned - unless all users are okay to share the same super users password!
+
 Apart from the described default solution, there is an even more innovative, but arguably less secure mode where even the button click is optional in the positive case. Read more on the [lazy auth mode](#lazy-auth-mode) below.
 
 # installation
 
-## linux
+## linux | mac
+
+⚠ The installation procedure hooks alp deeply into the main 
 
 In a terminal, perform the following steps:
 1. Choose your platform
