@@ -36,7 +36,7 @@ docker build . -f test/docker-scenarios/fallback-to-password-prompt-bad-password
 
 ```
 export GITHUB_TOKEN="<verysecret>"
-git tag <major.minor.patch>
+git tag <major.minor.patch> && g push origin <major.minor.patch>
 goreleaser --clean
 ```
 bump version in [README](../README.md#linux--mac)
