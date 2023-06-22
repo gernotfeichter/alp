@@ -74,20 +74,20 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	authCmd.Flags().DurationP("timeout", "t", time.Second*15,
+	authCmd.Flags().DurationP("timeout", "t", time.Second*40,
 		"wait for as long till the authentication is given up and fallback to the next pam module in /etc/pam.d/common-auth will occur")
 	authCmd.Flags().DurationP("responseTimeoutDelta", "d", time.Second*7,
 		`The timeout parameter (linux) is also used as basis for the calculation of the android notification timeout. However, the 
 		android timeout may not be the same, because the android configuration allows defining a default decision. The default decision is 
 		to deny an auth request if it is not approved within the timeout, but that could be changed by the user.
 		As a consequence, setting both timeout values to the same value would not allow for that default response to be communicated back, 
-		since the response will also take some time to arrive. So the android must be shorter, and it is so much shorter as specified by
+		since the response will also take some time to arrive. So the android timeout must be shorter, and it is so much shorter as specified by
 		this parameter.`)
 	authCmd.Flags().BoolP("mockSuccess", "s", false, `Warning: Never ever use true in a real setup!
 	Setting this to true hardcodes authentication success and should only be used in testing!`)
 	authCmd.Flags().DurationP("refreshInterval", "r", time.Second*1,
 		"refreshes the 'waiting for android user input (x seconds left)' text by the given interval")
-	authCmd.Flags().StringP("key", "k", "", "key aka password used by both linux (client) and android (server) for communcation. utf-8 string. "+
+	authCmd.Flags().StringP("key", "k", "", "key aka password used by both linux (client) and android (server) for encrypting communication. utf-8 string. "+
 		"Recommendation: do not override this param. Use the alp init command instead, which writes the key to /etc/alp/alp.yaml and "+
 		"takes precedence over the empty default specified for this command line arg.")
 
