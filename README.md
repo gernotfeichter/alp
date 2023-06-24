@@ -87,7 +87,7 @@ On 99% of installations, that will be a password prompt.
 # reasons to use alp
 - typing passwords sucks
 - you own an android device
-- you do not want or cannot use face unlock (e.g. [howdy](https://github.com/boltgolt/howdy)) for whatever reasons, for me those were
+- you do not want to or cannot use face unlock (e.g. [howdy](https://github.com/boltgolt/howdy)) for whatever reasons, for me those were
   - no webcam at each machine (main reason)
   - less secure than conventional passwords
   - you mostly stare at the screen - that means if an authentication prompt pops up and you do not explicitly look away - you will authorize whatever pops up.
