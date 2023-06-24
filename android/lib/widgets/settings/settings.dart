@@ -161,13 +161,13 @@ class Settings extends ConsumerWidget {
                     leading: const Icon(Icons.numbers),
                     title: const Text('IP (v4)'),
                     description: const Text('readonly'),
-                    value: Text(err.toString()),
+                    value: const Text("error"),
                     trailing: const Icon(Icons.error)),
                 loading: () => SettingsTile.navigation(
                     leading: const Icon(Icons.numbers),
                     title: const Text('IP (v4)'),
                     description: const Text('readonly'),
-                    value: const Text(""),
+                    value: const Text("loading"),
                     trailing: const CircularProgressIndicator())),
             ipv6.when(
                 data: (ip) => SettingsTile.navigation(
@@ -179,13 +179,13 @@ class Settings extends ConsumerWidget {
                     leading: const Icon(Icons.numbers),
                     title: const Text('IP (v6)'),
                     description: const Text('readonly'),
-                    value: Text(err.toString()),
+                    value: const Text("error"),
                     trailing: const Icon(Icons.error)),
                 loading: () => SettingsTile.navigation(
                     leading: const Icon(Icons.numbers),
                     title: const Text('IP (v6)'),
                     description: const Text('readonly'),
-                    value: const Text(""),
+                    value: const Text("loading"),
                     trailing: const CircularProgressIndicator())),
           ],
         ),
