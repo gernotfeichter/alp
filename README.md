@@ -17,7 +17,7 @@ The solution proposed assumes that the user owns an android device that is on th
 > Note that alp does not "remove" your password. Per default the authentication and authorisation process tries to use alp, but as a fallback, the "traditional" fallback authentication and authorisation process - on most systems that will be a password promt - kicks in. Since alp is using https://github.com/linux-pam/linux-pam, quite something could be tweaked when having knowledge of pam.
 
 This solution works on, and is intended for single user linux machines.
-Thought it should also work for mac users.
+Though it should also work for mac users.
 
 In any case, the users also needs to have an android device.
 If another maintainer is interested to compile/test/release an ios version, I am open for merging such a PR.
