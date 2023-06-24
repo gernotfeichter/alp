@@ -27,9 +27,9 @@ git add -A
 git commit -m "chore(release) linux ${new_version}"
 
 # tag
-git tag "${VERSION}"
+git tag "${new_version}"
 
 # release
 goreleaser --clean
 git push
-git push origin "${VERSION}"
+git push origin "${new_version}"
