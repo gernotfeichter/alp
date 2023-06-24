@@ -4,10 +4,10 @@ new_version="$1"
 # assert correct dir
 [ "$(basename "$(echo "$PWD")")" != 'linux' ] && "ERROR: you need to be in the linux directory to run this command properly!" && exit 1
 # assert correct branch
-[ "$(git branch)" != 'master' ] && "ERROR: you need to be on the master branch to runt his command properly!" && exit 1
+[ "$(git rev-parse --abbrev-ref HEAD)" != 'master' ] && "ERROR: you need to be on the master branch to runt his command properly!" && exit 1
 
 # load secrets
-. release.sh
+. github-token.sh # contains export GITHUB_TOKEN="<secret_token_here>"
 
 # update version in main user facing (parent) README.md
 sed "s/download\/[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*/download\/$new_version/" "../README.md"
