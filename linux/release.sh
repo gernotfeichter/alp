@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # input params
 new_version="$1"
 
@@ -10,7 +12,7 @@ new_version="$1"
 . github-token.sh # contains export GITHUB_TOKEN="<secret_token_here>"
 
 # update version in main user facing (parent) README.md
-sed "s/download\/[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*/download\/$new_version/" "../README.md"
+sed -i "s/download\/[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*/download\/$new_version/" "../README.md"
 
 # build
 go mod tidy
