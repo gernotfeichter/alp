@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:isolate';
 import 'package:alfred/alfred.dart';
 import '../crypt/aes_gcm_256_pbkdf2_string_encryption.dart';
+import '../crypt/md5_checksum.dart';
 import '../logging/logging.dart';
 import '../notifications/notifications.dart';
 import '../secure_storage/secure_storage.dart';
@@ -24,6 +25,7 @@ Future init() async {
     String host;
     DateTime requestExpirationTime;
     String encryptionDecryptionKey = await getKey();
+    String requestMessageSignature="defaultInvalidSignature";
     try {
       String decryptedMessage = "";
       Map bodyAsJsonMap = await req.body as Map;
@@ -32,6 +34,7 @@ Future init() async {
           log.severe("Decryption Key is empty, please configure a key!");
         } else {
           decryptedMessage = aesGcmPbkdf2DecryptFromBase64(encryptionDecryptionKey, bodyAsJsonMap['encryptedMessage']);
+          requestMessageSignature = md5sum(bodyAsJsonMap['encryptedMessage']);
         }
       } on Exception {
         throw DecryptionError();
@@ -75,7 +78,7 @@ Future init() async {
     } else {
       log.severe(approvedMessage);
     }
-    return '{"encryptedMessage":"$encryptedMessage"}';
+    return '{"encryptedMessage":"$encryptedMessage","requestMessageSignature": "$requestMessageSignature"}';
   });
 
   var port = await getRestApiPort();

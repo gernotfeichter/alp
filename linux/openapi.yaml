@@ -76,8 +76,11 @@ components:
       properties:
         encryptedMessage:
           $ref: '#/components/schemas/EncryptedMessage'
+        requestMessageSignature:
+          type: string
       required:
         - encryptedMessage
+        - requestMessageSignature
       additionalProperties: false
       description: |
         encryptedMessage containing: {"authenticated": true/false}

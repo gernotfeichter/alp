@@ -18,6 +18,7 @@ package cmd
 
 import (
 	"context"
+	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -151,6 +152,7 @@ func authRequest(authArgs AuthArgs) {
 		encryptedMessage := crypt.AesGcmPbkdf2EncryptToBase64(
 			authArgs.Key,
 			fmt.Sprintf(`{"host":"%s","requestExpirationTime":"%s"}`, hostname, requestExpirationTimeAndroidString))
+		requestMessageSignature := fmt.Sprintf("%x", md5.Sum([]byte(encryptedMessage)))
 		if err != nil {
 			log.Fatalf("Error encrypting message: %s", err)
 		}
@@ -169,6 +171,9 @@ func authRequest(authArgs AuthArgs) {
 			err := json.Unmarshal([]byte(decryptedMessage), &responseJson)
 			if err != nil {
 				log.Fatalf("Parsing response as json failed: %s", err)
+			}
+			if !(r.RequestMessageSignature == requestMessageSignature) {
+				log.Fatalf("Wrong checksum. This could be due to a replay attack!")
 			}
 			if !responseJson["auth"].(bool) {
 				log.Fatalf("not authorized!")
