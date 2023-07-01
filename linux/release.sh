@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 # input params
 new_version="$1"
