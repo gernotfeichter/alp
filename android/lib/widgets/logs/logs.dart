@@ -30,6 +30,11 @@ class Logs extends ConsumerWidget {
       ),
     );
   }
+
+  @override
+  String toStringShort() {
+    return "Logs";
+  }
 }
 
 class LogRecordWidget extends StatelessWidget {

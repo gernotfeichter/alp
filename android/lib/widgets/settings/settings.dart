@@ -192,4 +192,9 @@ class Settings extends ConsumerWidget {
       ],
     );
   }
+
+  @override
+  String toStringShort() {
+    return "Settings";
+  }
 }
