@@ -23,7 +23,7 @@ Though it should also work for mac users.
 In any case, the users also needs to have an android device.
 If another maintainer is interested to compile/test/release an ios version, I am open for merging such a PR.
 
-> It does not work for machines that are operated by different users, nor is such support currently planned - unless all users are okay to share the same super users password!
+> It does not work for machines that are operated by different users, nor is such support currently planned - unless all users are okay to share the same super user password!
 
 Apart from the described default solution, there is an even more innovative, but arguably less secure mode where even the button click is optional in the positive case. Read more on the [lazy auth mode](#lazy-auth-mode) below.
 
