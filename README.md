@@ -2,11 +2,11 @@
 
 > DEVELOPMENT IS STILL ONGOING! NOT USABLE ATM!
 
-Alp is a convenient - yet secure - authentication method that lets you use your android device as a key for your linux machine.
+Alp is a convenient - yet secure - authentication method that lets you use your android device as a key for your Linux machine.
 
-The idea of alp is, instead of typing a password on the linux machine, the user only clicks a button on an android device to confirm an authentication/authorisation request.
+The idea of alp is, instead of typing a password on the Linux machine, the user only clicks a button on an android device to confirm an authentication/authorisation request.
 
-I realized that in traditional PC setups, the user is confronted with either
+I realized that in traditional PC set-ups, the user is confronted with either
 - using a secure password that is labour intensive to type or
 - using a less secure password that is still annoying to be typed because of the frequency.
 
@@ -14,7 +14,7 @@ Alp attempts to solve that usability problem!
 
 The solution proposed assumes that the user owns an android device that is on the same wifi network. The solution also works if the android phone is the hotspot of the linux machine.
 
-> Note that alp does not "remove" your password. Per default the authentication and authorisation process tries to use alp, but as a fallback, the "traditional" fallback authentication and authorisation process - on most systems that will be a password promt - kicks in. Since alp is using https://github.com/linux-pam/linux-pam, quite something could be tweaked when having knowledge of pam.
+> Note that alp does not "remove" your password. Per default the authentication and authorisation process tries to use alp, but as a fallback, the "traditional" fallback authentication and authorisation process - on most systems that will be a password prompt - kicks in. Since alp is using https://github.com/linux-pam/linux-pam, quite something could be tweaked when having knowledge of pam.
 
 This solution works on, and is intended for single user linux machines.
 Though it should also work for mac users.
