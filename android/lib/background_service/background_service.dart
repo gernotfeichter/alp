@@ -12,6 +12,7 @@ Future init() async {
       // this will be executed when app is in foreground or background in separated isolate
       onStart: backgroundService,
 
+
       // auto start service
       autoStart: true,
       autoStartOnBoot: true,
@@ -22,6 +23,7 @@ Future init() async {
   await service.startService();
 }
 
+@pragma('vm:entry-point')
 Future<void> backgroundService(ServiceInstance service) async {
   init_lib.init();
 }
