@@ -105,8 +105,8 @@ Instead, I suggest using full disk encryption and I personally set my keyring pa
 This way, I can seamlessly use apps that require a keyring.
 Just that you understand why I dared to do so:
 1. Unlock your keyring (If you entered your password on a regular distro, this might be already the case).
-2. Query your keyring passwords (You will see that you can do so through any script - or easier - use seahorse!)
-You will see that you can see your plaintext passwords without further ado!
+2. Query your keyring passwords (You can do so through any script - or easier - use seahorse!)
+You can see your plaintext passwords without further ado!
 Note: any app/script that is running can do so as well!
 I hope this makes my point clear why I think having a password for something that can be read by "almost everything" AFTER entering the password, makes little sense outside of a single-user environment when using full disk encryption.
 
