@@ -97,6 +97,7 @@ Unfortunately, this is still in progress!
 
 ## keyrings
 > this section refers to the gnome-keyring implementation (that is also used outside of the gnome desktop environment a lot) - have not looked into others, but there might be similar problems/solutions!
+
 Some apps use keyrings that also need to be unlocked via a password.
 Alp is intended for single user machines.
 I see no point in using keyrings/keyring-passwords on single user machines.
