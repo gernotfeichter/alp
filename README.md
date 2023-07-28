@@ -1,9 +1,6 @@
 # alp - android-linux-pam
 
-> DEVELOPMENT IS STILL ONGOING! NOT USABLE ATM!
-> request created for publication in the Google Play store, waiting for approval.
-
-Alp is a convenient - yet secure - authentication method that lets you use your android device as a key for your Linux machine.
+Alp is a convenient - yet secure (DISCLAIMER: still your risk!) - authentication method that lets you use your android device as a key for your Linux machine.
 
 The idea of alp is, instead of typing a password on the Linux machine, the user only clicks a button on an android device to confirm an authentication/authorisation request.
 
@@ -20,7 +17,7 @@ The solution proposed assumes that the user owns an android device that is on th
 This solution works on, and is intended for single user linux machines.
 Though it should also work for mac users.
 
-In any case, the users also needs to have an android device.
+In any case, the user also needs to have an android device.
 If another maintainer is interested to compile/test/release an ios version, I am open for merging such a PR.
 
 > It does not work for machines that are operated by different users, nor is such support currently planned - unless all users are okay to share the same super user password!
@@ -54,7 +51,7 @@ In a terminal, perform the following steps:
 3. Initialize alp
    
    ⚠ Replace the `<IP>` parameter below with the IP:Port values from your android device in below code snippet.
-   Hint: You find these in the settings screen of the [android alp app](#android)!
+   Hint: You find these in the settings screen of the [android app - alp](#android)!
    ```
    sudo alp init -t <IP>:7654
    ```
@@ -66,7 +63,37 @@ In a terminal, perform the following steps:
    ```
 4. Now proceed with the android part!
 ## android
-TODO: Gernot
+1. Download the [android app - alp](https://play.google.com/store/apps/details?id=io.github.gernotfeichter.alp).
+2. In the settings of the android app, enter the key that was randomly generated
+   and can be retrieved (on your linux machine) like so: `sudo cat /etc/alp/alp.yaml`.
+   While it may be trivial, the key starts after the `key: ` part.
+   ⚠ Since you did not sync your key at this moment, alp will first fail when issuing the sudo command above.
+   This is a good way to test the fallback to the password prompt!
+3. Now perform your hopefully successful first alp auth:
+   ```
+   sudo -k echo 'hello alp!'
+   ```
+
+# known issues and solutions
+
+## home drive encryption
+If you use home drive encryption, the password is needed to decrypt the drive.
+Therfore, logging in will fail (even if the alp auth request is successful!).
+I suggest to either
+- switch to full disk encryption, which was shown to outperform home drive encryption anyway and has even less of an atack surface.
+- just ignore the first failed attempt, then type the password - for the first login only.
+  Subsequent lock-screen unlocking should work via alp!
+  NOTE: I noticed some login managers are not very versed in displaying multi-lined output that alp produces.
+  In some cases you may hardly see the password field. Just try typing the password, then enter.
+  You may want to manually deny the first auth request or let it time out.
+  Sometimes, pressing escape helps to get to the password field.
+
+## full disk encryption
+Full disk encryption is not based on PAM and therefore alp cannot use to unlock the disk.
+This also means that a password is normally still required to be typed.
+NOTE: In my next project I am trying to solve that problem again via an android app that works the following way:
+Android running a TANG server -> clevis tang pin -> unlocks LUKS.
+Unfortunately, this is still in progress!
 
 # authentication flow
 
