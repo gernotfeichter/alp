@@ -89,7 +89,7 @@ I suggest to either
   Sometimes, pressing escape helps to get to the password field.
 
 ## full disk encryption
-Full disk encryption is not based on PAM and therefore alp cannot use to unlock the disk.
+Full disk encryption is not based on PAM and therefore alp cannot be used to unlock the disk.
 For that purpose, I initiated another project where I am trying to solve that problem again via android:
 https://github.com/gernotfeichter/tanga.
 
