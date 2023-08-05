@@ -90,10 +90,8 @@ I suggest to either
 
 ## full disk encryption
 Full disk encryption is not based on PAM and therefore alp cannot use to unlock the disk.
-This also means that a password is normally still required to be typed.
-NOTE: In my next project I am trying to solve that problem again via an android app that works the following way:
-Android running a TANG server -> clevis tang pin -> unlocks LUKS.
-Unfortunately, this is still in progress!
+For that purpose, I initiated another project where I am trying to solve that problem again via android:
+https://github.com/gernotfeichter/tanga.
 
 ## keyrings
 > this section refers to the gnome-keyring implementation (that is also used outside of the gnome desktop environment a lot) - have not looked into others, but there might be similar problems/solutions!
