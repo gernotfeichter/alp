@@ -40,7 +40,7 @@
             android:exported="false"
             android:stopWithTask="false"
             android:foregroundServiceType="mediaPlayback"
-            tools:replace="android:foregroundServiceType"
+            tools:replace="android:foregroundServiceType,android:stopWithTask"
             ></service>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
