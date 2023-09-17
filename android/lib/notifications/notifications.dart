@@ -8,6 +8,14 @@ import '../logging/logging.dart';
 import '../secure_storage/secure_storage.dart';
 import 'event_handler.dart';
 
+const foregroundServiceNotificationChannelKey = 'alp_foreground_service';
+const foregroundServiceNotificationMessage = 'Alp is running in background!';
+const foregroundServiceNotificationContent = '''You can disable this notification via android settings,
+but be sure to not disable all alp notifications but only this channel.
+Note that it is a requirement from android side, so I have to show this
+notification at first for this kind of permanently running service.''';
+
+const foregroundServiceNotificationId = 1;
 const authRequestsNotificationChannelKey = 'alp_auth_requests';
 const authRequestsNotificationStartId = 2;
 
@@ -19,6 +27,11 @@ Future init() async{
   AwesomeNotifications().initialize(
       'resource://drawable/ic_bg_service_small',
       [
+        NotificationChannel(
+            channelKey: foregroundServiceNotificationChannelKey,
+            channelName: 'Alp service notifications (dismissing advised)',
+            channelDescription: 'Service notification channel for alp (android-linux-pam project) - Authentication Requests from Linux',
+            importance: NotificationImportance.Low),
         NotificationChannel(
             channelKey: authRequestsNotificationChannelKey,
             channelName: 'Alp auth requests',
@@ -41,6 +54,22 @@ Future init() async{
       onNotificationCreatedMethod:    NotificationEventHandler.onNotificationCreatedMethod,
       onNotificationDisplayedMethod:  NotificationEventHandler.onNotificationDisplayedMethod,
       onDismissActionReceivedMethod:  NotificationEventHandler.onDismissActionReceivedMethod
+  );
+  // bring service to foreground
+  Timer.periodic(const Duration(milliseconds: 500), (timer) async {
+    createNotificationForegroundService();
+  });
+}
+
+void createNotificationForegroundService() {
+  AwesomeNotifications().createNotification(
+    content: NotificationContent(
+      id: foregroundServiceNotificationId,
+      channelKey: foregroundServiceNotificationChannelKey,
+      summary: foregroundServiceNotificationMessage,
+      body: foregroundServiceNotificationContent,
+      notificationLayout: NotificationLayout.BigText,
+    ),
   );
 }
 
