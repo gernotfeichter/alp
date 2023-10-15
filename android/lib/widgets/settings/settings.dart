@@ -1,3 +1,4 @@
+import 'package:alp/init/init.dart';
 import 'package:alp/secure_storage/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -67,6 +68,7 @@ class Settings extends ConsumerWidget {
                         onChanged: (value) {
                           setKey(value);
                           ref.invalidate(keyProvider);
+                          init();
                         },
                       ),
                     ),
@@ -146,7 +148,10 @@ class Settings extends ConsumerWidget {
                         inputFormatters: <TextInputFormatter>[
                           FilteringTextInputFormatter.digitsOnly
                         ],
-                        onChanged: (value) => setRestApiPort(int.parse(value)),
+                        onChanged: (value)                                                                                                                                                                                                                                         {
+                          setRestApiPort(int.parse(value));
+                          init();
+                        },
                       ),
                   error: (err, stack) => Text(err.toString()),
                   loading: () => const CircularProgressIndicator()),

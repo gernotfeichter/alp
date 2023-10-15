@@ -30,20 +30,24 @@ Future init() async{
   );
   AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
     if (!isAllowed) {
-      // This is just a basic example. For real apps, you must show some
-      // friendly dialog box before call the request method.
-      // This is very important to not harm the user experience
+      initNotificationPerm();
+      AwesomeNotifications().setListeners(
+          onActionReceivedMethod:         NotificationEventHandler.onActionReceivedMethod,
+          onNotificationCreatedMethod:    NotificationEventHandler.onNotificationCreatedMethod,
+          onNotificationDisplayedMethod:  NotificationEventHandler.onNotificationDisplayedMethod,
+          onDismissActionReceivedMethod:  NotificationEventHandler.onDismissActionReceivedMethod
+      );
+    }
+  });
+}
+
+void initNotificationPerm() {
+  AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+    if (!isAllowed) {
       AwesomeNotifications().requestPermissionToSendNotifications();
     }
   });
-  AwesomeNotifications().setListeners(
-      onActionReceivedMethod:         NotificationEventHandler.onActionReceivedMethod,
-      onNotificationCreatedMethod:    NotificationEventHandler.onNotificationCreatedMethod,
-      onNotificationDisplayedMethod:  NotificationEventHandler.onNotificationDisplayedMethod,
-      onDismissActionReceivedMethod:  NotificationEventHandler.onDismissActionReceivedMethod
-  );
 }
-
 
 int createNotificationAuthRequest({timeoutSeconds = 60, title}) {
   log.info("createNotification called: $title");
