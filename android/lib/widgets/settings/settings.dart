@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:settings_ui/settings_ui.dart';
 
+import '../../init/init.dart';
+
 final keyProvider = FutureProvider<String>((ref) async {
   return getKey();
 });
@@ -67,6 +69,7 @@ class Settings extends ConsumerWidget {
                         onChanged: (value) {
                           setKey(value);
                           ref.invalidate(keyProvider);
+                          init();
                         },
                       ),
                     ),
@@ -146,7 +149,10 @@ class Settings extends ConsumerWidget {
                         inputFormatters: <TextInputFormatter>[
                           FilteringTextInputFormatter.digitsOnly
                         ],
-                        onChanged: (value) => setRestApiPort(int.parse(value)),
+                        onChanged: (value) {
+                          setRestApiPort(int.parse(value));
+                          init();
+                        },
                       ),
                   error: (err, stack) => Text(err.toString()),
                   loading: () => const CircularProgressIndicator()),
