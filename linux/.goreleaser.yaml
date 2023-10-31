@@ -34,6 +34,198 @@ changelog:
       - '^docs:'
       - '^test:'
 
+nix:
+  - #
+    # Name of the recipe
+    #
+    # Default: ProjectName
+    # Templates: allowed
+    name: alp
+
+    # IDs of the archives to use.
+    # Empty means all IDs.
+    # ids:
+      # - foo
+      # - bar
+
+    # GOAMD64 to specify which amd64 version to use if there are multiple
+    # versions from the build section.
+    #
+    # Default: v1
+    goamd64: v1
+
+    # URL which is determined by the given Token (github, gitlab or gitea).
+    #
+    # Default depends on the client.
+    # Templates: allowed
+    # Example: https://github.com/gernotfeichter/alp/releases/download/1.0.7/alp_Linux_x86_64.tar.gz
+    #url_template: "https://github.com/gernotfeichter/alp/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+
+    # Git author used to commit to the repository.
+    commit_author:
+      name: goreleaserbot
+      email: bot@goreleaser.com
+
+    # The project name and current git tag are used in the format string.
+    #
+    # Templates: allowed
+    commit_msg_template: "chore(release): linux {{ .Tag }}"
+
+    # Path for the file inside the repository.
+    #
+    # Default: pkgs/<name>/default.nix
+    # Templates: allowed
+    #path: pkgs/foo.nix
+
+    # Your app's homepage.
+    #
+    # Templates: allowed
+    homepage: "https://github.com/gernotfeichter/alp"
+
+    # Your app's description.
+    #
+    # Templates: allowed
+    description: >-
+      alp - android-linux-pam
+
+      Alp is a convenient - yet secure (DISCLAIMER: still your risk!) - authentication method that lets you use your android device as a key for your Linux machine.
+
+      The idea of alp is, instead of typing a password on the Linux machine, the user only clicks a button on an android device to confirm an authentication/authorisation request.
+
+    # License name.
+    license: "GPLv2"
+
+    # Setting this will prevent goreleaser to actually try to commit the updated
+    # package - instead, it will be stored on the dist folder only,
+    # leaving the responsibility of publishing it to the user.
+    #
+    # If set to auto, the release will not be uploaded to the repository
+    # in case there is an indicator for prerelease in the tag e.g. v1.0.0-rc1
+    #
+    # Templates: allowed
+    skip_upload: true  # TODO: Gernot
+
+    # Runtime dependencies of the package.
+    #
+    # Since: v1.20.
+    # dependencies:
+    # - zsh
+    # - chromium
+    # - name: bash
+    #   os: linux
+    # - name: fish
+    #   os: darwin
+
+    # Custom install script.
+    #
+    # Default: 'mkdir -p $out/bin; cp -vr $binary $out/bin/$binary', and
+    #   `makeWrapper` if `dependencies` were provided.
+    # Templates: allowed
+    install: |
+      mkdir -p $out/bin
+      chmod 4755 $binary
+      cp -vr $binary $out/bin/$binary
+
+    # Custom additional install instructions.
+    # This has the advantage of preventing you to rewrite the `install` script
+    # if the defaults work for you.
+    #
+    # Since: v1.20
+    # Templates: allowed
+    # extra_install: |
+      # installManPage ./manpages/foo.1.gz
+
+    # Custom post_install script.
+    # Could be used to do any additional work after the "install" script
+    #
+    # Templates: allowed
+    # post_install: |
+      # installShellCompletion ./completions/*
+
+    # Repository to push the generated files to.
+    repository:
+      # Repository owner.
+      #
+      # Templates: allowed
+      owner: gernotfeichter
+
+      # Repository name.
+      #
+      # Templates: allowed
+      name: alp
+
+      # Optionally a branch can be provided.
+      #
+      # Default: default repository branch
+      # Templates: allowed
+      branch: test/nixos  # TODO: Gernot
+
+      # Optionally a token can be provided, if it differs from the token
+      # provided to GoReleaser
+      # Templates: allowed
+      #token: "{{ .Env.GITHUB_PERSONAL_AUTH_TOKEN }}"
+
+      # Sets up pull request creation instead of just pushing to the given branch.
+      # Make sure the 'branch' property is different from base before enabling
+      # it.
+      #
+      # Since: v1.17
+      pull_request:
+        # Whether to enable it or not.
+        enabled: false # TODO: Gernot
+
+        # Whether to open the PR as a draft or not.
+        #
+        # Since: v1.19
+        draft: true
+
+        # If the pull request template has checkboxes, enabling this will
+        # check all of them.
+        #
+        # Since: v1.20 (pro).
+        # This feature is only available in GoReleaser Pro.
+        #check_boxex: true
+
+        # Base can also be another repository, in which case the owner and name
+        # above will be used as HEAD, allowing cross-repository pull requests.
+        #
+        # Since: v1.19
+        #base:
+        #  owner: goreleaser
+        #  name: my-repo
+        #  branch: main
+
+      # Clone, create the file, commit and push, to a regular Git repository.
+      #
+      # Notice that this will only have any effect if the given URL is not
+      # empty.
+      #
+      # Since: v1.18
+      #git:
+        # The Git URL to push.
+        #
+        # Templates: allowed
+        #url: 'ssh://git@myserver.com:repo.git'
+
+        # The SSH private key that should be used to commit to the Git
+        # repository.
+        # This can either be a path or the key contents.
+        #
+        # IMPORTANT: the key must not be password-protected.
+        #
+        # WARNING: do not expose your private key in the configuration file!
+        #
+        # Templates: allowed
+        #private_key: '{{ .Env.PRIVATE_KEY_PATH }}'
+
+        # The value to be passed to `GIT_SSH_COMMAND`.
+        # This is mainly used to specify the SSH private key used to pull/push
+        # to the Git URL.
+        #
+        # Default: 'ssh -i {{ .KeyPath }} -o StrictHostKeyChecking=accept-new -F /dev/null'
+        # Templates: allowed
+        #ssh_command: 'ssh -i {{ .Env.KEY }} -o SomeOption=yes'
+
 # The lines beneath this are called `modelines`. See `:help modeline`
 # Feel free to remove those if you don't want/use them.
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
