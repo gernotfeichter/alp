@@ -1,4 +1,4 @@
-//go:generate go run github.com/ogen-go/ogen/cmd/ogen@latest --target api -package api --clean openapi.yaml --convenient-errors on
+//go:generate go run github.com/ogen-go/ogen/cmd/ogen@v0.73.0 --target api -package api --clean openapi.yaml --convenient-errors on
 
 /*
 Copyright © 2023 Gernot Feichter
