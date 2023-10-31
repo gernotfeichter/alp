@@ -30,7 +30,7 @@ git commit -m "chore(release) linux ${new_version}"
 # tag
 git tag "${new_version}"
 
-# release
+# releasee
 goreleaser --clean
 git push
 git push origin "${new_version}"

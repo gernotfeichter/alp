@@ -103,7 +103,7 @@ nix:
     # in case there is an indicator for prerelease in the tag e.g. v1.0.0-rc1
     #
     # Templates: allowed
-    skip_upload: true  # TODO: Gernot
+    skip_upload: false
 
     # Runtime dependencies of the package.
     #
