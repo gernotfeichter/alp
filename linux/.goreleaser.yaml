@@ -52,7 +52,7 @@ nix:
     # versions from the build section.
     #
     # Default: v1
-    goamd64: v1
+    #goamd64: v1
 
     # URL which is determined by the given Token (github, gitlab or gitea).
     #
@@ -152,13 +152,13 @@ nix:
       # Repository name.
       #
       # Templates: allowed
-      name: alp
+      name: nur
 
       # Optionally a branch can be provided.
       #
       # Default: default repository branch
       # Templates: allowed
-      branch: test/nixos  # TODO: Gernot
+      branch: master
 
       # Optionally a token can be provided, if it differs from the token
       # provided to GoReleaser
@@ -170,14 +170,14 @@ nix:
       # it.
       #
       # Since: v1.17
-      pull_request:
+      #pull_request:
         # Whether to enable it or not.
-        enabled: false # TODO: Gernot
+        #enabled: false # TODO: Gernot
 
         # Whether to open the PR as a draft or not.
         #
         # Since: v1.19
-        draft: true
+        #draft: true
 
         # If the pull request template has checkboxes, enabling this will
         # check all of them.
