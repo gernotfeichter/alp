@@ -159,7 +159,7 @@ nix:
       #
       # Default: default repository branch
       # Templates: allowed
-      branch: master
+      branch: 
 
       # Optionally a token can be provided, if it differs from the token
       # provided to GoReleaser
