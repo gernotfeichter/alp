@@ -71,7 +71,7 @@ nix:
     # Templates: allowed
     #
     # Note, this follows: https://github.com/NixOS/nixpkgs/blob/master/CONTRIBUTING.md#commit-conventions
-    commit_msg_template: "{{ .ProjectName }}: init at 1.1.3"
+    commit_msg_template: "{{ .ProjectName }}: init at {{ .Version }}"
 
     # Path for the file inside the repository.
     #
@@ -159,7 +159,7 @@ nix:
       #
       # Default: default repository branch
       # Templates: allowed
-      branch: 
+      branch: "{{ .ProjectName }}-{{ .Version }}"
 
       # Optionally a token can be provided, if it differs from the token
       # provided to GoReleaser
