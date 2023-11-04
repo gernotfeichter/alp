@@ -63,13 +63,15 @@ nix:
 
     # Git author used to commit to the repository.
     commit_author:
-      name: goreleaserbot
-      email: bot@goreleaser.com
+      name: gernotfeichter
+      email: absolutanon@hotmail.com
 
     # The project name and current git tag are used in the format string.
     #
     # Templates: allowed
-    commit_msg_template: "chore(release): linux {{ .Tag }}"
+    #
+    # Note, this follows: https://github.com/NixOS/nixpkgs/blob/master/CONTRIBUTING.md#commit-conventions
+    commit_msg_template: "alp: init at 1.1.3"
 
     # Path for the file inside the repository.
     #
