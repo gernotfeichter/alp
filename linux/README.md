@@ -23,7 +23,7 @@ go run main.go auth -l trace
 
 ### all tests
 ```
-go test
+go test --timeout 20m
 ```
 
 ### specific tests

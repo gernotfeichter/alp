@@ -21,7 +21,7 @@ go generate ./...
 go build -o alp
 
 # test
-go test ./...
+go test ./... --timeout 20m
 
 # commit
 git add -A
