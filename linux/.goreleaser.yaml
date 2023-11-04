@@ -40,7 +40,7 @@ nix:
     #
     # Default: ProjectName
     # Templates: allowed
-    name: alp
+    name: "{{ .ProjectName }}"
 
     # IDs of the archives to use.
     # Empty means all IDs.
@@ -71,13 +71,13 @@ nix:
     # Templates: allowed
     #
     # Note, this follows: https://github.com/NixOS/nixpkgs/blob/master/CONTRIBUTING.md#commit-conventions
-    commit_msg_template: "alp: init at 1.1.3"
+    commit_msg_template: "{{ .ProjectName }}: init at 1.1.3"
 
     # Path for the file inside the repository.
     #
     # Default: pkgs/<name>/default.nix
     # Templates: allowed
-    #path: pkgs/foo.nix
+    path: pkgs/os-specific/linux/{{ .ProjectName }}/default.nix
 
     # Your app's homepage.
     #
@@ -95,7 +95,7 @@ nix:
       The idea of alp is, instead of typing a password on the Linux machine, the user only clicks a button on an android device to confirm an authentication/authorisation request.
 
     # License name.
-    license: "GPLv2"
+    license: "gpl2Only"
 
     # Setting this will prevent goreleaser to actually try to commit the updated
     # package - instead, it will be stored on the dist folder only,
@@ -123,10 +123,9 @@ nix:
     # Default: 'mkdir -p $out/bin; cp -vr $binary $out/bin/$binary', and
     #   `makeWrapper` if `dependencies` were provided.
     # Templates: allowed
-    install: |
-      mkdir -p $out/bin
-      chmod 4755 $binary
-      cp -vr $binary $out/bin/$binary
+    # install: |
+    #   mkdir -p $out/bin
+    #   cp -vr $binary $out/bin/$binary
 
     # Custom additional install instructions.
     # This has the advantage of preventing you to rewrite the `install` script
@@ -154,7 +153,7 @@ nix:
       # Repository name.
       #
       # Templates: allowed
-      name: nur
+      name: nixpkgs
 
       # Optionally a branch can be provided.
       #
