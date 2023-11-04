@@ -112,7 +112,7 @@ Warning: This will overwrite the existing alp config file (if it exists).`,
 		}
 
 		if !patched {
-			log.Warnf("Did patch any of the files %s. This could be because they are already patched. Otherwise, the output above may provide more info!", initArgs.PamConfigFile)
+			log.Warnf("Did no patch any of the files: %s. This could be because they are already patched. Otherwise, the output above may provide more info! On some distributions, e.g. nix-os, this can be safely ignored.", initArgs.PamConfigFile)
 		}
 
 	},
