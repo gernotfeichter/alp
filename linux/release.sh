@@ -33,4 +33,4 @@ git tag "${new_version}"
 # releasee
 goreleaser --clean
 git push
-git push origin "${new_version}"
+
