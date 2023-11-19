@@ -98,6 +98,20 @@ In a terminal, perform the following steps:
    ''
    ));
    ```
+3. Initialize alp
+   
+   ⚠ Replace the `<IP>` parameter below with the IP:Port values from your android device in below code snippet.
+   Hint: You find these in the settings screen of the [android app - alp](#android)!
+   ```
+   sudo alp init -t <IP>:7654
+   ```
+   It is recomended that you use alp in a local wifi network and to reserve a dhcp lease in your router,
+   such that you always get assigned a fixed IP address.
+   Or, if your android phone is your hotspot, simply run:
+   ```
+   sudo alp init
+   ```
+4. Now proceed with the [android](#android) part!
 
 ## android
 1. Download the [android app - alp](https://play.google.com/store/apps/details?id=io.github.gernotfeichter.alp).
