@@ -61,7 +61,44 @@ In a terminal, perform the following steps:
    ```
    sudo alp init
    ```
-4. Now proceed with the android part!
+4. Now proceed with the [android](#android) part!
+
+## nixos
+
+1. Install the alp package as system package inside the `/etc/nixos/configuration.nix` file:
+   ```
+   environment.systemPackages = with pkgs; [
+     alp
+   ];
+   ```
+2. Also add this to /etc/nixos/configuration.nix and honor the code comments:
+   ```
+   # replace yourusername by your user and optionally add additional users you wanto to use alp for:
+   security.sudo.extraRules = [ {
+      users = [ "yourusername" ];
+      commands = [ {
+         command = "{pkgs.alp}/bin/alp";
+         options = [ "SETENV" "NOPASSWD" ];
+      } ];
+   }];
+
+   # now choose the pam files you want to modify, e.g. If you like to use alp for sudo and login (as used by lightdm):
+   security.pam.services.sudo.text = pkgs.lib.mkDefault( pkgs.lib.mkBefore(
+   ''
+   # https://github.com/gernotfeichter/alp
+   auth    sufficient      pam_exec.so stdout  ${pkgs.sudo}/bin/sudo ${pkgs.alp}/bin/alp auth
+
+   ''
+   ));
+   security.pam.services.login.text = pkgs.lib.mkDefault( pkgs.lib.mkBefore(
+   ''
+   # https://github.com/gernotfeichter/alp
+   auth    sufficient      pam_exec.so stdout  ${pkgs.sudo}/bin/sudo ${pkgs.alp}/bin/alp auth
+
+   ''
+   ));
+   ```
+
 ## android
 1. Download the [android app - alp](https://play.google.com/store/apps/details?id=io.github.gernotfeichter.alp).
 2. In the settings of the android app, enter the key that was randomly generated
