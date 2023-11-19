@@ -94,6 +94,34 @@ nix:
 
       The idea of alp is, instead of typing a password on the Linux machine, the user only clicks a button on an android device to confirm an authentication/authorisation request.
 
+      To make proper use of this, add this to /etc/nixos/configuration.nix:
+      ```
+      # replace yourusername by your user and optionally add additional users you wanto to use alp for:
+      security.sudo.extraRules = [ {
+          users = [ "yourusername" ];
+          commands = [ {
+            command = "{pkgs.alp}/bin/alp";
+            options = [ "SETENV" "NOPASSWD" ];
+          } ];
+      }];
+
+      # now choose the pam files you want to modify, e.g. If you like to use alp for sudo and login (as used by lightdm):
+      security.pam.services.sudo.text = pkgs.lib.mkDefault( pkgs.lib.mkBefore(
+        ''
+        # https://github.com/gernotfeichter/alp
+        auth    sufficient      pam_exec.so stdout  ${pkgs.sudo}/bin/sudo ${pkgs.alp}/bin/alp auth
+      
+        ''
+      ));
+
+      security.pam.services.login.text = pkgs.lib.mkDefault( pkgs.lib.mkBefore(
+        ''
+        # https://github.com/gernotfeichter/alp
+        auth    sufficient      pam_exec.so stdout  ${pkgs.sudo}/bin/sudo ${pkgs.alp}/bin/alp auth
+      
+        ''
+      ));
+      ```
     # License name.
     license: "gpl2Only"
 
