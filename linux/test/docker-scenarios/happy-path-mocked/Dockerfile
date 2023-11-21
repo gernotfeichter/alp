@@ -1,6 +1,6 @@
 # This Dockerfile is only used for testing
 
-FROM golang:1.20
+FROM golang:1.21
 
 # Set destination for COPY
 WORKDIR /ws

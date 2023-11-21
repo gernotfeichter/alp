@@ -17,11 +17,11 @@ sed -i "s/download\/[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*/download\/$new_vers
 
 # build
 go mod tidy
-go generate ./...
+go generate
 go build -o alp
 
 # test
-go test ./... --timeout 20m
+go test --timeout "20m"
 
 # commit
 git add -A
