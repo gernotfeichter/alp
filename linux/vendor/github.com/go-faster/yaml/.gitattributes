@@ -1,2 +1,0 @@
-# Never modify line endings of corpus.
-testdata/fuzz/** text eol=lf

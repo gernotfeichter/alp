@@ -1,9 +1,0 @@
-{
-    "type": "object",
-    "properties": {
-        "primary": {
-            "x-ogen-name": "Foo*^*$",
-            "type": "string"
-        }
-    }
-}

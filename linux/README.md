@@ -2,9 +2,10 @@
 
 ## code generation
 This project will only compile if all source code is available.
-The following procedure must be done once on a developer machine before running other go commands:
+Note: Since version 1.1.12, the generated code was also added to git, due to not easily fixable problems with releasing for nixos,
+so the following step is optional, or only required when the openapi specs change:
 ```
-go generate ./...
+go generate
 ```
 
 ## alp init
