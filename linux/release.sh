@@ -26,11 +26,10 @@ go test --timeout "20m"
 # commit
 git add -A
 git commit -m "chore(release) linux ${new_version}"
+git push
 
 # tag
 git tag "${new_version}"
 
 # releasee
 goreleaser --clean
-git push
-
