@@ -14,6 +14,7 @@ new_version="$1"
 
 # update version in main user facing (parent) README.md
 sed -i "s/download\/[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*/download\/$new_version/" "../README.md"
+echo -n "$new_version" > cmd/version.txt
 
 # build
 go mod tidy
