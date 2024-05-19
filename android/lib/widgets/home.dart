@@ -11,6 +11,7 @@ class Home extends ConsumerWidget {
 
     return MaterialApp(
       initialRoute: "/home",
+      theme: ThemeData.dark(),
       routes: {
         "/home": (context) => const MyScaffold(Settings()),
         "/settings": (context) => const MyScaffold(Settings()),
