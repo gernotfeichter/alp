@@ -1,6 +1,7 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="io.github.gernotfeichter.alp">
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="android"
+        android:label="alp"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
