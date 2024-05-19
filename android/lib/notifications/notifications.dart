@@ -96,7 +96,7 @@ void _reconcileNotification({int id = 0, int progress = 0, title}) async {
           title: title + " ($id)",
           channelKey: authRequestsNotificationChannelKey,
           notificationLayout: NotificationLayout.ProgressBar,
-          progress: progress,
+          progress: progress.toDouble(),
           category: NotificationCategory.Alarm,
           criticalAlert: true,
           wakeUpScreen: true,

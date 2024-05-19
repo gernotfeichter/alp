@@ -1,5 +1,5 @@
 name: alp
-description: android part of alp - android-linux-pam
+description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -16,11 +16,10 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.9+9
+version: 1.0.10+10
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
-  flutter: ">=3.0.0"
+  sdk: '>=3.3.2 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -35,20 +34,19 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-  awesome_notifications: ^0.7.4+1
+  cupertino_icons: ^1.0.6
+  awesome_notifications: ^0.9.3+1
   logging: ^1.1.1
   alfred: ^1.1.0+2
-  flutter_secure_storage: ^8.0.0
+  flutter_secure_storage: ^9.2.1
   circular_buffer: ^0.11.0
   pointycastle: ^3.7.3
-  flutter_background_service: ^2.4.6
-  flutter_background_service_android: ^3.0.3
+  flutter_background_service: ^5.0.5
+  flutter_background_service_android: ^6.2.2
   settings_ui: ^2.0.2
   flutter_riverpod: ^2.3.6
-  network_info_plus: ^4.0.1
+  network_info_plus: ^5.0.3
   crypto: ^3.0.3
-
 
 dev_dependencies:
   flutter_test:
@@ -59,7 +57,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
+  flutter_lints: ^4.0.0
 
   # parses flutter_launcher_icons.yaml
   flutter_launcher_icons: "^0.13.1"
