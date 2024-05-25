@@ -24,7 +24,13 @@ flutter create --platforms android --platforms web --template app --org io.githu
 ## release
 
 1. bump the version in [pubspec.yaml](pubspec.yaml)
-```
-flutter build appbundle
-```
-Then upload build/app/outputs/bundle/release/app-release.aab to https://play.google.com/console.
+    ```
+    flutter build appbundle
+    ```
+2. Test install
+    ```
+    bundletool build-apks --bundle=build/app/outputs/bundle/release/app-release.aab --output=build/app/outputs/bundle/release/app-release.apks
+    bundletool install-apks --apks=build/app/outputs/bundle/release/app-release.apks
+    ```
+
+3. Upload build/app/outputs/bundle/release/app-release.aab to https://play.google.com/console
