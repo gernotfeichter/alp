@@ -21,7 +21,10 @@ void main() async {
         // auto start service
         autoStart: true,
         autoStartOnBoot: true,
-        isForegroundMode: false,
+        isForegroundMode: true,
+        foregroundServiceNotificationId: 7654,
+        initialNotificationTitle: "Alp Foreground Service running",
+        initialNotificationContent: "Android requires to show this for permanently running services, but you may dismiss it!",
       ),
       iosConfiguration: IosConfiguration()
   );
