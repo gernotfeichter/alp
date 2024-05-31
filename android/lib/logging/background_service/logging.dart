@@ -15,13 +15,9 @@ Stream<Map<String, dynamic>?>? sendLogsToUi;
 Future init(ServiceInstance service) async {
   sendLogsToUi = service.on("sendLogsToUi");
   sendLogsToUi!.listen((event) {
-    print("Gernot log received: $event");
     if (event!["logRecord"] != null) {
       LogRecord logRecord = event["logRecord"];
       addLogToAggregator(logRecord);
-    }
-    else {
-      print("Gernot event did not contain logRecord");
     }
   });
   Logger.root.level = Level.INFO;

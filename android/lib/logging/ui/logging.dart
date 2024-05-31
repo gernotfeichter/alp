@@ -13,13 +13,9 @@ Future init(FlutterBackgroundService service) async {
     // and thereby to the ui as well
     sendLogsToUi = service.on("sendLogsToUi");
     sendLogsToUi!.listen((event) {
-      print("Gernot log received: $event");
       if (event!["logRecord"] != null) {
         LogRecord logRecord = Jsonify.fromJson(event["logRecord"]);
         addLogToAggregator(logRecord);
-      }
-      else {
-        print("Gernot event did not contain logRecord");
       }
     });
   // logs that come from the ui
