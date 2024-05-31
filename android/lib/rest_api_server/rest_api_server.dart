@@ -5,7 +5,7 @@ import 'dart:isolate';
 import 'package:alfred/alfred.dart';
 import '../crypt/aes_gcm_256_pbkdf2_string_encryption.dart';
 import '../crypt/md5_checksum.dart';
-import '../logging/logging.dart';
+import '../logging/background_service/logging.dart';
 import '../notifications/notifications.dart';
 import '../secure_storage/secure_storage.dart';
 import '../crypt/decryption_error.dart';

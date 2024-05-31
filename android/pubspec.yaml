@@ -41,8 +41,7 @@ dependencies:
   flutter_secure_storage: ^9.2.1
   circular_buffer: ^0.11.0
   pointycastle: ^3.7.3
-  flutter_background_service: ^5.0.5
-  flutter_background_service_android: ^6.2.2
+  flutter_background_service: ^5.0.5  # https://github.com/ekasetiawans/flutter_background_service/issues/375
   settings_ui: ^2.0.2
   flutter_riverpod: ^2.3.6
   network_info_plus: ^5.0.3

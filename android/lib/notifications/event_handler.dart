@@ -2,7 +2,7 @@ import 'dart:isolate';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 
-import '../logging/logging.dart';
+import '../logging/background_service/logging.dart';
 import 'notifications.dart';
 
 class NotificationEventHandler {

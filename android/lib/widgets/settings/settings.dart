@@ -1,3 +1,4 @@
+import 'package:alp/main.dart';
 import 'package:alp/secure_storage/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:settings_ui/settings_ui.dart';
 
-import '../../init/init.dart';
 
 final keyProvider = FutureProvider<String>((ref) async {
   return getKey();
@@ -69,7 +69,7 @@ class Settings extends ConsumerWidget {
                         onChanged: (value) {
                           setKey(value);
                           ref.invalidate(keyProvider);
-                          init();
+                          restartService();
                         },
                       ),
                     ),
@@ -151,7 +151,7 @@ class Settings extends ConsumerWidget {
                         ],
                         onChanged: (value) {
                           setRestApiPort(int.parse(value));
-                          init();
+                          restartService();
                         },
                       ),
                   error: (err, stack) => Text(err.toString()),

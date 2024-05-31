@@ -1,8 +1,12 @@
+import 'package:alp/init/ui/init.dart';
 import 'package:alp/widgets/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'init/init.dart' as init;
+import 'logging/background_service/logging.dart' as logging;
+import 'init/background_service/init.dart' as init;
+
+final service = FlutterBackgroundService();
 
 void main() async {
   runApp(const ProviderScope(child: Home()));
@@ -13,7 +17,8 @@ void main() async {
   // https://pub.dev/packages/flutter_background_service
   // It's highly recommended to call this method in main() method to ensure the
   // callback handler updated.
-  final service = FlutterBackgroundService();
+  await initUi(service);
+  service.invoke("stop"); // cleanup potentially old one still running
   await service.configure(
       androidConfiguration: AndroidConfiguration(
         // this will be executed when app is in foreground or background in separated isolate
@@ -28,10 +33,19 @@ void main() async {
       ),
       iosConfiguration: IosConfiguration()
   );
+  logging.sendLogsToUi = service.on('sendLogsToUi');
   await service.startService();
 }
 
 @pragma('vm:entry-point')
 Future<void> backgroundService(ServiceInstance service) async {
-  await init.init();
+  service.on("stop").listen((event) {
+    service.stopSelf();
+  });
+  await init.init(service);
+}
+
+void restartService() {
+  service.invoke("stop");
+  service.startService();
 }

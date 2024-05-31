@@ -4,7 +4,7 @@ import 'dart:isolate';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:circular_buffer/circular_buffer.dart';
 import 'package:flutter/material.dart';
-import '../logging/logging.dart';
+import '../logging/background_service/logging.dart';
 import '../secure_storage/secure_storage.dart';
 import 'event_handler.dart';
 
@@ -15,7 +15,18 @@ const authRequestsNotificationStartId = 2;
 // That means that one device can theoretically handle up to five concurrent auth requests
 final authRequestNotificationStateHistory = CircularBuffer<Map<int,bool>>(5)..add({authRequestsNotificationStartId: false});
 
-Future init() async{
+void initForUi() {
+  AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+    if (!isAllowed) {
+      // This is just a basic example. For real apps, you must show some
+      // friendly dialog box before call the request method.
+      // This is very important to not harm the user experience
+      AwesomeNotifications().requestPermissionToSendNotifications();
+    }
+  });
+}
+
+Future initForBackgroundService() async{
   AwesomeNotifications().initialize(
       'resource://drawable/ic_bg_service_small',
       [
@@ -28,14 +39,6 @@ Future init() async{
         )
       ]
   );
-  AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-    if (!isAllowed) {
-      // This is just a basic example. For real apps, you must show some
-      // friendly dialog box before call the request method.
-      // This is very important to not harm the user experience
-      AwesomeNotifications().requestPermissionToSendNotifications();
-    }
-  });
   AwesomeNotifications().setListeners(
       onActionReceivedMethod:         NotificationEventHandler.onActionReceivedMethod,
       onNotificationCreatedMethod:    NotificationEventHandler.onNotificationCreatedMethod,
