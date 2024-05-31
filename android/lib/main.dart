@@ -5,6 +5,7 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'logging/background_service/logging.dart' as logging;
 import 'init/background_service/init.dart' as init;
+import 'logging/ui/logging.dart';
 
 final service = FlutterBackgroundService();
 
@@ -45,7 +46,12 @@ Future<void> backgroundService(ServiceInstance service) async {
   await init.init(service);
 }
 
-void restartService() {
+Future<void> restartService() async {
+  log.info("restarting service");
   service.invoke("stop");
+  if (! await service.isRunning()) {
+    log.severe("after stopping the service, it is still running");
+  }
   service.startService();
+  log.info("restarted service");
 }

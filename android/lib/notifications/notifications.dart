@@ -15,13 +15,13 @@ const authRequestsNotificationStartId = 2;
 // That means that one device can theoretically handle up to five concurrent auth requests
 final authRequestNotificationStateHistory = CircularBuffer<Map<int,bool>>(5)..add({authRequestsNotificationStartId: false});
 
-void initForUi() {
-  AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+Future<void> initForUi() async {
+  await AwesomeNotifications().isNotificationAllowed().then((isAllowed) async {
     if (!isAllowed) {
       // This is just a basic example. For real apps, you must show some
       // friendly dialog box before call the request method.
       // This is very important to not harm the user experience
-      AwesomeNotifications().requestPermissionToSendNotifications();
+      await AwesomeNotifications().requestPermissionToSendNotifications();
     }
   });
 }

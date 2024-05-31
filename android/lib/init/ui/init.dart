@@ -9,6 +9,6 @@ Future<void> initUi(FlutterBackgroundService service) async {
   await logging.init(service);
   log.info("initializing ui");
   WidgetsFlutterBinding.ensureInitialized();
-  notifications.initForUi();
+  await notifications.initForUi();
   log.info("initialized ui");
 }
