@@ -20,6 +20,7 @@ import (
 	"context"
 	"crypto/md5"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"os/signal"
@@ -47,6 +48,7 @@ type AuthArgs struct {
 	MockSuccess          bool
 	Targets              []string
 	Key                  string
+	RetryOnEOFInterval   time.Duration
 }
 
 const defaultGatewayConst = "default-gateway"
@@ -91,6 +93,8 @@ func init() {
 	authCmd.Flags().StringP("key", "k", "", "key aka password used by both linux (client) and android (server) for encrypting communication. utf-8 string. "+
 		"Recommendation: do not override this param. Use the alp init command instead, which writes the key to /etc/alp/alp.yaml and "+
 		"takes precedence over the empty default specified for this command line arg.")
+	authCmd.Flags().Duration("retryOnEOFInterval", time.Second*3,
+		`If an EOF error occurs when talking to the android side, retry after the specified amount of time.`)
 
 	viper.BindPFlags(authCmd.Flags())
 }
@@ -157,11 +161,19 @@ func authRequest(authArgs AuthArgs) {
 			log.Fatalf("Error encrypting message: %s", err)
 		}
 		log.Info("sending auth request to connected device")
-		res, err := client.GetAuthenticationStatus(ctx, &api.AuthRequest{
-			EncryptedMessage: api.EncryptedMessage(encryptedMessage),
-		})
+		var res api.GetAuthenticationStatusRes
+		err = nil
+		eofError := errors.New("EOF")
+		currentEOFRetries := 0
+		for currentEOFRetries == 0 || errors.Is(err, eofError) {
+			res, err = client.GetAuthenticationStatus(ctx, &api.AuthRequest{
+				EncryptedMessage: api.EncryptedMessage(encryptedMessage),
+			})
+			currentEOFRetries++
+			time.Sleep(authArgs.RetryOnEOFInterval)
+		}
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalf("error when performing auth request: %s", err)
 		}
 		switch r := res.(type) {
 		case *api.AuthResponse:
