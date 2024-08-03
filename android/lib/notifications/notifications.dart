@@ -21,7 +21,18 @@ Future<void> initForUi() async {
       // This is just a basic example. For real apps, you must show some
       // friendly dialog box before call the request method.
       // This is very important to not harm the user experience
-      await AwesomeNotifications().requestPermissionToSendNotifications();
+      await AwesomeNotifications().requestPermissionToSendNotifications(
+          permissions: [
+            NotificationPermission.Alert,
+            NotificationPermission.Sound,
+            NotificationPermission.Badge,
+            NotificationPermission.Vibration,
+            NotificationPermission.Light,
+            NotificationPermission.FullScreenIntent,
+            NotificationPermission.CriticalAlert,
+            NotificationPermission.Provisional,
+          ]
+      );
     }
   });
 }
