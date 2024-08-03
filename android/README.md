@@ -29,10 +29,12 @@ flutter create --platforms android --platforms web --template app --org io.githu
     ```
 2. Test install
     ```
+    rm build/app/outputs/bundle/release/app-release.apks || true
     bundletool build-apks --bundle=build/app/outputs/bundle/release/app-release.aab --output=build/app/outputs/bundle/release/app-release.apks
     adb uninstall io.github.gernotfeichter.alp
     bundletool install-apks --apks=build/app/outputs/bundle/release/app-release.apks
     ```
 
 3. Upload build/app/outputs/bundle/release/app-release.aab to https://play.google.com/console
-4. `git push`
+4. `g commit -a -m "chore(android): release <version>"`
+5. `git push`
