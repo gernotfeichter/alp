@@ -9,6 +9,7 @@ import '../logging/background_service/logging.dart';
 import '../notifications/notifications.dart';
 import '../secure_storage/secure_storage.dart';
 import '../crypt/decryption_error.dart';
+import '../../notifications/notifications.dart' as notifications;
 
 Future init() async {
   // Atm. of writing I could not find a lib for server dart codegen from
@@ -53,6 +54,7 @@ Future init() async {
     }
 
     // notification
+    await notifications.initForBackgroundService();
     var notificationTimeoutSeconds = requestExpirationTime.difference(DateTime.now()).inSeconds;
     if (notificationTimeoutSeconds < 0) {
       res.statusCode = HttpStatus.badRequest;

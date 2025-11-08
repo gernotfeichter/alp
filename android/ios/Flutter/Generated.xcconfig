@@ -1,11 +1,11 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=/nix/store/wiwqsx1cl7p5hqnxjdfj83fxiwav6xbj-flutter-wrapped-3.19.4-sdk-links
-FLUTTER_APPLICATION_PATH=/home/anon/workspace/alp/android
+FLUTTER_ROOT=/nix/store/6g1nphgjz0qdvkd975lxx870b5yfilal-flutter-wrapped-3.27.1-sdk-links
+FLUTTER_APPLICATION_PATH=/home/nix/git/alp/android
 COCOAPODS_PARALLEL_CODE_SIGN=true
 FLUTTER_TARGET=lib/main.dart
 FLUTTER_BUILD_DIR=build
-FLUTTER_BUILD_NAME=1.0.13
-FLUTTER_BUILD_NUMBER=13
+FLUTTER_BUILD_NAME=1.0.19
+FLUTTER_BUILD_NUMBER=19
 EXCLUDED_ARCHS[sdk=iphonesimulator*]=i386
 EXCLUDED_ARCHS[sdk=iphoneos*]=armv7
 DART_OBFUSCATION=false
