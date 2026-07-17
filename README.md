@@ -133,7 +133,7 @@ Therfore, logging in will fail (even if the alp auth request is successful!).
 I suggest to either
 - switch to full disk encryption, which was shown to outperform home drive encryption anyway and has even less of an atack surface.
 - just ignore the first failed attempt, then type the password - for the first login only.
-  Subsequent lock-screen unlocking should work via alp!
+  Subsequent sddm lock-screen unlocking should work via alp!
   NOTE: I noticed some login managers are not very versed in displaying multi-lined output that alp produces.
   In some cases you may hardly see the password field. Just try typing the password, then enter.
   You may want to manually deny the first auth request or let it time out.
@@ -160,6 +160,9 @@ Note: any app/script that is running can do so as well!
 I hope this makes my point clear why I think having a password for something that can be read by "almost everything" AFTER entering the password, makes little sense outside of a single-user environment when using full disk encryption.
 
 If you know more, please raise an issue!
+
+## performance
+While authentication normally terminates in a few seconds, it still feels like it takes longer than necessary. My intuition is that the cryptography is to blame, but i need to test first if this is even true and potentially release a future version that allows lowering the hash cycles.
 
 # authentication flow
 
@@ -217,3 +220,7 @@ You may enable this mode in the android app's settings if you feel you want to t
 
 # license
 [GNU GENERAL PUBLIC LICENSE - Version 2](LICENSE)
+
+# alternatives
+[alpdsa](https://github.com/migdal-or/alpdsa)
+[howdy](https://github.com/boltgolt/howdy)
