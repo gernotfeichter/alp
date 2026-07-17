@@ -222,5 +222,5 @@ You may enable this mode in the android app's settings if you feel you want to t
 [GNU GENERAL PUBLIC LICENSE - Version 2](LICENSE)
 
 # alternatives
-[alpdsa](https://github.com/migdal-or/alpdsa)
-[howdy](https://github.com/boltgolt/howdy)
+- [alpdsa](https://github.com/migdal-or/alpdsa)
+- [howdy](https://github.com/boltgolt/howdy)
