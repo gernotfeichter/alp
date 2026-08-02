@@ -49,8 +49,9 @@ type AuthArgs struct {
 	Targets              []string
 	Key                  string
 	RetryOnEOFInterval   time.Duration
+	Pbkdf2Iterations     int
 }
-
+	
 const defaultGatewayConst = "default-gateway"
 
 // authCmd represents the auth command
@@ -95,6 +96,10 @@ func init() {
 		"takes precedence over the empty default specified for this command line arg.")
 	authCmd.Flags().Duration("retryOnEOFInterval", time.Second*3,
 		`If an EOF error occurs when talking to the android side, retry after the specified amount of time.`)
+	authCmd.Flags().Int("pbkdf2Iterations", 15000,
+		"Number of PBKDF2 iterations to use for encryption/decryption.
+		Higher value = better security, lower value = better performance.
+		If you change this, you must also change it on android side.")
 
 	viper.BindPFlags(authCmd.Flags())
 }
@@ -155,7 +160,8 @@ func authRequest(authArgs AuthArgs) {
 		hostname, _ := os.Hostname()
 		encryptedMessage := crypt.AesGcmPbkdf2EncryptToBase64(
 			authArgs.Key,
-			fmt.Sprintf(`{"host":"%s","requestExpirationTime":"%s"}`, hostname, requestExpirationTimeAndroidString))
+			fmt.Sprintf(`{"host":"%s","requestExpirationTime":"%s"}`, hostname, requestExpirationTimeAndroidString),
+			authArgs.Pbkdf2Iterations)
 		requestMessageSignature := fmt.Sprintf("%x", md5.Sum([]byte(encryptedMessage)))
 		if err != nil {
 			log.Fatalf("Error encrypting message: %s", err)
@@ -178,7 +184,7 @@ func authRequest(authArgs AuthArgs) {
 		switch r := res.(type) {
 		case *api.AuthResponse:
 			log.Tracef("200 - Success authorized=%s. Note that checking the auth flag is still pending before being fully authorized.", r)
-			decryptedMessage := crypt.AesGcmPbkdf2DecryptFromBase64(authArgs.Key, string(r.EncryptedMessage))
+			decryptedMessage := crypt.AesGcmPbkdf2DecryptFromBase64(authArgs.Key, string(r.EncryptedMessage), authArgs.Pbkdf2Iterations)
 			var responseJson map[string]any
 			err := json.Unmarshal([]byte(decryptedMessage), &responseJson)
 			if err != nil {

@@ -29,9 +29,9 @@ func TestAesGcmPbkdf2EncryptToBase64(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			encrypted := AesGcmPbkdf2EncryptToBase64(tt.args.passphrase, tt.args.data)
+			encrypted := AesGcmPbkdf2EncryptToBase64(tt.args.passphrase, tt.args.data, 15000)
 			log.Infof("encrypted=%s", encrypted)
-			decrypted := AesGcmPbkdf2DecryptFromBase64(tt.args.passphrase, encrypted)
+			decrypted := AesGcmPbkdf2DecryptFromBase64(tt.args.passphrase, encrypted, 15000)
 			assert.Equal(t, tt.args.data, decrypted)
 		})
 	}

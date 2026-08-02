@@ -19,6 +19,10 @@ final restApiPortProvider = FutureProvider<int>((ref) async {
   return getRestApiPort();
 });
 
+final pbkdf2IterationsProvider = FutureProvider<int>((ref) async {
+  return getPbkdf2Iterations();
+});
+
 final wifiIpV4Provider = FutureProvider<String?>((ref) async {
   final info = NetworkInfo();
   return info.getWifiIP();
@@ -46,6 +50,7 @@ class Settings extends ConsumerWidget {
     bool obscureTextWatched = ref.watch(obscureTextProvider);
     AsyncValue<bool> lazyAuth = ref.watch(lazyAuthProvider);
     AsyncValue<int> restApiPort = ref.watch(restApiPortProvider);
+    AsyncValue<int> pbkdf2IterationsProviderWatched = ref.watch(pbkdf2IterationsProvider);
     AsyncValue<String?> ipv4 = ref.watch(wifiIpV4Provider);
     AsyncValue<String?> ipv6 = ref.watch(wifiIpV6Provider);
 
@@ -133,6 +138,40 @@ class Settings extends ConsumerWidget {
                 onToggle: (bool value) {  },
               )
             ),
+          ],
+        ),
+        SettingsSection(
+          title: const Text('Crypto Settings'),
+          tiles: <SettingsTile>[
+            pbkdf2IterationsProviderWatched.when(
+                data: (value) => SettingsTile.navigation(
+                      leading: const Icon(Icons.numbers),
+                      title: const Text('PBKDF2 Iterations'),
+                      description: const Text('Warning: Changing this requires changing it on the Linux client side (/etc/alp/alp.yaml) to match.'),
+                      value: TextFormField(
+                        initialValue: value.toString(),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            signed: false, decimal: false),
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        onChanged: (val) {
+                          if (val.isNotEmpty) {
+                            setPbkdf2Iterations(int.parse(val));
+                            restartService();
+                          }
+                        },
+                      ),
+                    ),
+                error: (err, stack) => SettingsTile.navigation(
+                      leading: const Icon(Icons.numbers),
+                      title: const Text('PBKDF2 Iterations'),
+                      value: Text(err.toString()),
+                      trailing: const Icon(Icons.error)),
+                loading: () => SettingsTile.navigation(
+                      leading: const Icon(Icons.numbers),
+                      title: const Text('PBKDF2 Iterations'),
+                      trailing: const CircularProgressIndicator())),
           ],
         ),
         SettingsSection(

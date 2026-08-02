@@ -37,3 +37,15 @@ Future<bool> getLazyAuthMode() async {
 setLazyAuthMode(bool lazyAuthMode) async {
   storage.write(key: 'lazyAuthMode', value: lazyAuthMode.toString());
 }
+
+Future<int> getPbkdf2Iterations() async {
+  var strValue = await storage.read(key: 'pbkdf2Iterations');
+  if (strValue == null || strValue == "") {
+    return 15000;
+  }
+  return int.parse(strValue);
+}
+
+setPbkdf2Iterations(int iterations) async {
+  storage.write(key: 'pbkdf2Iterations', value: "$iterations");
+}

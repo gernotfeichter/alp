@@ -1,6 +1,6 @@
 # This Dockerfile is only used for testing
 
-FROM golang:1.21
+FROM golang:1.25
 
 # Set destination for COPY
 WORKDIR /ws
@@ -24,7 +24,7 @@ RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -o /usr/sbin/alp
 
 # Test
-RUN apt-get update && apt-get install sudo && apt-get clean
+RUN apt-get update && apt-get install -y sudo && apt-get clean
 RUN useradd test
 COPY test/resources/common-auth /etc/pam.d/common-auth
 USER test

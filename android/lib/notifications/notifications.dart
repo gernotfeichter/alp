@@ -4,6 +4,7 @@ import 'dart:isolate';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:circular_buffer/circular_buffer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import '../logging/background_service/logging.dart';
 import '../secure_storage/secure_storage.dart';
 import 'event_handler.dart';
@@ -37,7 +38,7 @@ Future<void> initForUi() async {
   });
 }
 
-Future initForBackgroundService() async{
+Future initForBackgroundService(ServiceInstance service) async{
   AwesomeNotifications().initialize(
       'resource://drawable/ic_bg_service_small',
       [
@@ -56,6 +57,18 @@ Future initForBackgroundService() async{
       onNotificationDisplayedMethod:  NotificationEventHandler.onNotificationDisplayedMethod,
       onDismissActionReceivedMethod:  NotificationEventHandler.onDismissActionReceivedMethod
   );
+
+  service.on("notificationAction").listen((event) {
+    if (event != null) {
+      log.info("Received notificationAction from other isolate: $event");
+      event.forEach((key, value) {
+        final id = int.tryParse(key);
+        if (id != null) {
+          authRequestNotificationStateHistory.add({id: value as bool});
+        }
+      });
+    }
+  });
 }
 
 

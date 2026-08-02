@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'package:alfred/alfred.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import '../crypt/aes_gcm_256_pbkdf2_string_encryption.dart';
 import '../crypt/md5_checksum.dart';
 import '../logging/background_service/logging.dart';
@@ -11,11 +12,13 @@ import '../secure_storage/secure_storage.dart';
 import '../crypt/decryption_error.dart';
 import '../../notifications/notifications.dart' as notifications;
 
-Future init() async {
+Future init(ServiceInstance service) async {
   // Atm. of writing I could not find a lib for server dart codegen from
   // the openapi.yaml file, hence this is self-written.
   // The openapi.yaml is however used for the client code generation (linux side)!
   final app = Alfred(logLevel: LogType.debug);
+
+  await notifications.initForBackgroundService(service);
 
   app.get('/auth', (req, res) async {
     // init
@@ -26,6 +29,7 @@ Future init() async {
     String host;
     DateTime requestExpirationTime;
     String encryptionDecryptionKey = await getKey();
+    int pbkdf2Iterations = await getPbkdf2Iterations();
     String requestMessageSignature="defaultInvalidSignature";
     try {
       String decryptedMessage = "";
@@ -34,7 +38,7 @@ Future init() async {
         if (encryptionDecryptionKey == '') {
           log.severe("Decryption Key is empty, please configure a key!");
         } else {
-          decryptedMessage = aesGcmPbkdf2DecryptFromBase64(encryptionDecryptionKey, bodyAsJsonMap['encryptedMessage']);
+          decryptedMessage = aesGcmPbkdf2DecryptFromBase64(encryptionDecryptionKey, bodyAsJsonMap['encryptedMessage'], pbkdf2Iterations);
           requestMessageSignature = md5sum(bodyAsJsonMap['encryptedMessage']);
         }
       } on Exception {
@@ -54,7 +58,7 @@ Future init() async {
     }
 
     // notification
-    await notifications.initForBackgroundService();
+    // await notifications.initForBackgroundService();
     var notificationTimeoutSeconds = requestExpirationTime.difference(DateTime.now()).inSeconds;
     if (notificationTimeoutSeconds < 0) {
       res.statusCode = HttpStatus.badRequest;
@@ -73,7 +77,8 @@ Future init() async {
     // response
     var encryptedMessage = aesGcmPbkdf2EncryptToBase64(
         encryptionDecryptionKey,
-        '{"auth":$approved}');
+        '{"auth":$approved}',
+        pbkdf2Iterations);
     var approvedMessage = "auth request from host $host ${approved ? "approved" : "denied"}";
     if (approved) {
       log.info(approvedMessage);

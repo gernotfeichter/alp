@@ -7,6 +7,6 @@ import '../../rest_api_server/rest_api_server.dart' as rest_api_server;
 Future<void> init(ServiceInstance service) async {
   await logging.init(service);
   log.info("initializing background service");
-  await rest_api_server.init();
+  await rest_api_server.init(service);
   log.info("initialized background service");
 }

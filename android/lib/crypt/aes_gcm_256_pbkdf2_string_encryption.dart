@@ -5,10 +5,9 @@ import 'dart:math';
 import 'dart:typed_data';
 import "package:pointycastle/export.dart";
 
-String aesGcmPbkdf2EncryptToBase64(String password, String plaintext) {
+String aesGcmPbkdf2EncryptToBase64(String password, String plaintext, int pbkdf2Iterations) {
   var plaintextUint8 = createUint8ListFromString(plaintext);
   var passphrase =  createUint8ListFromString(password);
-  const pbkdf2Iterations = 15000;
   final salt = generateSalt32Byte();
   KeyDerivator derivator = PBKDF2KeyDerivator(HMac(SHA256Digest(), 64));
   Pbkdf2Parameters params = Pbkdf2Parameters(salt, pbkdf2Iterations, 32);
@@ -30,7 +29,7 @@ String aesGcmPbkdf2EncryptToBase64(String password, String plaintext) {
   return '$saltBase64:$nonceBase64:$ciphertextBase64:$gcmTagBase64';
 }
 
-String aesGcmPbkdf2DecryptFromBase64(String password, String data) {
+String aesGcmPbkdf2DecryptFromBase64(String password, String data, int pbkdf2Iterations) {
   var parts = data.split(':');
   var salt = base64Decoding(parts[0]);
   var nonce = base64Decoding(parts[1]);
@@ -41,7 +40,6 @@ String aesGcmPbkdf2DecryptFromBase64(String password, String data) {
   bb.add(gcmTag);
   var ciphertextWithTag = bb.toBytes();
   var passphrase =  createUint8ListFromString(password);
-  const pbkdf2Iterations = 15000;
   KeyDerivator derivator = PBKDF2KeyDerivator(HMac(SHA256Digest(), 64));
   Pbkdf2Parameters params = Pbkdf2Parameters(salt, pbkdf2Iterations, 32);
   derivator.init(params);

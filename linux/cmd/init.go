@@ -157,6 +157,10 @@ Furthermore, a backup will be created for each auto-patched file in its original
 const (
 	defaultConfigFileAlpTemplate = `---
 key: {{ .Key }}
+# Number of PBKDF2 iterations to use for encryption/decryption.
+# Higher value = better security, lower value = better performance.
+# If you change this, you must also change it on android side.
+pbkdf2Iterations: 15000
 targets:
 {{- range $target := .Targets }}
   - {{ $target }}

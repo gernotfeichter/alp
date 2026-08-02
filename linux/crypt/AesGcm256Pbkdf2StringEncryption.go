@@ -13,8 +13,8 @@ import (
 	"golang.org/x/crypto/pbkdf2"
 )
 
-func AesGcmPbkdf2EncryptToBase64(passphrase string, data string)(string) {
-  PBKDF2_ITERATIONS := int(15000)
+func AesGcmPbkdf2EncryptToBase64(passphrase string, data string, iterations int)(string) {
+  PBKDF2_ITERATIONS := iterations
   salt := []byte(GenerateSalt32Byte())
   // derive key
   key := []byte(pbkdf2.Key([]byte(passphrase), salt, PBKDF2_ITERATIONS, 32, sha256.New))
@@ -41,8 +41,8 @@ func AesGcmPbkdf2EncryptToBase64(passphrase string, data string)(string) {
   return ciphertextCompleteBase64
 }
 
-func AesGcmPbkdf2DecryptFromBase64(passphrase string, ciphertextCompleteBase64 string)(string) {
-  PBKDF2_ITERATIONS := int(15000)
+func AesGcmPbkdf2DecryptFromBase64(passphrase string, ciphertextCompleteBase64 string, iterations int)(string) {
+  PBKDF2_ITERATIONS := iterations
   data := strings.Split(ciphertextCompleteBase64, ":") 
   salt := []byte(Base64Decoding(data[0]))
   nonce := []byte(Base64Decoding(data[1]))
