@@ -8,3 +8,15 @@ I am therefore using the following command/tool (adapt the interface name after 
 ```
 sudo tcpflow -p -c -i wlp8s0 port 7654
 ```
+
+# E2E Test
+To run the end-to-end test (requires a running Android emulator):
+```bash
+dart shared/e2eTest/e2e_test.dart
+```
+This script will:
+1. Compile the Linux app.
+2. Compile the Android app (release).
+3. Configure the Android app via `integration_test`.
+4. Setup port forwarding.
+5. Perform a "happy path" authentication flow.

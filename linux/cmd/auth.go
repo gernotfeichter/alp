@@ -97,9 +97,9 @@ func init() {
 	authCmd.Flags().Duration("retryOnEOFInterval", time.Second*3,
 		`If an EOF error occurs when talking to the android side, retry after the specified amount of time.`)
 	authCmd.Flags().Int("pbkdf2Iterations", 15000,
-		"Number of PBKDF2 iterations to use for encryption/decryption.
-		Higher value = better security, lower value = better performance.
-		If you change this, you must also change it on android side.")
+		"Number of PBKDF2 iterations to use for encryption/decryption. " +
+		"Higher value = better security, lower value = better performance. " +
+		"If you change this, you must also change it on android side.")
 
 	viper.BindPFlags(authCmd.Flags())
 }

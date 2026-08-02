@@ -1,0 +1,7 @@
+---
+key: "123"
+targets:
+  - localhost:7654
+pbkdf2Iterations: 150
+timeout: 40s
+responseTimeoutDelta: 7s
