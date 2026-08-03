@@ -33,6 +33,8 @@ final wifiIpV6Provider = FutureProvider<String?>((ref) async {
   return info.getWifiIPv6();
 });
 
+final restartRequiredProvider = StateProvider<bool>((ref) => false);
+
 var obscureText = true;
 final obscureTextProvider = StateProvider<bool>((ref) => obscureText);
 
@@ -53,9 +55,29 @@ class Settings extends ConsumerWidget {
     AsyncValue<int> pbkdf2IterationsProviderWatched = ref.watch(pbkdf2IterationsProvider);
     AsyncValue<String?> ipv4 = ref.watch(wifiIpV4Provider);
     AsyncValue<String?> ipv6 = ref.watch(wifiIpV6Provider);
+    bool restartRequired = ref.watch(restartRequiredProvider);
 
     return SettingsList(
       sections: [
+        SettingsSection(
+          title: const Text('Actions'),
+          tiles: [
+            SettingsTile(
+              title: const Text('Restart Background Service'),
+              leading: Icon(
+                Icons.restart_alt,
+                color: restartRequired ? Colors.orange : null,
+              ),
+              description: restartRequired
+                ? const Text('Restart required to apply changes')
+                : const Text('Service is up to date'),
+              onPressed: (context) async {
+                await restartService();
+                ref.read(restartRequiredProvider.notifier).state = false;
+              },
+            ),
+          ],
+        ),
         SettingsSection(
           title: const Text('Authentication/Authorization'),
           tiles: <SettingsTile>[
@@ -74,7 +96,7 @@ class Settings extends ConsumerWidget {
                         onChanged: (value) {
                           setKey(value);
                           ref.invalidate(keyProvider);
-                          restartService();
+                          ref.read(restartRequiredProvider.notifier).state = true;
                         },
                       ),
                     ),
@@ -115,6 +137,7 @@ class Settings extends ConsumerWidget {
                       onChanged: (value) {
                         setLazyAuthMode(value);
                         ref.invalidate(lazyAuthProvider);
+                        ref.read(restartRequiredProvider.notifier).state = true;
                       }
                   ),
                   onToggle: (bool value) {},
@@ -158,7 +181,7 @@ class Settings extends ConsumerWidget {
                         onChanged: (val) {
                           if (val.isNotEmpty) {
                             setPbkdf2Iterations(int.parse(val));
-                            restartService();
+                            ref.read(restartRequiredProvider.notifier).state = true;
                           }
                         },
                       ),
@@ -190,7 +213,7 @@ class Settings extends ConsumerWidget {
                         ],
                         onChanged: (value) {
                           setRestApiPort(int.parse(value));
-                          restartService();
+                          ref.read(restartRequiredProvider.notifier).state = true;
                         },
                       ),
                   error: (err, stack) => Text(err.toString()),

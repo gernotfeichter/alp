@@ -40,7 +40,18 @@ void main() async {
 
 @pragma('vm:entry-point')
 Future<void> backgroundService(ServiceInstance service) async {
-  service.on("stop").listen((event) {
+  if (service is AndroidServiceInstance) {
+    service.setAsForegroundService(); // Call it immediately
+    service.on('setAsForeground').listen((event) {
+      service.setAsForegroundService();
+    });
+    service.on('setAsBackground').listen((event) {
+      service.setAsBackgroundService();
+    });
+  }
+  service.on("stop").listen((event) async {
+    // Give other listeners (like REST server cleanup) a chance to run
+    await Future.delayed(const Duration(milliseconds: 200));
     service.stopSelf();
   });
   await init.init(service);
@@ -49,9 +60,11 @@ Future<void> backgroundService(ServiceInstance service) async {
 Future<void> restartService() async {
   log.info("restarting service");
   service.invoke("stop");
-  if (! await service.isRunning()) {
+  // Give it a moment to stop
+  await Future.delayed(const Duration(milliseconds: 500));
+  if (await service.isRunning()) {
     log.severe("after stopping the service, it is still running");
   }
-  service.startService();
+  await service.startService();
   log.info("restarted service");
 }

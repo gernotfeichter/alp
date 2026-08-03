@@ -89,8 +89,18 @@ Future init(ServiceInstance service) async {
   });
 
   var port = await getRestApiPort();
-  await app.listen(port);
-  log.info("Listening on port $port");
+  HttpServer? server;
+  try {
+    server = await app.listen(port);
+    log.info("Listening on port $port");
+  } catch (e) {
+    log.severe("Failed to listen on port $port: $e");
+  }
+
+  service.on("stop").listen((event) async {
+    log.info("Stopping REST server");
+    await server?.close(force: true);
+  });
 }
 
 Future<bool> pollForNotificationResult(int notificationId, int timeoutSeconds) async {

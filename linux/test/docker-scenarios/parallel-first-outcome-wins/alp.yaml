@@ -1,0 +1,14 @@
+# Used only by the parallel-first-outcome-wins test scenario.
+# The password/key must match the one used by the mock server in mock/main.go.
+key: test-key-parallel-first-outcome
+# Number of PBKDF2 iterations to use for encryption/decryption.
+# The value must match mock/main.go.
+pbkdf2Iterations: 15000
+targets:
+  # The "slow" endpoint is intentionally listed first: if the requests were
+  # executed sequentially, the result would only arrive after the slow delay.
+  - 127.0.0.1:18081
+  # The "fast" endpoint answers immediately. When requests are issued in
+  # parallel, this first (positive) outcome decides and authentication
+  # completes quickly.
+  - 127.0.0.1:18082

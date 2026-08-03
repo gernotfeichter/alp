@@ -142,70 +142,98 @@ func authCommand() {
 	// log.Println("Ticker stopped")
 }
 
+// authOutcome carries the result of a single target's auth attempt. The first
+// target to report an outcome (positive or negative) decides the result.
+type authOutcome struct {
+	authorized bool
+	message    string
+}
+
 func authRequest(authArgs AuthArgs) {
-	for _, target := range authArgs.Targets {
-		targetTemplated := templateDefaultGateway(target)
-		client, err := api.NewClient(fmt.Sprintf("http://%s", targetTemplated))
-		if err != nil {
-			log.Fatalf("Could not create rest client: %s", err)
-		}
-		requestExpirationTimeAndroid := time.Now().Add(authArgs.Timeout - authArgs.ResponseTimeoutDelta)
-		requestExpirationTimeLinux := time.Now().Add(authArgs.Timeout)
-		requestExpirationTimeAndroidString := requestExpirationTimeAndroid.Format(time.RFC3339)
-		ctx, cancel := context.WithDeadline(context.Background(), requestExpirationTimeLinux)
-		defer cancel()
-		if err != nil {
-			log.Fatal(err)
-		}
-		hostname, _ := os.Hostname()
-		encryptedMessage := crypt.AesGcmPbkdf2EncryptToBase64(
-			authArgs.Key,
-			fmt.Sprintf(`{"host":"%s","requestExpirationTime":"%s"}`, hostname, requestExpirationTimeAndroidString),
-			authArgs.Pbkdf2Iterations)
-		requestMessageSignature := fmt.Sprintf("%x", md5.Sum([]byte(encryptedMessage)))
-		if err != nil {
-			log.Fatalf("Error encrypting message: %s", err)
-		}
-		log.Info("sending auth request to connected device")
-		var res api.GetAuthenticationStatusRes
-		err = nil
-		eofError := errors.New("EOF")
-		currentEOFRetries := 0
-		for currentEOFRetries == 0 || errors.Is(err, eofError) {
-			res, err = client.GetAuthenticationStatus(ctx, &api.AuthRequest{
-				EncryptedMessage: api.EncryptedMessage(encryptedMessage),
-			})
-			currentEOFRetries++
-			time.Sleep(authArgs.RetryOnEOFInterval)
-		}
-		if err != nil {
-			log.Fatalf("error when performing auth request: %s", err)
-		}
-		switch r := res.(type) {
-		case *api.AuthResponse:
-			log.Tracef("200 - Success authorized=%s. Note that checking the auth flag is still pending before being fully authorized.", r)
-			decryptedMessage := crypt.AesGcmPbkdf2DecryptFromBase64(authArgs.Key, string(r.EncryptedMessage), authArgs.Pbkdf2Iterations)
-			var responseJson map[string]any
-			err := json.Unmarshal([]byte(decryptedMessage), &responseJson)
-			if err != nil {
-				log.Fatalf("Parsing response as json failed: %s", err)
-			}
-			if !(r.RequestMessageSignature == requestMessageSignature) {
-				log.Fatalf("Wrong checksum. This could be due to a replay attack!")
-			}
-			if !responseJson["auth"].(bool) {
-				log.Fatalf("not authorized!")
-			}
-			log.Info("authorized!")
-			os.Exit(0)
-		case *api.GetAuthenticationStatusBadRequest:
-			log.Fatalf("400 - BadRequest: %s", res)
-		case *api.GetAuthenticationStatusUnauthorized:
-			log.Fatalf("401 - Unauthorized: %s", res)
-		}
-		log.Fatal("Could not classify response into known cases.")
+	if len(authArgs.Targets) == 0 {
+		log.Fatal("No targets delivered a meaningful response.")
 	}
-	log.Fatal("No targets delivered a meaningful response.")
+
+	// Cancel all in-flight requests as soon as the first outcome is decided.
+	parentCtx, parentCancel := context.WithCancel(context.Background())
+	defer parentCancel()
+
+	// Buffered so losing goroutines never block when reporting their results.
+	outcomes := make(chan authOutcome, len(authArgs.Targets))
+	for _, target := range authArgs.Targets {
+		go func(target string) {
+			outcomes <- authRequestForTarget(authArgs, parentCtx, target)
+		}(target)
+	}
+
+	outcome := <-outcomes
+	parentCancel()
+	if outcome.authorized {
+		log.Info("authorized!")
+		os.Exit(0)
+	}
+	log.Fatal(outcome.message)
+}
+
+func authRequestForTarget(authArgs AuthArgs, parentCtx context.Context, target string) authOutcome {
+	fail := func(message string, args ...any) authOutcome {
+		return authOutcome{authorized: false, message: fmt.Sprintf(message, args...)}
+	}
+
+	targetTemplated := templateDefaultGateway(target)
+	client, err := api.NewClient(fmt.Sprintf("http://%s", targetTemplated))
+	if err != nil {
+		return fail("Could not create rest client: %s", err)
+	}
+	requestExpirationTimeAndroid := time.Now().Add(authArgs.Timeout - authArgs.ResponseTimeoutDelta)
+	requestExpirationTimeLinux := time.Now().Add(authArgs.Timeout)
+	requestExpirationTimeAndroidString := requestExpirationTimeAndroid.Format(time.RFC3339)
+	ctx, cancel := context.WithDeadline(parentCtx, requestExpirationTimeLinux)
+	defer cancel()
+
+	hostname, _ := os.Hostname()
+	encryptedMessage := crypt.AesGcmPbkdf2EncryptToBase64(
+		authArgs.Key,
+		fmt.Sprintf(`{"host":"%s","requestExpirationTime":"%s"}`, hostname, requestExpirationTimeAndroidString),
+		authArgs.Pbkdf2Iterations)
+	requestMessageSignature := fmt.Sprintf("%x", md5.Sum([]byte(encryptedMessage)))
+	log.Info("sending auth request to connected device")
+	var res api.GetAuthenticationStatusRes
+	err = nil
+	eofError := errors.New("EOF")
+	currentEOFRetries := 0
+	for currentEOFRetries == 0 || errors.Is(err, eofError) {
+		res, err = client.GetAuthenticationStatus(ctx, &api.AuthRequest{
+			EncryptedMessage: api.EncryptedMessage(encryptedMessage),
+		})
+		currentEOFRetries++
+		time.Sleep(authArgs.RetryOnEOFInterval)
+	}
+	if err != nil {
+		return fail("error when performing auth request: %s", err)
+	}
+	switch r := res.(type) {
+	case *api.AuthResponse:
+		log.Tracef("200 - Success - authorized=%s. Note that checking the auth flag is still pending before being fully authorized.", r)
+		decryptedMessage := crypt.AesGcmPbkdf2DecryptFromBase64(authArgs.Key, string(r.EncryptedMessage), authArgs.Pbkdf2Iterations)
+		var responseJson map[string]any
+		err := json.Unmarshal([]byte(decryptedMessage), &responseJson)
+		if err != nil {
+			return fail("Parsing response as json failed: %s", err)
+		}
+		if !(r.RequestMessageSignature == requestMessageSignature) {
+			return fail("Wrong checksum. This could be due to a replay attack!")
+		}
+		if !responseJson["auth"].(bool) {
+			return fail("not authorized!")
+		}
+		return authOutcome{authorized: true, message: "authorized!"}
+	case *api.GetAuthenticationStatusBadRequest:
+		return fail("400 - BadRequest: %s", res)
+	case *api.GetAuthenticationStatusUnauthorized:
+		return fail("401 - Unauthorized: %s", res)
+	}
+	return fail("Could not classify response into known cases.")
 }
 
 func allowQuickAbort() {
