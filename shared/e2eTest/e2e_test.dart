@@ -10,6 +10,35 @@ Future<void> main() async {
 
   print('--- Starting E2E Test ---');
 
+  // 0. Bootstrap Android Device
+  print('\n[0/7] Bootstrapping Android device...');
+  final adbDevices = await Process.run('adb', ['devices']);
+  if (!adbDevices.stdout.toString().contains('emulator-5554')) {
+    print('No emulator detected. Launching Pixel_10...');
+    // We launch it in the background as it won't return until closed
+    unawaited(Process.run('flutter', ['emulators', '--launch', 'Pixel_10']));
+
+    print('Waiting for device to boot...');
+    bool booted = false;
+    for (int i = 0; i < 60; i++) {
+      final bootStatus = await Process.run('adb', ['-s', 'emulator-5554', 'shell', 'getprop', 'sys.boot_completed']);
+      if (bootStatus.stdout.toString().trim() == '1') {
+        booted = true;
+        break;
+      }
+      await Future.delayed(const Duration(seconds: 2));
+    }
+    if (!booted) {
+      print('Error: Device failed to boot within 2 minutes.');
+      exit(1);
+    }
+    print('Device booted successfully.');
+    // Give it a few more seconds to settle
+    await Future.delayed(const Duration(seconds: 5));
+  } else {
+    print('Emulator already running.');
+  }
+
   // 1. Compile Linux app
   print('\n[1/7] Compiling Linux app...');
   final goBuild = await Process.run('go', ['build', '-o', 'alp', 'main.go'], workingDirectory: linuxDir);

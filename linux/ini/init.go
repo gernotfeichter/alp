@@ -1,6 +1,8 @@
 package ini
 
 import (
+	"os"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -22,6 +24,7 @@ func initLog() {
 	    ForceColors: true,
 	    DisableTimestamp: true,
 	})
+	log.SetOutput(os.Stdout)
 }
 
 func initRootArgs() RootArgs {

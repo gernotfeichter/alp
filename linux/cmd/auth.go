@@ -176,11 +176,10 @@ func authRequest(authArgs AuthArgs) {
 }
 
 func authRequestForTarget(authArgs AuthArgs, parentCtx context.Context, target string) authOutcome {
-	fail := func(message string, args ...any) authOutcome {
-		return authOutcome{authorized: false, message: fmt.Sprintf(message, args...)}
-	}
-
 	targetTemplated := templateDefaultGateway(target)
+	fail := func(message string, args ...any) authOutcome {
+		return authOutcome{authorized: false, message: fmt.Sprintf("[%s] %s", targetTemplated, fmt.Sprintf(message, args...))}
+	}
 	client, err := api.NewClient(fmt.Sprintf("http://%s", targetTemplated))
 	if err != nil {
 		return fail("Could not create rest client: %s", err)
@@ -197,7 +196,7 @@ func authRequestForTarget(authArgs AuthArgs, parentCtx context.Context, target s
 		fmt.Sprintf(`{"host":"%s","requestExpirationTime":"%s"}`, hostname, requestExpirationTimeAndroidString),
 		authArgs.Pbkdf2Iterations)
 	requestMessageSignature := fmt.Sprintf("%x", md5.Sum([]byte(encryptedMessage)))
-	log.Info("sending auth request to connected device")
+	log.Infof("sending auth request to connected device (%s)", targetTemplated)
 	var res api.GetAuthenticationStatusRes
 	err = nil
 	eofError := errors.New("EOF")
@@ -214,7 +213,7 @@ func authRequestForTarget(authArgs AuthArgs, parentCtx context.Context, target s
 	}
 	switch r := res.(type) {
 	case *api.AuthResponse:
-		log.Tracef("200 - Success - authorized=%s. Note that checking the auth flag is still pending before being fully authorized.", r)
+		log.Tracef("%s: 200 - Success - authorized=%s. Note that checking the auth flag is still pending before being fully authorized.", targetTemplated, r)
 		decryptedMessage := crypt.AesGcmPbkdf2DecryptFromBase64(authArgs.Key, string(r.EncryptedMessage), authArgs.Pbkdf2Iterations)
 		var responseJson map[string]any
 		err := json.Unmarshal([]byte(decryptedMessage), &responseJson)
