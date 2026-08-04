@@ -181,6 +181,7 @@ class Settings extends ConsumerWidget {
                         onChanged: (val) {
                           if (val.isNotEmpty) {
                             setPbkdf2Iterations(int.parse(val));
+                            ref.invalidate(pbkdf2IterationsProvider);
                             ref.read(restartRequiredProvider.notifier).state = true;
                           }
                         },
@@ -213,6 +214,7 @@ class Settings extends ConsumerWidget {
                         ],
                         onChanged: (value) {
                           setRestApiPort(int.parse(value));
+                          ref.invalidate(restApiPortProvider);
                           ref.read(restartRequiredProvider.notifier).state = true;
                         },
                       ),

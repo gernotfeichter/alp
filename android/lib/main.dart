@@ -19,7 +19,11 @@ void main() async {
   // It's highly recommended to call this method in main() method to ensure the
   // callback handler updated.
   await initUi(service);
-  service.invoke("stop"); // cleanup potentially old one still running
+  if (await service.isRunning()) {
+    service.invoke("stop");
+    // Give it a moment to stop
+    await Future.delayed(const Duration(milliseconds: 500));
+  }
   await service.configure(
       androidConfiguration: AndroidConfiguration(
         // this will be executed when app is in foreground or background in separated isolate

@@ -15,8 +15,8 @@ Future<int> getRestApiPort() async {
   return int.parse(strValue);
 }
 
-setRestApiPort(int port) {
-  storage.write(key: 'restApiPort', value: "$port");
+Future<void> setRestApiPort(int port) async {
+  await storage.write(key: 'restApiPort', value: "$port");
 }
 
 // encryption and decryption key
@@ -24,8 +24,8 @@ Future<String> getKey() async {
   return await storage.read(key: 'key') ?? '';
 }
 
-setKey(String key) async {
-  storage.write(key: 'key', value: key);
+Future<void> setKey(String key) async {
+  await storage.write(key: 'key', value: key);
 }
 
 Future<bool> getLazyAuthMode() async {
@@ -34,8 +34,8 @@ Future<bool> getLazyAuthMode() async {
   return lazyAuthMode;
 }
 
-setLazyAuthMode(bool lazyAuthMode) async {
-  storage.write(key: 'lazyAuthMode', value: lazyAuthMode.toString());
+Future<void> setLazyAuthMode(bool lazyAuthMode) async {
+  await storage.write(key: 'lazyAuthMode', value: lazyAuthMode.toString());
 }
 
 Future<int> getPbkdf2Iterations() async {
@@ -46,6 +46,6 @@ Future<int> getPbkdf2Iterations() async {
   return int.parse(strValue);
 }
 
-setPbkdf2Iterations(int iterations) async {
-  storage.write(key: 'pbkdf2Iterations', value: "$iterations");
+Future<void> setPbkdf2Iterations(int iterations) async {
+  await storage.write(key: 'pbkdf2Iterations', value: "$iterations");
 }
