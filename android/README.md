@@ -25,7 +25,7 @@ flutter create --platforms android --platforms web --template app --org io.githu
 
 1. bump the version in [pubspec.yaml](pubspec.yaml)
     ```
-    flutter build appbundle
+    flutter build appbundle --release
     ```
 2. Test install
     ```
