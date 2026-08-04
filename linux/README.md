@@ -35,6 +35,9 @@ docker build . -f test/docker-scenarios/fallback-to-password-prompt-bad-password
 
 ## release
 
-```
+The `release.sh` script requires a `GITHUB_TOKEN` environment variable with `repo` scope to upload artifacts to GitHub.
+
+```bash
+export GITHUB_TOKEN=your_token_here
 ./release.sh <major>.<minor>.<patch>
 ```

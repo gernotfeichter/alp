@@ -10,7 +10,11 @@ new_version="$1"
 [ "$(git rev-parse --abbrev-ref HEAD)" != 'master' ] && "ERROR: you need to be on the master branch to run this command properly!" && exit 1
 
 # load secrets
-. github-token.sh # contains export GITHUB_TOKEN="<secret_token_here>"
+if [ -z "$GITHUB_TOKEN" ]; then
+    echo "ERROR: GITHUB_TOKEN environment variable is not set."
+    echo "Please set it before running this script, e.g.: export GITHUB_TOKEN=your_token"
+    exit 1
+fi
 
 # update version in main user facing (parent) README.md
 sed -i "s/download\/[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*/download\/$new_version/" "../README.md"
