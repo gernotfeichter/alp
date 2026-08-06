@@ -32,6 +32,7 @@ Future<void> initForUi() async {
             NotificationPermission.FullScreenIntent,
             NotificationPermission.CriticalAlert,
             NotificationPermission.Provisional,
+            NotificationPermission.PreciseAlarms,
           ]
       );
     }

@@ -50,7 +50,7 @@ Future<void> main() async {
 
   // 2. Compile Android app (release)
   print('\n[2/7] Compiling Android app (release apk)...');
-  final flutterBuild = await Process.run('flutter', ['build', 'apk', '--release'], workingDirectory: androidDir);
+  final flutterBuild = await Process.run('flutter', ['build', 'appbundle', '--release'], workingDirectory: androidDir);
   if (flutterBuild.exitCode != 0) {
     print('Error compiling Android app: ${flutterBuild.stderr}');
     exit(1);
@@ -247,8 +247,9 @@ Future<void> dismissSystemDialogs() async {
 
     if (content.contains('com.android.systemui:id/internet_connectivity_dialog') ||
         content.contains('android:id/alertTitle') ||
-        content.contains('Wait') || content.contains('Close app')) {
-      print('System dialog detected. Pressing Back...');
+        content.contains('Wait') || content.contains('Close app') ||
+        content.contains('Alarms & reminders')) {
+      print('System dialog or permission screen detected. Pressing Back...');
       await Process.run('adb', ['shell', 'input', 'keyevent', '4']);
     }
   } catch (e) {
