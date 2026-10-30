@@ -2,6 +2,23 @@
 
 android part of alp - android-linux-pam
 
+## local network permission
+
+The app targets Android 17 (API 37) and therefore declares and requests
+`android.permission.ACCESS_LOCAL_NETWORK` (shown to users as part of the
+**Nearby devices** permission group). It is required because the Linux client
+connects to the REST server that runs on the phone, so a system device picker
+cannot provide the same core functionality.
+
+If the permission is denied, the server still starts, but Android blocks its
+local network traffic. The permission can be granted again from the app's
+settings screen or from *Settings > Apps > alp > Permissions > Nearby devices*.
+
+When publishing to Google Play, submit the local network permission declaration
+in Play Console and explain that this is a LAN-only client/server
+authentication app whose core functionality depends on incoming connections
+from the user's own Linux machine.
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.

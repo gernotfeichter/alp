@@ -30,7 +30,9 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "io.github.gernotfeichter.alp.android"
-    compileSdk 36
+    // Android 17 (API 37) introduced the ACCESS_LOCAL_NETWORK runtime
+    // permission required by the REST server.
+    compileSdk 37
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -52,7 +54,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 36
+        targetSdkVersion 37
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

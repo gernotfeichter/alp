@@ -115,6 +115,10 @@ In a terminal, perform the following steps:
 
 ## android
 1. Download the [android app - alp](https://play.google.com/store/apps/details?id=io.github.gernotfeichter.alp).
+   On Android 17 or newer, allow the **Nearby devices** permission when asked.
+   alp needs it so the Linux client can reach the REST server running on your
+   phone. If you denied it, enable it later under
+   *Settings > Apps > alp > Permissions > Nearby devices*.
 2. In the settings of the android app, enter the key that was randomly generated
    and can be retrieved (on your linux machine) like so: `sudo cat /etc/alp/alp.yaml`.
    While it may be trivial, the key starts after the `key: ` part.

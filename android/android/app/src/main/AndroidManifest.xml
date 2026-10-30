@@ -5,6 +5,11 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Android 17 (API 37) and higher gate traffic to and from the local
+         network behind this runtime permission. The Linux client connects to
+         the server running in this app, so broad local network access is core
+         functionality and cannot be replaced by a device picker. -->
+    <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application
         android:label="alp"

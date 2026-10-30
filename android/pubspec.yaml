@@ -46,6 +46,7 @@ dependencies:
   flutter_riverpod: ^2.3.6
   network_info_plus: ^7.0.0
   crypto: ^3.0.3
+  permission_handler: ^13.0.2
 
 dev_dependencies:
   flutter_test:

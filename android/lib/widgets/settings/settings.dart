@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:settings_ui/settings_ui.dart';
 
+import '../../permissions/local_network.dart';
+
 
 final keyProvider = FutureProvider<String>((ref) async {
   return getKey();
@@ -17,6 +19,10 @@ final lazyAuthProvider = FutureProvider<bool>((ref) async {
 
 final restApiPortProvider = FutureProvider<int>((ref) async {
   return getRestApiPort();
+});
+
+final localNetworkPermissionProvider = FutureProvider<bool>((ref) async {
+  return hasLocalNetworkPermission();
 });
 
 final pbkdf2IterationsProvider = FutureProvider<int>((ref) async {
@@ -55,6 +61,8 @@ class Settings extends ConsumerWidget {
     AsyncValue<int> pbkdf2IterationsProviderWatched = ref.watch(pbkdf2IterationsProvider);
     AsyncValue<String?> ipv4 = ref.watch(wifiIpV4Provider);
     AsyncValue<String?> ipv6 = ref.watch(wifiIpV6Provider);
+    AsyncValue<bool> localNetworkPermission =
+        ref.watch(localNetworkPermissionProvider);
     bool restartRequired = ref.watch(restartRequiredProvider);
 
     return SettingsList(
@@ -257,6 +265,30 @@ class Settings extends ConsumerWidget {
                     description: const Text('readonly'),
                     value: const Text("loading"),
                     trailing: const CircularProgressIndicator())),
+          ],
+        ),
+        SettingsSection(
+          title: const Text('Permissions'),
+          tiles: <SettingsTile>[
+            SettingsTile.navigation(
+              leading: const Icon(Icons.lan),
+              title: const Text('Local network access'),
+              description: const Text(
+                  'Required on Android 17+ so your Linux machine can reach '
+                  'the alp server on this device.'),
+              trailing: localNetworkPermission.when(
+                  data: (granted) => granted
+                      ? const Icon(Icons.check_circle, color: Colors.green)
+                      : const Icon(Icons.warning, color: Colors.orange),
+                  error: (err, stack) => const Icon(Icons.error),
+                  loading: () => const CircularProgressIndicator()),
+              onPressed: (context) async {
+                if (!await hasLocalNetworkPermission()) {
+                  await requestLocalNetworkPermission();
+                  ref.invalidate(localNetworkPermissionProvider);
+                }
+              },
+            ),
           ],
         ),
       ],
